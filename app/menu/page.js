@@ -1,15 +1,17 @@
-export const metadata = {
-  title: "Özel Lezzet Menüsü & Fiyat Listesi — Can Evim Şile",
-  description: "Can Evim Şile resmi lezzet menüsü ve güncel fiyat listesi.",
-};
+'use client';
+
+import { useState } from 'react';
 
 export default function MenuPage() {
+  const [activeCategory, setActiveCategory] = useState("all");
+
   const menuCategories = [
     {
       id: "cat-kahvalti",
-      title: "K A H V A L T I",
-      rawTitle: "KÖY KAHVALTISI",
+      title: "KÖY KAHVALTISI",
+      sub: "K A H V A L T I",
       desc: "Doğal köy peynirleri, ev reçelleri ve sınırsız termos çay ile.",
+      badge: "Özel Kahvaltı",
       plates: [
         "/assets/images/serpme_kahvalti.jpg",
         "/assets/images/pisiler.jpg",
@@ -17,27 +19,28 @@ export default function MenuPage() {
       ],
       items: [
         {
-          name: "SERPME KÖY KAHVALTISI (İKİ KİŞİLİK)",
-          price: "1.700,00 ₺",
+          name: "Serpme Köy Kahvaltısı (İki Kişilik)",
+          price: "1.700 ₺",
           desc: "Peynir tabağı, yeşil & siyah zeytin, acuka, çilek & portakal reçeli, çeri domates, salatalık, tereyağ, bal-kaymak, pişi (2 adet), muska böreği (2 adet), sahanda yumurta ve sınırsız termos çay."
         },
         {
-          name: "KAHVALTI TABAĞI (TEK KİŞİLİK)",
-          price: "800,00 ₺",
+          name: "Kahvaltı Tabağı (Tek Kişilik)",
+          price: "800 ₺",
           desc: "Zengin peynir çeşitleri, zeytinler, acuka, reçeller, domates, salatalık, tereyağı, haşlanmış yumurta ve 2 adet çay."
         },
         {
-          name: "İLAVE KAHVALTILIK PORSİYON",
-          price: "80,00 ₺",
+          name: "İlave Kahvaltılık Porsiyon",
+          price: "80 ₺",
           desc: "İlave ev reçeli, zeytin tabağı, özel acuka veya süzme peynir porsiyonu."
         }
       ]
     },
     {
       id: "cat-sicaklar",
-      title: "S I C A K L A R  &  O M L E T L E R",
-      rawTitle: "TAVADA SICAKLAR",
+      title: "TAVADA SICAKLAR & OMLETLER",
+      sub: "S I C A K L A R",
       desc: "Bakır tavada cızbız pişen sıcak kahvaltılıklar ve omletler.",
+      badge: "Tavadan Sıcak",
       plates: [
         "/assets/images/menemen_mihlama.jpg",
         "/assets/images/omlet.jpg",
@@ -45,238 +48,264 @@ export default function MenuPage() {
       ],
       items: [
         {
-          name: "TRABZON MIHLAMA / KUYMAK",
-          price: "400,00 ₺",
+          name: "Trabzon Mıhlama / Kuymak",
+          price: "400 ₺",
           desc: "Trabzon tereyağı, uzayan kolot peyniri ve mısır unu ile sıcak bakır tavada."
         },
         {
-          name: "ÖZEL SAHANDA MENEMEN",
-          price: "300,00 ₺",
+          name: "Özel Sahanda Menemen",
+          price: "300 ₺",
           desc: "Taptaze Şile bahçe domatesleri, biber ve taze yumurta ile."
         },
         {
-          name: "SUCUKLU KASAP OMLET",
-          price: "350,00 ₺",
+          name: "Sucuklu Kasap Omlet",
+          price: "350 ₺",
           desc: "Özel baharatlı kasap sucuklu sıcak sahanda omlet."
         },
         {
-          name: "BOL KAŞARLI OMLET",
-          price: "300,00 ₺",
+          name: "Bol Kaşarlı Omlet",
+          price: "300 ₺",
           desc: "Eriyen bol kaşar peynirli veya ezine beyaz peynirli omlet."
         },
         {
-          name: "BAHARATLI KIYMALI OMLET",
-          price: "400,00 ₺",
+          name: "Baharatlı Kıymalı Omlet",
+          price: "400 ₺",
           desc: "Özel harçlı taze kıymalı sahanda omlet."
         },
         {
-          name: "SADE SAHANDA OMLET",
-          price: "200,00 ₺",
+          name: "Sade Sahanda Omlet",
+          price: "200 ₺",
           desc: "Taze çırpılmış sahanda sade tereyağlı omlet."
         },
         {
-          name: "TEREYAĞLI SAHANDA YUMURTA",
-          price: "200,00 ₺",
+          name: "Tereyağlı Sahanda Yumurta",
+          price: "200 ₺",
           desc: "Köy tereyağında göz yumurta."
         },
         {
-          name: "HAŞLANMIŞ KÖY YUMURTASI",
-          price: "60,00 ₺",
+          name: "Haşlanmış Köy Yumurtası",
+          price: "60 ₺",
           desc: "Taze kıvamında haşlanmış köy yumurtası."
         },
         {
-          name: "CIZBIZ TAVADA SUCUK",
-          price: "300,00 ₺",
+          name: "Cızbız Tavada Sucuk",
+          price: "300 ₺",
           desc: "Cızbız tavada dilimlenmiş sıcak kasap sucuğu."
         },
         {
-          name: "ÇITIR PATATES KIZARTMASI",
-          price: "200,00 ₺",
+          name: "Çıtır Patates Kızartması",
+          price: "200 ₺",
           desc: "Altın sarısı çıtır parmak patates kızartması."
         },
         {
-          name: "DOMATES SOSLU BİBER KIZARTMASI",
-          price: "200,00 ₺",
+          name: "Domates Soslu Biber Kızartması",
+          price: "200 ₺",
           desc: "Ev yapımı domates soslu sıcak biber kızartması."
         },
         {
-          name: "PUF PUF PİŞİ TABAĞI (4 ADET)",
-          price: "200,00 ₺",
+          name: "Puf Puf Pişi Tabağı (4 Adet)",
+          price: "200 ₺",
           desc: "Sıcacık puf puf 4 adet el yapımı pişi."
         },
         {
-          name: "EL AÇMASI MUSKA BÖREK (4 ADET)",
-          price: "250,00 ₺",
+          name: "El Açması Muska Börek (4 Adet)",
+          price: "250 ₺",
           desc: "Çıtır el açması 4 adet muska böreği."
         },
         {
-          name: "ÖZEL SOSLU KARIŞIK KIZARTMA",
-          price: "250,00 ₺",
+          name: "Özel Soslu Karışık Kızartma",
+          price: "250 ₺",
           desc: "Kızarmış patates ve biber üzerine özel domates sosu."
         },
         {
-          name: "SÜZME EV MERCİMEK ÇORBASI",
-          price: "150,00 ₺",
+          name: "Süzme Ev Mercimek Çorbası",
+          price: "150 ₺",
           desc: "Sıcacık kıvamlı ev usulü süzme mercimek çorbası."
         }
       ]
     },
     {
       id: "cat-tostlar",
-      title: "T O S T L A R  &  I Z G A R A",
-      rawTitle: "ÇITIR TOSTLAR & IZGARA KÖFTE",
+      title: "TOSTLAR & IZGARALAR",
+      sub: "T O S T L A R",
       desc: "Izgaradan ve döküm tost makinesinden çıkan sıcak lezzetler.",
+      badge: "Çıtır Lezzetler",
       plates: [
         "/assets/images/karisik_tost.jpg",
         "/assets/images/tost_kofte.jpg"
       ],
       items: [
         {
-          name: "ÇITIR KAŞARLI TOST",
-          price: "200,00 ₺",
+          name: "Çıtır Kaşarlı Tost",
+          price: "200 ₺",
           desc: "Bol kaşar peynirli ve tereyağlı çıtır tost."
         },
         {
-          name: "KASAP SUCUKLU TOST",
-          price: "250,00 ₺",
+          name: "Kasap Sucuklu Tost",
+          price: "250 ₺",
           desc: "Özel kasap sucuklu ve tereyağlı çıtır tost."
         },
         {
-          name: "KARIŞIK TOST (KAŞARLI & SUCUKLU)",
-          price: "280,00 ₺",
+          name: "Karışık Tost (Kaşarlı & Sucuklu)",
+          price: "280 ₺",
           desc: "Bol kaşar ve kasap sucuklu özel karışık tost."
         },
         {
-          name: "EKMEK ARASI IZGARA ANNE KÖFTESİ",
-          price: "350,00 ₺",
+          name: "Ekmek Arası Izgara Anne Köftesi",
+          price: "350 ₺",
           desc: "Izgara dana köfteleri, taze domates ve yeşillikle ekmek arası."
         }
       ]
     },
     {
       id: "cat-gozleme",
-      title: "G Ö Z L E M E L E R  &  K A V U R M A",
-      rawTitle: "EL AÇMASI GÖZLEME",
+      title: "EL AÇMASI GÖZLEME & KAVURMA",
+      sub: "G Ö Z L E M E L E R",
       desc: "Sac üzerinde incecik elde açılan gözlemeler ve döküm et kavurma.",
+      badge: "El Açması",
       plates: [
         "/assets/images/gozleme_kavurma.jpg",
         "/assets/images/sac_kavurma.jpg"
       ],
       items: [
         {
-          name: "PATATESLİ KÖY GÖZLEMESİ",
-          price: "250,00 ₺",
+          name: "Patatesli Köy Gözlemesi",
+          price: "250 ₺",
           desc: "Sac üzerinde elde açılan hamur ve özel baharatlı patates harcı."
         },
         {
-          name: "KAŞARLI KÖY GÖZLEMESİ",
-          price: "250,00 ₺",
+          name: "Kaşarlı Köy Gözlemesi",
+          price: "250 ₺",
           desc: "Eriyen bol kaşar peynirli sıcak el açması gözleme."
         },
         {
-          name: "BAHARATLI KIYMALI GÖZLEME",
-          price: "280,00 ₺",
+          name: "Baharatlı Kıymalı Gözleme",
+          price: "280 ₺",
           desc: "Özel kıymalı harç ile elde açılan nefis köy gözlemesi."
         },
         {
-          name: "DÖKÜM SAÇTA LEZİZ ET KAVURMA",
-          price: "450,00 ₺",
+          name: "Döküm Saçta Leziz Et Kavurma",
+          price: "450 ₺",
           desc: "Lokum dana eti, domates ve biberle cızbız döküm saçta."
         }
       ]
     },
     {
       id: "cat-tatli",
-      title: "T A T L I L A R  &  İ Ç E C E K L E R",
-      rawTitle: "EV TATLILARI & ÇAY",
+      title: "TATLILAR & İÇECEKLER",
+      sub: "T A T L I L A R",
       desc: "Dilara Hanım'ın el yapımı tatlıları ve demleme çay.",
+      badge: "El Yapımı",
       plates: [
         "/assets/images/tatli_kahve.jpg",
         "/assets/images/termos_cay.jpg"
       ],
       items: [
         {
-          name: "DİLARA HANIM'IN EV YAPIMI TİRAMİSUSU",
-          price: "200,00 ₺",
+          name: "Dilara Hanım'ın Ev Yapımı Tiramisusu",
+          price: "200 ₺",
           desc: "İtalyan usulü taze mascarpone kremalı el yapımı özel tiramisu."
         },
         {
-          name: "TERMOS DEMLEME ÇAY",
-          price: "150,00 ₺",
+          name: "Termos Demleme Çay",
+          price: "150 ₺",
           desc: "Masada tüm kahvaltı boyunca sıcacık kalan büyük boy termos çay."
         },
         {
-          name: "KÖZDE BOL KÖPÜKLÜ TÜRK KAHVESİ",
-          price: "90,00 ₺",
+          name: "Közde Bol Köpüklü Türk Kahvesi",
+          price: "90 ₺",
           desc: "Taze çekilmiş köpüklü Türk kahvesi. Su ve lokum ikramı ile."
         }
       ]
     }
   ];
 
+  const filteredCategories = activeCategory === "all" 
+    ? menuCategories 
+    : menuCategories.filter(c => c.id === activeCategory);
+
   return (
-    <main className="menu-page-template">
-      {/* HEADER SECTION */}
-      <section className="template-hero-header text-center">
-        <div className="container">
-          <h1 className="template-menu-title">MENÜ</h1>
-          <p className="template-hero-subtitle">CAN EVİM ŞİLE · DOĞAL & LEZZETLİ</p>
+    <main className="perfect-menu-page">
+      {/* REFINED COMPACT HERO */}
+      <section className="perfect-menu-hero">
+        <div className="container text-center">
+          <span className="perfect-hero-tag">CAN EVİM ŞİLE</span>
+          <h1 className="perfect-hero-title">Lezzet Menümüz</h1>
+          <p className="perfect-hero-sub">Taptaze serpme kahvaltılar, el açması gözlemeler ve sıcacık ikramlar.</p>
         </div>
       </section>
 
-      {/* CATEGORY NAV PILLS */}
-      <div className="template-nav-bar">
+      {/* FILTER PILLS */}
+      <div className="perfect-nav-sticky">
         <div className="container">
-          <div className="category-scroll-wrapper">
-            <a href="#cat-kahvalti" className="cat-pill active">Kahvaltı</a>
-            <a href="#cat-sicaklar" className="cat-pill">Sıcaklar & Omletler</a>
-            <a href="#cat-tostlar" className="cat-pill">Tostlar & Izgara</a>
-            <a href="#cat-gozleme" className="cat-pill">Gözleme & Kavurma</a>
-            <a href="#cat-tatli" className="cat-pill">Tatlılar & İçecekler</a>
+          <div className="perfect-nav-wrapper">
+            <button 
+              className={`perfect-nav-btn ${activeCategory === "all" ? "active" : ""}`}
+              onClick={() => setActiveCategory("all")}
+            >
+              Tüm Menü
+            </button>
+            {menuCategories.map((c) => (
+              <button
+                key={c.id}
+                className={`perfect-nav-btn ${activeCategory === c.id ? "active" : ""}`}
+                onClick={() => setActiveCategory(c.id)}
+              >
+                {c.title.split('&')[0]}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* CATEGORIZED MENU SHEETS (CANVA TEMPLATE DESIGN) */}
+      {/* REFINED MENU SHEETS CONTAINER */}
       <div className="container" style={{ paddingBottom: 60 }}>
-        {menuCategories.map((cat) => (
-          <div key={cat.id} id={cat.id} className="template-menu-sheet">
-            {/* LEFT CONTENT LIST */}
-            <div className="template-sheet-left">
-              <div className="template-sheet-header">
-                <div className="template-category-subtitle">{cat.title}</div>
-                <p>{cat.desc}</p>
-              </div>
-
-              <div className="template-item-list">
-                {cat.items.map((item, idx) => (
-                  <div key={idx} className="template-item-row">
-                    <div className="template-item-top">
-                      <span className="template-item-name">{item.name}</span>
-                      <span className="template-item-price">{item.price}</span>
-                    </div>
-                    {item.desc && <p className="template-item-desc">{item.desc}</p>}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* RIGHT TERRACOTTA ORANGE STRIP WITH ROUND FOOD PLATES */}
-            <div className="template-sheet-right">
-              {cat.plates.map((plateImg, pIdx) => (
-                <div key={pIdx} className="template-circle-plate">
-                  <img src={plateImg} alt={`${cat.rawTitle} Görseli ${pIdx + 1}`} loading="lazy" />
+        <div className="perfect-sheets-stack">
+          {filteredCategories.map((cat) => (
+            <div key={cat.id} id={cat.id} className="perfect-sheet">
+              {/* TOP HEADER BAND */}
+              <div className="perfect-sheet-topband">
+                <div>
+                  <span className="perfect-sheet-sub">{cat.sub}</span>
+                  <h2 className="perfect-sheet-h2">{cat.title}</h2>
                 </div>
-              ))}
-            </div>
+                <span className="perfect-sheet-badge">{cat.badge}</span>
+              </div>
 
-            {/* FOOTER BAR */}
-            <div className="template-sheet-footer">
-              <span>www.canevimsile.com</span>
-              <span>Alemdağ Şile Yolu Cd. No: 193, 34980 Şile / İstanbul • Tel: 0537 497 50 62</span>
+              {/* SHEET MAIN SPLIT */}
+              <div className="perfect-sheet-body">
+                {/* LEFT ITEMS LIST WITH CLASSIC RESTAURANT DOTTED LEADERS */}
+                <div className="perfect-sheet-items">
+                  {cat.items.map((item, idx) => (
+                    <div key={idx} className="perfect-menu-item">
+                      <div className="perfect-item-header">
+                        <span className="perfect-item-title">{item.name}</span>
+                        <span className="perfect-item-dots"></span>
+                        <span className="perfect-item-price">{item.price}</span>
+                      </div>
+                      {item.desc && <p className="perfect-item-desc">{item.desc}</p>}
+                    </div>
+                  ))}
+                </div>
+
+                {/* RIGHT ACCENT STRIP WITH BALANCED FLOATING ROUND PLATES */}
+                <div className="perfect-sheet-side">
+                  {cat.plates.map((plateImg, pIdx) => (
+                    <div key={pIdx} className="perfect-round-plate">
+                      <img src={plateImg} alt={`${cat.title} ${pIdx + 1}`} loading="lazy" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* SHEET FOOTER */}
+              <div className="perfect-sheet-footer">
+                <span>📍 Alemdağ Şile Yolu Cd. No: 193 (Üvezli Sapağı)</span>
+                <span>📞 0537 497 50 62 · www.canevimsile.com</span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </main>
   );

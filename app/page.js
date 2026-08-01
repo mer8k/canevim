@@ -1,489 +1,418 @@
-'use client';
-
-import { useState } from 'react';
-import Link from 'next/link';
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import FadeIn from "./components/FadeIn";
 
 export default function Home() {
-  const todayStr = "29 Temmuz 2026, Çarşamba";
-  const tomorrowStr = "30 Temmuz 2026, Perşembe";
+  const [name, setName] = useState("");
+  const [date, setDate] = useState("");
 
-  const [selectedDate, setSelectedDate] = useState("Bugün (29 Temmuz)");
-  const [customDateVal, setCustomDateVal] = useState("2026-07-29");
-  const [selectedTime, setSelectedTime] = useState("10:00");
-  const [selectedGuests, setSelectedGuests] = useState("2 Kişi (Serpme Kahvaltı)");
-  
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    note: ''
-  });
-
-  const mapsUrl = "https://www.google.com/maps/dir//Can+Evim+%C5%9Eile,+%C3%9Cvezli,+Alemda%C4%9F+%C5%9Eile+Yolu+No:+193,+34980+%C5%9Eile%2F%C4%B0stanbul/@41.1664895,29.5977184,14z/data=!4m8!4m7!1m0!1m5!1m1!1s0x409fd5b99f0c193b:0x275f89d0fdeb1d23!2m2!1d29.4258912!2d41.1104673?entry=ttu&g_ep=EgoyMDI2MDcyNy4wIKXMDSoASAFQAw%3D%3D";
-  const instagramUrl = "https://www.instagram.com/canevimsile/";
-
-  const handleWhatsAppSubmit = (e) => {
+  const handleReservationSubmit = (e) => {
     e.preventDefault();
-    const dateText = selectedDate === "Özel Tarih" ? customDateVal : selectedDate;
-    const text = `Merhaba Can Evim Şile, Masa Rezervasyonu Talebi:\n\n👤 Ad Soyad: ${formData.name}\n📞 Telefon: ${formData.phone || 'Belirtilmedi'}\n📅 Tarih: ${dateText}\n⏰ Saat: ${selectedTime}\n👥 Kişi Sayısı: ${selectedGuests}\n📝 Not: ${formData.note || 'Yok'}`;
-    const url = `https://wa.me/905374975062?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
+    if (!name || !date) return alert("Lütfen ad soyad ve tarih bilgilerinizi girin.");
+    
+    // Format the WhatsApp message
+    const message = `Merhaba Can Evim, ben ${name}. ${date} tarihi için rezervasyon yaptırmak istiyorum.`;
+    const waUrl = `https://wa.me/905374975062?text=${encodeURIComponent(message)}`;
+    
+    window.open(waUrl, "_blank");
   };
 
-  const reviews = [
-    {
-      name: "Zeynep BAYRAK",
-      meta: "Google Değerlendirmesi",
-      text: "Güler yüzle, hızlıca, taptaze, dolu dolu serpme kahvaltımız, termosla çayımız hemen geldi. Doyduk, dolduk taştık. Her şey çok lezzetliydi ellerine emeğine sağlık çok teşekkür ederiz."
-    },
-    {
-      name: "Gözde Genç",
-      meta: "Google Değerlendirmesi",
-      text: "Bugünü harika bir kahvaltıyla taçlandırdık. İlgi ve alaka mükemmeldi. Özellikle o muhteşem menemeni mutlaka denemelisiniz, lezzeti anlatılmaz yaşanır! Emeği geçen herkesin eline sağlık."
-    },
-    {
-      name: "Şerife Acar",
-      meta: "Google Değerlendirmesi",
-      text: "Hafta sonu denize giderken yol üstünde ayak üstü uğradığımız bir mekan. Kahvaltı çeşidi ve kalitesi çok iyiydi. Özellikle yediğimiz menemenin tadı tekrar gitmemize sebep olacak lezzette idi."
-    },
-    {
-      name: "Sedat Kütük",
-      meta: "Google Değerlendirmesi",
-      text: "Yeni açılmış sıcak bir aile mekanı. Gözlemeleri anne eli değmiş gibi sıcacık ve lezzetli. Çalışanlar güler yüzlü ve ilgili. Ailenizle keyifle kahvaltı yapabileceğiniz huzurlu bir ortam."
-    },
-    {
-      name: "Yusuf Uygun",
-      meta: "Yerel Rehber · Google Değerlendirmesi",
-      text: "Gözleme ve saç kavurma denedik. Her iki ürünün de lezzeti gayet başarılıydı. Gözlemenin yanında turşu ve söğüş ikram etmeleri hoş bir detay. Sıcak ekmek servisi harikaydı."
-    },
-    {
-      name: "Volkan Şimşek",
-      meta: "Yerel Rehber · Google Değerlendirmesi",
-      text: "Çatal-kaşık servisinden, pişinin altına konulan kağıda kadar her şey özenle düşünülmüş. Kahvaltının lezzetinden ve kalitesinden son derece memnun kaldık."
-    }
-  ];
-
-  const timeOptions = ["09:00", "10:00", "11:30", "13:00", "15:00", "17:00", "19:00", "21:00"];
-  const guestOptions = [
-    "2 Kişi (Serpme Kahvaltı)",
-    "3-4 Kişi (Aile Masası)",
-    "5-8 Kişi (Grup Kahvaltısı)",
-    "8+ Kalabalık Etkinlik"
-  ];
-
   return (
-    <main>
-      {/* HERO SECTION */}
-      <div className="hero-wrapper" id="anasayfa">
-        <div className="container">
-          <div className="hero-card">
-            <div className="hero-bg-img" style={{ backgroundImage: "url('/assets/images/serpme_kahvalti.jpg')" }}></div>
-            <div className="hero-content">
-              <div className="hero-badge-group">
-                <span className="hero-eyebrow-badge">Alemdağ Şile Yolu · Üvezli Köyü Girişi</span>
-                <span className="hero-rating-pill">★ 5.0 (80+ Değerlendirme)</span>
-              </div>
-              <h1>Doğanın içinde.<br/>Masada lezzet şöleni.</h1>
-              <p>Alemdağ Şile Yolu No: 193 adresinde; sıcacık menemenli serpme köy kahvaltısı, el açması taze gözlemeler ve şömineli huzurlu ortam.</p>
+    <main className="min-h-screen relative w-full flex flex-col justify-between selection:bg-white/30">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-[-1] w-full h-[90vh]">
+        {/* Desktop Image */}
+        <div className="relative w-full h-full hidden md:block">
+          <Image 
+            src="/heromasaustu.jpg"
+            alt="Can Evim Şile"
+            fill
+            priority
+            className="object-cover object-center"
+          />
+        </div>
+        {/* Mobile Image */}
+        <div className="relative w-full h-full block md:hidden">
+          <Image 
+            src="/heromobil_v2.jpg"
+            alt="Can Evim Şile Mobil"
+            fill
+            priority
+            className="object-cover object-center"
+          />
+        </div>
+        {/* Subtle overlay to ensure text readability like noma */}
+        <div className="absolute inset-0 bg-black/10" />
+      </div>
 
-              <a href="#rezervasyon" className="btn-hero-cta">
-                Hemen Masa Ayırt ➔
-              </a>
-            </div>
-          </div>
-
-          {/* 4 SQUIRCLE ACTION ICON BUTTONS */}
-          <div className="hero-action-bar">
-            <a href={instagramUrl} target="_blank" rel="noopener" className="squircle-btn" aria-label="Instagram @canevimsile">
-              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-            </a>
-            <a href="https://wa.me/905374975062?text=Merhaba%20Can%20Evim%20%C5%9Eile%2C%20rezervasyon%20yapmak%20istiyorum." target="_blank" rel="noopener" className="squircle-btn" aria-label="WhatsApp">
-              <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-1.157 4.228 4.228-1.157z"/></svg>
-            </a>
-            <a href="tel:05374975062" className="squircle-btn" aria-label="Telefon Et">
-              <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-            </a>
-            <a href={mapsUrl} target="_blank" rel="noopener" className="squircle-btn" aria-label="Google Haritalar Yol Tarifi">
-              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-            </a>
+      {/* Hero Content (Bottom Left) */}
+      <div className="h-[90vh] flex flex-col justify-end px-8 pb-16 md:px-16 md:pb-24 w-full text-white relative">
+        <h1 className="text-5xl md:text-7xl lg:text-[84px] font-serif mb-6 drop-shadow-md font-normal tracking-tight">
+          Şile 2026
+        </h1>
+        
+        <div className="relative w-fit">
+          <Link href="/menu" className="group inline-flex items-center gap-4 border border-white/40 px-6 py-3 md:px-8 md:py-[18px] w-fit hover:bg-white/10 hover:border-white/60 transition-all duration-500 relative overflow-hidden backdrop-blur-sm">
+            <span className="text-[17px] md:text-[20px] font-serif tracking-[0.08em] group-hover:pr-2 transition-all duration-300">Menüye Eriş</span>
+            <span className="text-xl font-sans font-light -mt-1 group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
+          </Link>
+          
+          {/* Red Flower Accent - positioned overlapping the button border */}
+          <div className="absolute -bottom-4 -right-5 text-4xl opacity-90 rotate-[-15deg] hover:scale-110 transition-transform duration-500 origin-center drop-shadow-md z-10 pointer-events-none">
+            {/* Using a realistic flower emoji or a custom SVG would work here. I'll use SVG for better control */}
+            <svg width="48" height="48" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-lg">
+              <path d="M45.5 15.5C40 2 20 -2.5 10 7.5C0 17.5 10 38.5 25 45.5C10 50.5 -2.5 70.5 7.5 82.5C17.5 94.5 40 90.5 45.5 75.5C52.5 90.5 72.5 94.5 82.5 82.5C92.5 70.5 80.5 50.5 65.5 45.5C80.5 40.5 92.5 20.5 82.5 7.5C72.5 -5.5 52.5 2 45.5 15.5Z" fill="#a01212" stroke="#7a0a0a" strokeWidth="2"/>
+              <path d="M50 40C45 40 40 45 40 50C40 55 45 60 50 60C55 60 60 55 60 50C60 45 55 40 50 40Z" fill="#1a1a1a"/>
+            </svg>
           </div>
         </div>
       </div>
 
-      {/* HAKKIMIZDA */}
-      <section className="section" id="hakkimizda">
-        <div className="container">
-          <div className="story">
-            <div className="story-image">
-              <img src="/assets/images/serpme_kahvalti.jpg" alt="Can Evim Şile Kahvaltı Masası" loading="lazy" />
+      {/* Two Column Image Showcase Section */}
+      <div className="bg-[#f7f6f2] w-full pb-16 pt-12 md:pt-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 p-4 md:p-8 max-w-[1600px] mx-auto">
+          
+          {/* Column 1 (Masalar/Bahçe) */}
+          <FadeIn delay={0.1}>
+            <div className="flex flex-col h-full gap-8">
+              <div className="relative w-full aspect-[4/3] overflow-hidden">
+                <Image 
+                  src="/section2.jpg"
+                  alt="Can Evim Şile Bahçe"
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-700 ease-in-out"
+                />
+              </div>
+              <div className="px-4 md:px-8 flex flex-col items-start">
+                <p className="text-[22px] md:text-[26px] lg:text-[30px] font-serif leading-snug text-[#222] mb-6 max-w-lg">
+                  Şehrin gürültüsünden uzak, huzur dolu bahçemizde sevdiklerinizle özel anlarınızı taçlandırın.
+                </p>
+                <Link href="/menu" className="text-[13px] font-sans font-medium tracking-wide text-[#444] border-b border-[#444] hover:text-black hover:border-black transition-colors pb-1 inline-block">
+                  Mekanımızı Keşfedin
+                </Link>
+              </div>
+              {/* Fill remaining space with kesinkullan3 */}
+              <div className="relative w-full min-h-[200px] flex-grow overflow-hidden mt-4">
+                <Image 
+                  src="/images/kesinkullan3.jpeg"
+                  alt="Can Evim Detay"
+                  fill
+                  className="object-cover object-bottom"
+                />
+              </div>
             </div>
-            <div className="story-text">
-              <span className="section-tag">Hakkımızda</span>
-              <h2>Doğanın ve lezzetin buluşma noktası.</h2>
-              <p>Üvezli Köyü Girişi Alemdağ Şile Yolu Üzerinde No: 193 (3. Gözlemeci) adresindeki Can Evim Şile; yemyeşil bahçesi, şömineli sıcak iç mekanı ve eşsiz lezzetleriyle hizmet vermektedir.</p>
-              <p>Özenle seçilmiş yöresel peynirler, puf puf pişiler, sahanda yumurtalar ve meşhur menemenimizle evinizdeki huzuru masanıza taşıyoruz.</p>
+          </FadeIn>
+
+          {/* Column 2 (Serpme) */}
+          <FadeIn delay={0.3}>
+          <div className="flex flex-col h-full gap-8">
+            <div className="relative w-full aspect-square md:aspect-[4/5] overflow-hidden">
+              <Image 
+                src="/images/serpme.jpeg"
+                alt="Can Evim Şile Serpme Kahvaltı"
+                fill
+                className="object-cover object-[center_60%] hover:scale-105 transition-transform duration-700 ease-in-out"
+              />
+            </div>
+            <div className="px-4 md:px-8 pb-12 flex flex-col items-start">
+              <p className="text-[22px] md:text-[26px] lg:text-[30px] font-serif leading-snug text-[#222] mb-6 max-w-lg">
+                Geleneksel tariflerin, en taze yerel malzemeler ve yılların ustalığıyla buluştuğu eşsiz lezzet dünyamızı keşfedin.
+              </p>
+              <Link href="/menu" className="text-[13px] font-sans font-medium tracking-wide text-[#444] border-b border-[#444] hover:text-black hover:border-black transition-colors pb-1 inline-block">
+                Lezzetlerimizi İncele
+              </Link>
             </div>
           </div>
+          </FadeIn>
+          
         </div>
-      </section>
+      </div>
 
-      {/* LEZZET KATEGORİLERİ VİTRİNİ */}
-      <section className="section section-soft" id="kategoriler">
-        <div className="container">
-          <div className="section-head">
-            <span className="section-tag">Özel Mutfak</span>
-            <h2>Lezzet Kategorilerimiz</h2>
-            <p className="lead">Gözünüzün önünde hazırlanan el açması gözlemelerden zengin kahvaltılara kadar tüm çeşitlerimiz.</p>
-          </div>
-
-          <div className="category-showcase-grid">
-            <Link href="/menu#cat-kahvalti" className="cat-card">
-              <div className="cat-card-img">
-                <img src="/assets/images/serpme_kahvalti.jpg" alt="Geleneksel Serpme Kahvaltılar" loading="lazy" />
-              </div>
-              <div className="cat-card-body">
-                <span className="cat-card-tag">Zengin Çeşitler</span>
-                <h3>Geleneksel Serpme Kahvaltılar</h3>
-                <p>Sıcak menemen, pişi, muska böreği, peynir tabağı ve sınırsız çay ile.</p>
-                <span className="cat-card-link">Menüyü Gör &rarr;</span>
-              </div>
-            </Link>
-
-            <Link href="/menu#cat-sicaklar" className="cat-card">
-              <div className="cat-card-img">
-                <img src="/assets/images/menemen_mihlama.jpg" alt="Sıcaklar & Mıhlama" loading="lazy" />
-              </div>
-              <div className="cat-card-body">
-                <span className="cat-card-tag">Tavada Sıcak</span>
-                <h3>Sıcaklar & Karadeniz Mıhlaması</h3>
-                <p>Trabzon tereyağlı uzayan mıhlama, taze sahanda menemen ve omletler.</p>
-                <span className="cat-card-link">Menüyü Gör &rarr;</span>
-              </div>
-            </Link>
-
-            <Link href="/menu#cat-tostlar" className="cat-card">
-              <div className="cat-card-img">
-                <img src="/assets/images/karisik_tost.jpg" alt="Tostlar & Izgara Köfte" loading="lazy" />
-              </div>
-              <div className="cat-card-body">
-                <span className="cat-card-tag">Çıtır & Doyurucu</span>
-                <h3>Çıtır Tostlar & Izgara Köfte</h3>
-                <p>Bol kaşarlı, sucuklu özel tostlar ve ekmek arası ızgara anne köftesi.</p>
-                <span className="cat-card-link">Menüyü Gör &rarr;</span>
-              </div>
-            </Link>
-
-            <Link href="/menu#cat-gozleme" className="cat-card">
-              <div className="cat-card-img">
-                <img src="/assets/images/gozleme_kavurma.jpg" alt="El Açması Gözlemeler & Kavurma" loading="lazy" />
-              </div>
-              <div className="cat-card-body">
-                <span className="cat-card-tag">Gözünüzün Önünde Açılır</span>
-                <h3>El Açması Gözleme & Kavurma</h3>
-                <p>İncecik elde açılan börek kıvamında gözlemeler ve sıcak saç kavurma.</p>
-                <span className="cat-card-link">Menüyü Gör &rarr;</span>
-              </div>
-            </Link>
-
-            <Link href="/menu#cat-tatli" className="cat-card">
-              <div className="cat-card-img">
-                <img src="/assets/images/tatli_kahve.jpg" alt="Ev Yapımı Tatlılar" loading="lazy" />
-              </div>
-              <div className="cat-card-body">
-                <span className="cat-card-tag">El Yapımı İkram</span>
-                <h3>Dilara Hanım'ın Ev Tatlıları</h3>
-                <p>Taze İtalyan usulü Tiramisu ve özel Antep fıstıklı tatlı ikramları.</p>
-                <span className="cat-card-link">Menüyü Gör &rarr;</span>
-              </div>
-            </Link>
-
-            <Link href="/menu#cat-icecek" className="cat-card">
-              <div className="cat-card-img">
-                <img src="/assets/images/termos_cay.jpg" alt="İçecekler & Demleme Çay" loading="lazy" />
-              </div>
-              <div className="cat-card-body">
-                <span className="cat-card-tag">Ferahlatıcı</span>
-                <h3>Demleme Çay & İçecekler</h3>
-                <p>Sıcaklığı koruyan termos çay, köpüklü yayık ayranı ve közde Türk kahvesi.</p>
-                <span className="cat-card-link">Menüyü Gör &rarr;</span>
-              </div>
-            </Link>
-          </div>
+      {/* Editorial About Us Section */}
+      <div id="hakkimizda" className="w-full bg-[#fcfaf7] flex flex-col md:flex-row border-b border-[#e5e3dc] items-stretch">
+        {/* Left Image (Edge to edge on left) */}
+        <div className="w-full md:w-1/2 relative h-[50vh] md:h-auto min-h-[500px] lg:min-h-[700px]">
+          <Image 
+            src="/images/IMG_5123_7_cropped.JPG"
+            alt="Can Evim Şile Doğaya Dönüş"
+            fill
+            className="object-cover"
+          />
         </div>
-      </section>
-
-      {/* GALERİ */}
-      <section className="section" id="galeri">
-        <div className="container">
-          <div className="section-head">
-            <span className="section-tag">Fotoğraf Galerisi</span>
-            <h2>Mekân ve Lezzetlerimiz</h2>
-            <p className="lead">Can Evim Şile'nin huzurlu atmosferinden ve iştah açıcı lezzetlerinden kareler.</p>
-          </div>
-
-          <div className="gallery-grid">
-            <div className="gallery-item">
-              <img src="/assets/images/serpme_kahvalti.jpg" alt="Serpme Kahvaltı Masası" loading="lazy" />
-              <div className="gallery-caption">Geleneksel Serpme Kahvaltı</div>
+        
+        {/* Right Text Content */}
+        <div className="w-full md:w-1/2 flex items-center justify-center py-20 px-8 md:px-16 lg:px-24">
+          <FadeIn direction="up">
+            <div className="text-[15px] md:text-[17px] font-serif leading-[2.2] text-[#333] max-w-[550px] space-y-8 text-left">
+              <p>Değerli Misafirlerimiz,</p>
+              <p>
+                Şehrin yorucu temposundan ve gürültüsünden uzaklaşmak isteyen herkes için Şile'nin kalbinde özel bir sığınak hayal ettik. 
+                Uzun süren planlama ve özenli çalışmaların ardından Can Evim'i hayata geçirmenin heyecanını yaşıyoruz.
+              </p>
+              <p>
+                Amacımız sadece bir kahvaltı mekanı olmak değil; sevdiklerinizle birlikte doğanın sesini dinleyebileceğiniz, 
+                taptaze yöresel lezzetlerle güne huzur dolu bir başlangıç yapabileceğiniz bir yaşam alanı sunmaktır. 
+                Tedarikçilerimizden mutfak ekibimize kadar sayısız insan bu hayali gerçeğe dönüştürmek için çabaladı. 
+                Bahçemizde geçirdiğiniz her anın, damaklarınızda kalan her tadın özenle seçilmiş, ortak bir emeğin hikayesi var.
+              </p>
+              <p>
+                Büyük bir sevgi ve tutkuyla hazırladığımız bu özel mekanı nihayet sizinle paylaşmaya hazırız.
+              </p>
+              <p>Sizi aramızda görmek dileğiyle.</p>
             </div>
-            <div className="gallery-item">
-              <img src="/assets/images/menemen_mihlama.jpg" alt="Sıcak Menemen & Mıhlama" loading="lazy" />
-              <div className="gallery-caption">Menemen & Karadeniz Mıhlaması</div>
-            </div>
-            <div className="gallery-item">
-              <img src="/assets/images/gozleme_kavurma.jpg" alt="El Açması Gözleme" loading="lazy" />
-              <div className="gallery-caption">El Açması Köy Gözlemesi</div>
-            </div>
-            <div className="gallery-item">
-              <img src="/assets/images/karisik_tost.jpg" alt="Tost & Izgara Köfte" loading="lazy" />
-              <div className="gallery-caption">Çıtır Tostlar & Izgara Köfte</div>
-            </div>
-            <div className="gallery-item">
-              <img src="/assets/images/somine.jpg" alt="Şömineli İç Mekan" loading="lazy" />
-              <div className="gallery-caption">Şömineli İç Mekan</div>
-            </div>
-            <div className="gallery-item">
-              <img src="/assets/images/tatli_kahve.jpg" alt="Ev Yapımı Tiramisu & Kahve" loading="lazy" />
-              <div className="gallery-caption">Ev Yapımı Tiramisu & Kahve</div>
-            </div>
-          </div>
+          </FadeIn>
         </div>
-      </section>
+      </div>
 
-      {/* YORUMLAR SECTION */}
-      <section className="section section-soft" id="yorumlar">
-        <div className="container">
-          <div className="section-head">
-            <span className="section-tag">Misafir Değerlendirmeleri</span>
-            <h2>5,0 Google Puanı</h2>
-            <p className="lead">Google Haritalar üzerindeki gerçek misafir deneyimleri.</p>
+      {/* Gallery Section */}
+      <div className="w-full bg-[#fcfaf7] py-8 md:py-16 flex flex-col gap-4 overflow-hidden">
+
+        {/* 1. 3 Vertical Images */}
+        <FadeIn>
+          <div className="w-full flex gap-1 md:gap-2 px-1 md:px-2">
+            <div className="w-1/3 relative aspect-[3/4] md:aspect-[9/16] overflow-hidden">
+              <Image src="/images/galeri/dikey1.JPG" alt="Can Evim Galeri" fill className="object-cover" />
+            </div>
+            <div className="w-1/3 relative aspect-[3/4] md:aspect-[9/16] overflow-hidden">
+              <Image src="/images/galeri/dikey2.jpeg" alt="Can Evim Galeri" fill className="object-cover" />
+            </div>
+            <div className="w-1/3 relative aspect-[3/4] md:aspect-[9/16] overflow-hidden">
+              <Image src="/images/galeri/dikey3.JPG" alt="Can Evim Galeri" fill className="object-cover" />
+            </div>
           </div>
+        </FadeIn>
 
-          <div className="reviews-grid">
-            {reviews.map((r, idx) => (
-              <div key={idx} className="review-card">
-                <div>
-                  <div className="rev-stars">★★★★★</div>
-                  <p className="rev-quote">"{r.text}"</p>
+        {/* 2. 3 Square Images (Full width side by side) */}
+        <FadeIn delay={0.2}>
+          <div className="w-full grid grid-cols-3 gap-1 md:gap-2 px-1 md:px-2">
+            <div className="w-full relative aspect-square overflow-hidden">
+              <Image src="/images/galeri/kare1.jpeg" alt="Can Evim Galeri" fill className="object-cover" />
+            </div>
+            <div className="w-full relative aspect-square overflow-hidden">
+              <Image src="/images/galeri/kare2.jpeg" alt="Can Evim Galeri" fill className="object-cover" />
+            </div>
+            <div className="w-full relative aspect-square overflow-hidden">
+              <Image src="/images/galeri/kare4.jpeg" alt="Can Evim Galeri" fill className="object-cover" />
+            </div>
+          </div>
+        </FadeIn>
+
+      </div>
+      {/* Reviews Section */}
+      <div className="w-full bg-white py-16 md:py-28 border-t border-[#e5e3dc]">
+        <div className="px-4 md:px-16 max-w-[1600px] mx-auto w-full">
+          
+          <div className="flex flex-col gap-12 lg:gap-16 w-full">
+            
+            {/* Top Image: Full Width Rectangle */}
+            <FadeIn>
+              <div className="relative w-full h-[40vh] md:h-[450px] lg:h-[550px] max-w-[1000px] mx-auto overflow-hidden rounded-xl shadow-sm border border-[#e5e3dc]">
+                <Image 
+                  src="/images/kesinkullan2.jpeg"
+                  alt="Can Evim Yorumlar"
+                  fill
+                  className="object-cover object-center"
+                />
+              </div>
+            </FadeIn>
+
+            {/* Title and Overall Rating */}
+            <FadeIn delay={0.1}>
+              <div className="flex flex-col items-center text-center">
+                <h3 className="text-[32px] md:text-[40px] font-serif text-[#222] mb-4">Misafir Yorumları</h3>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-4xl font-sans font-medium tracking-tighter text-[#222]">5,0</span>
+                  <div className="flex text-[#c39b53] text-2xl">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                  </div>
                 </div>
-                <div>
-                  <div className="rev-author">{r.name}</div>
-                  <div className="rev-meta">{r.meta}</div>
-                </div>
+                <p className="text-[12px] font-sans tracking-[0.15em] text-[#666] uppercase border-b border-[#666] pb-1">Google'da 88 Değerlendirme</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </FadeIn>
 
-      {/* REZERVASYON & İLETİŞİM — ULTRA LUXURY CUSTOM PILL PICKERS */}
-      <section className="section" id="rezervasyon">
-        <div className="container">
-          <div className="contact-split">
-            {/* LEFT CONTACT INFO */}
-            <div className="contact-info" id="iletisim">
-              <span className="section-tag">İletişim & Lokasyon</span>
-              <h2>Bize Ulaşın.</h2>
-              <p className="lead">Üvezli, Alemdağ Şile Yolu Cd. No: 193, 34980 Şile / İstanbul <br/><strong style={{ color: '#0284c7' }}>(Üvezli Sapağı 3. Gözlemeci)</strong></p>
+            {/* Horizontal Scrolling Review Cards */}
+            <div className="w-full flex gap-6 overflow-x-auto pb-8 snap-x [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               
-              <ul className="info-list-luxury">
-                <li>
-                  <div className="info-icon">
-                    <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-                  </div>
-                  <div>
-                    <span className="label">Telefon & WhatsApp</span>
-                    <span className="val"><a href="tel:05374975062">0537 497 50 62</a></span>
-                  </div>
-                </li>
-
-                <li>
-                  <div className="info-icon">
-                    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                  </div>
-                  <div>
-                    <span className="label">Resmi Instagram</span>
-                    <span className="val"><a href={instagramUrl} target="_blank" rel="noopener">@canevimsile</a></span>
-                  </div>
-                </li>
-
-                <li>
-                  <div className="info-icon">
-                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                  </div>
-                  <div>
-                    <span className="label">Çalışma Saatleri</span>
-                    <span className="val">Her Gün: 08:00 – 00:00 <span className="status-live-dot">🟢 ŞU AN AÇIK</span></span>
-                  </div>
-                </li>
-
-                <li>
-                  <div className="info-icon">
-                    <svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
-                  </div>
-                  <div>
-                    <span className="label">Otopark</span>
-                    <span className="val">Ücretsiz Geniş Otopark Alanı</span>
-                  </div>
-                </li>
-              </ul>
-
-              <div className="contact-actions">
-                <a href="tel:05374975062" className="btn-hero-cta" style={{ padding: "12px 28px", fontSize: "0.9rem" }}>Hemen Ara</a>
-                <a href={mapsUrl} target="_blank" rel="noopener" className="btn-hero-cta" style={{ background: "#e4e4e7", color: "#09090b", padding: "12px 28px", fontSize: "0.9rem" }}>Google Haritalar Yol Tarifi</a>
+              {/* Review 1 */}
+              <div className="shrink-0 w-[300px] md:w-[350px] bg-[#fcfaf7] border border-[#e5e3dc] p-8 md:p-10 snap-start flex flex-col shadow-sm transition-transform hover:-translate-y-2 duration-300">
+                <div className="flex text-[#c39b53] mb-6 text-lg">
+                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                </div>
+                <p className="font-serif text-[16px] text-[#333] leading-[1.8] mb-8 italic flex-grow">
+                  "Tek kelime ile şahane! Güler yüz, hoş karşılama... Gözlemeleri olsun her şeyiyle çok güzel, içi de çok ferah ve temiz."
+                </p>
+                <div className="mt-auto pt-6 border-t border-[#e5e3dc]">
+                  <p className="font-sans font-medium text-[#222] tracking-wide text-[13px] uppercase">Figen</p>
+                  <p className="font-sans text-[10px] tracking-wider text-[#888] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
+                </div>
               </div>
-            </div>
 
-            {/* RIGHT ULTRA-LUXURY FORM WITH CUSTOM SELECTION PILLS */}
-            <div className="contact-form-box-luxury">
-              <div className="form-header-badge">
-                <span className="sparkle-icon">✨</span> Anında WhatsApp Onaylı Masa Rezervasyonu
+              {/* Review 2 */}
+              <div className="shrink-0 w-[300px] md:w-[350px] bg-[#fcfaf7] border border-[#e5e3dc] p-8 md:p-10 snap-start flex flex-col shadow-sm transition-transform hover:-translate-y-2 duration-300">
+                <div className="flex text-[#c39b53] mb-6 text-lg">
+                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                </div>
+                <p className="font-serif text-[16px] text-[#333] leading-[1.8] mb-8 italic flex-grow">
+                  "Gerçekten harika bir yer! Serpme kahvaltısı harika. Gözlemeler sıcacık, bol malzemeli ve çok lezzetliydi."
+                </p>
+                <div className="mt-auto pt-6 border-t border-[#e5e3dc]">
+                  <p className="font-sans font-medium text-[#222] tracking-wide text-[13px] uppercase">Halil Genç</p>
+                  <p className="font-sans text-[10px] tracking-wider text-[#888] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
+                </div>
               </div>
-              <h3>Masa Rezervasyonu</h3>
-              <p className="form-subtitle">Masayı sizin için hazırlayalım. Tarih ve saat seçip tek tıkla WhatsApp'tan gönderin.</p>
 
-              <form onSubmit={handleWhatsAppSubmit}>
-                {/* NAME INPUT */}
-                <div className="form-group-luxury">
-                  <label htmlFor="resName">
-                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    Adınız Soyadınız *
-                  </label>
-                  <input
-                    type="text"
-                    id="resName"
-                    required
-                    placeholder="Örn: Ahmet Yılmaz"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  />
+              {/* Review 3 */}
+              <div className="shrink-0 w-[300px] md:w-[350px] bg-[#fcfaf7] border border-[#e5e3dc] p-8 md:p-10 snap-start flex flex-col shadow-sm transition-transform hover:-translate-y-2 duration-300">
+                <div className="flex text-[#c39b53] mb-6 text-lg">
+                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                 </div>
-
-                {/* PHONE INPUT */}
-                <div className="form-group-luxury">
-                  <label htmlFor="resPhone">
-                    <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-                    Telefon Numarası
-                  </label>
-                  <input
-                    type="tel"
-                    id="resPhone"
-                    placeholder="Örn: 05xx xxx xx xx"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  />
+                <p className="font-serif text-[16px] text-[#333] leading-[1.8] mb-8 italic flex-grow">
+                  "Gözleme gurmesi olarak yeni bir yer keşfettik. Kıymalı ve patatesli yedik. Çok lezzetliydi, mekan tertemizdi."
+                </p>
+                <div className="mt-auto pt-6 border-t border-[#e5e3dc]">
+                  <p className="font-sans font-medium text-[#222] tracking-wide text-[13px] uppercase">Merve Şengül</p>
+                  <p className="font-sans text-[10px] tracking-wider text-[#888] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
                 </div>
+              </div>
 
-                {/* CUSTOM DATE SELECTION PILLS (NO UGLY BROWSER PICKER!) */}
-                <div className="form-group-luxury">
-                  <label>
-                    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
-                    Rezervasyon Tarihi *
-                  </label>
-                  <div className="option-pill-group">
-                    <button
-                      type="button"
-                      className={`option-pill ${selectedDate === "Bugün (29 Temmuz)" ? "active" : ""}`}
-                      onClick={() => setSelectedDate("Bugün (29 Temmuz)")}
-                    >
-                      📅 Bugün (29 Temmuz)
-                    </button>
-                    <button
-                      type="button"
-                      className={`option-pill ${selectedDate === "Yarın (30 Temmuz)" ? "active" : ""}`}
-                      onClick={() => setSelectedDate("Yarın (30 Temmuz)")}
-                    >
-                      🌅 Yarın (30 Temmuz)
-                    </button>
-                    <button
-                      type="button"
-                      className={`option-pill ${selectedDate === "Bu Hafta Sonu" ? "active" : ""}`}
-                      onClick={() => setSelectedDate("Bu Hafta Sonu")}
-                    >
-                      🌿 Bu Hafta Sonu
-                    </button>
-                    <button
-                      type="button"
-                      className={`option-pill ${selectedDate === "Özel Tarih" ? "active" : ""}`}
-                      onClick={() => setSelectedDate("Özel Tarih")}
-                    >
-                      ✏️ Özel Tarih
-                    </button>
-                  </div>
-                  {selectedDate === "Özel Tarih" && (
-                    <input
-                      type="text"
-                      style={{ marginTop: 8 }}
-                      placeholder="Örn: 15 Ağustos 2026"
-                      value={customDateVal}
-                      onChange={(e) => setCustomDateVal(e.target.value)}
-                    />
-                  )}
+              {/* Review 4 */}
+              <div className="shrink-0 w-[300px] md:w-[350px] bg-[#fcfaf7] border border-[#e5e3dc] p-8 md:p-10 snap-start flex flex-col shadow-sm transition-transform hover:-translate-y-2 duration-300">
+                <div className="flex text-[#c39b53] mb-6 text-lg">
+                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                 </div>
-
-                {/* CUSTOM TIME SELECTION PILLS */}
-                <div className="form-group-luxury">
-                  <label>
-                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                    Rezervasyon Saati *
-                  </label>
-                  <div className="option-pill-group time-grid">
-                    {timeOptions.map((t) => (
-                      <button
-                        type="button"
-                        key={t}
-                        className={`option-pill ${selectedTime === t ? "active" : ""}`}
-                        onClick={() => setSelectedTime(t)}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
+                <p className="font-serif text-[16px] text-[#333] leading-[1.8] mb-8 italic flex-grow">
+                  "15 yıldır gidip geldiğim Üvezli'deki hiçbir yere benzemiyor. Kalitesi ve muazzam servisi beni bağımlı hale getirecek."
+                </p>
+                <div className="mt-auto pt-6 border-t border-[#e5e3dc]">
+                  <p className="font-sans font-medium text-[#222] tracking-wide text-[13px] uppercase">Fatih Dem</p>
+                  <p className="font-sans text-[10px] tracking-wider text-[#888] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
                 </div>
-
-                {/* CUSTOM GUEST COUNT PILLS */}
-                <div className="form-group-luxury">
-                  <label>
-                    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                    Kişi Sayısı & Konsept *
-                  </label>
-                  <div className="option-pill-group">
-                    {guestOptions.map((g) => (
-                      <button
-                        type="button"
-                        key={g}
-                        className={`option-pill ${selectedGuests === g ? "active" : ""}`}
-                        onClick={() => setSelectedGuests(g)}
-                      >
-                        {g}
-                      </button>
-                    ))}
-                  </div>
+              </div>
+              
+              {/* Review 5 */}
+              <div className="shrink-0 w-[300px] md:w-[350px] bg-[#fcfaf7] border border-[#e5e3dc] p-8 md:p-10 snap-start flex flex-col shadow-sm transition-transform hover:-translate-y-2 duration-300">
+                <div className="flex text-[#c39b53] mb-6 text-lg">
+                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                 </div>
-
-                {/* SPECIAL NOTE */}
-                <div className="form-group-luxury">
-                  <label htmlFor="resNote">
-                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                    Özel İstek veya Not (Opsiyonel)
-                  </label>
-                  <textarea
-                    id="resNote"
-                    rows="2"
-                    placeholder="Bahçe masası, şömine kenarı, bebek sandalyesi talebi vb."
-                    value={formData.note}
-                    onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-                  ></textarea>
+                <p className="font-serif text-[16px] text-[#333] leading-[1.8] mb-8 italic flex-grow">
+                  "Açılalı henüz 45 gün olmuş ama mekan çok temiz her şey oldukça oturmuş. Sahipleri de oldukça ilgili insanlar."
+                </p>
+                <div className="mt-auto pt-6 border-t border-[#e5e3dc]">
+                  <p className="font-sans font-medium text-[#222] tracking-wide text-[13px] uppercase">Nida Nur Demirci</p>
+                  <p className="font-sans text-[10px] tracking-wider text-[#888] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
                 </div>
+              </div>
 
-                <button type="submit" className="btn-whatsapp-submit">
-                  <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-1.157 4.228 4.228-1.157z"/></svg>
-                  WhatsApp İle Masa Rezervasyonu Yap
-                </button>
-              </form>
             </div>
           </div>
+          
         </div>
-      </section>
+      </div>
+
+      {/* Contact & Footer Section */}
+      <div id="rezervasyon" className="relative w-full text-[#333] border-t border-white/20">
+        {/* Background Image with Fixed Attachment for Parallax Effect */}
+        <div className="absolute inset-0 z-[-2]">
+          <Image 
+            src="/heromasaustu.jpg"
+            alt="Background"
+            fill
+            className="object-cover object-center"
+          />
+        </div>
+        {/* Glassy/Curtain Overlay */}
+        <div className="absolute inset-0 z-[-1] bg-[#f0ede6]/90 backdrop-blur-md"></div>
+        
+        {/* Content */}
+        <div className="px-8 py-16 md:px-16 md:py-24 max-w-[1600px] mx-auto w-full flex flex-col gap-24">
+          
+          {/* Top Form Part */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12 w-full">
+            <FadeIn>
+              <p className="text-[24px] md:text-[32px] font-serif font-normal text-left max-w-lg leading-snug text-[#222]">
+                Rezervasyon ve detaylı bilgi için bize ulaşın.
+              </p>
+            </FadeIn>
+            
+            <FadeIn delay={0.2} direction="left">
+            <form onSubmit={handleReservationSubmit} className="flex flex-col sm:flex-row w-full lg:w-auto gap-8 items-start sm:items-end">
+              <div className="flex flex-col sm:flex-row gap-8 w-full lg:w-auto">
+                <input 
+                  type="text" 
+                  placeholder="AD SOYAD" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="bg-transparent border-b border-[#8a8883] pb-2 w-full sm:w-56 outline-none font-sans text-[11px] tracking-[0.15em] placeholder:text-[#555] focus:border-[#222] text-[#222] transition-colors"
+                />
+                <input 
+                  type="text" 
+                  placeholder="REZERVASYON TARİHİ" 
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="bg-transparent border-b border-[#8a8883] pb-2 w-full sm:w-56 outline-none font-sans text-[11px] tracking-[0.15em] placeholder:text-[#555] focus:border-[#222] text-[#222] transition-colors"
+                />
+              </div>
+              
+              <div className="flex items-center gap-3 sm:mb-2 whitespace-nowrap">
+                <div className="relative flex items-center justify-center w-5 h-5 border border-[#8a8883] cursor-pointer">
+                  <input type="checkbox" id="contact_permission" required className="absolute opacity-0 w-full h-full cursor-pointer peer" />
+                  <div className="w-3 h-3 bg-[#4d5b4a] scale-0 peer-checked:scale-100 transition-transform"></div>
+                </div>
+                <label htmlFor="contact_permission" className="text-[10px] font-sans tracking-[0.15em] text-[#444] cursor-pointer mt-0.5">İLETİŞİM İZNİ</label>
+              </div>
+              
+              <button type="submit" className="bg-[#4d5b4a] text-white px-10 py-[14px] font-serif text-[17px] tracking-wide hover:bg-[#323631] transition-colors w-full sm:w-auto shadow-sm">
+                Gönder
+              </button>
+            </form>
+            </FadeIn>
+          </div>
+          
+          {/* Bottom Footer Part */}
+          <FadeIn direction="up" delay={0.2}>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 border-t border-[#d8d5ce] pt-12">
+            <div className="flex flex-col gap-6">
+              <span className="text-3xl font-display tracking-normal">canevim</span>
+              <p className="font-sans text-[12px] tracking-widest text-[#555] uppercase leading-relaxed max-w-sm">
+                Üvezli, Alemdağ Şile Yolu No: 193,<br/>
+                34980 Şile/İstanbul<br/><br/>
+                0537 497 50 62<br/><br/>
+                Açık · Kapanış Saati: 00:00
+              </p>
+            </div>
+            
+            <div className="flex flex-col gap-8 md:items-end">
+              <div className="flex gap-6 text-[#444]">
+                <a href="https://instagram.com/canevimsile" target="_blank" rel="noreferrer" className="hover:text-black transition-colors">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                  </svg>
+                </a>
+                <a href="https://wa.me/905374975062" target="_blank" rel="noreferrer" className="hover:text-black transition-colors">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                  </svg>
+                </a>
+                <a href="https://www.google.com/maps/place/Can+Evim+%C5%9Eile/@41.1104673,29.4245564,17z/data=!3m1!4b1!4m15!1m8!3m7!1s0x409fd4f3461f9813:0x28012c3f4390e52!2zw5x2ZXpsaSwgQWxlbWRhxJ8gxZ5pbGUgWW9sdSBObzogMTkzLCAzNDk4MCDFnmlsZS_EsHN0YW5idWw!3b1!8m2!3d41.1104887!4d29.425856!16s%2Fg%2F11c1bqkrkk!3m5!1s0x409fd5b99f0c193b:0x275f89d0fdeb1d23!8m2!3d41.1104673!4d29.4258912!16s%2Fg%2F11nptwm57y?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" className="hover:text-black transition-colors">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                </a>
+              </div>
+              <p className="font-sans text-[11px] tracking-[0.1em] text-[#666] uppercase">
+                © 2026 Can Evim Şile. Tüm hakları saklıdır.
+              </p>
+            </div>
+          </div>
+          </FadeIn>
+          
+        </div>
+      </div>
     </main>
   );
 }

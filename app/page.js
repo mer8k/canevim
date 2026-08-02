@@ -36,7 +36,7 @@ export default function Home() {
         {/* Mobile Image */}
         <div className="relative w-full h-full block md:hidden">
           <Image 
-            src="/heromobil_v2.jpg"
+            src="/images/kesinkullan.jpeg"
             alt="Can Evim Şile Mobil"
             fill
             priority
@@ -347,11 +347,11 @@ export default function Home() {
                   className="bg-transparent border-b border-[#8a8883] pb-2 w-full sm:w-56 outline-none font-sans text-[11px] tracking-[0.15em] placeholder:text-[#555] focus:border-[#222] text-[#222] transition-colors"
                 />
                 <input 
-                  type="text" 
-                  placeholder="REZERVASYON TARİHİ" 
+                  type="date" 
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="bg-transparent border-b border-[#8a8883] pb-2 w-full sm:w-56 outline-none font-sans text-[11px] tracking-[0.15em] placeholder:text-[#555] focus:border-[#222] text-[#222] transition-colors"
+                  className="bg-transparent border-b border-[#8a8883] pb-2 w-full sm:w-56 outline-none font-sans text-[11px] tracking-[0.15em] text-[#555] focus:border-[#222] focus:text-[#222] transition-colors cursor-pointer"
+                  required
                 />
               </div>
               

@@ -3,17 +3,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import FadeIn from "./components/FadeIn";
+import DatePicker, { registerLocale } from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import tr from "date-fns/locale/tr";
+import { format } from "date-fns";
+
+registerLocale("tr", tr);
 
 export default function Home() {
   const [name, setName] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(null);
 
   const handleReservationSubmit = (e) => {
     e.preventDefault();
     if (!name || !date) return alert("Lütfen ad soyad ve tarih bilgilerinizi girin.");
     
     // Format the WhatsApp message
-    const message = `Merhaba Can Evim, ben ${name}. ${date} tarihi için rezervasyon yaptırmak istiyorum.`;
+    const formattedDate = format(date, "dd/MM/yyyy");
+    const message = `Merhaba Can Evim, ben ${name}. ${formattedDate} tarihi için rezervasyon yaptırmak istiyorum.`;
     const waUrl = `https://wa.me/905374975062?text=${encodeURIComponent(message)}`;
     
     window.open(waUrl, "_blank");
@@ -346,11 +353,13 @@ export default function Home() {
                   onChange={(e) => setName(e.target.value)}
                   className="bg-transparent border-b border-[#8a8883] pb-2 w-full sm:w-56 outline-none font-sans text-[11px] tracking-[0.15em] placeholder:text-[#555] focus:border-[#222] text-[#222] transition-colors"
                 />
-                <input 
-                  type="date" 
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="bg-transparent border-b border-[#8a8883] pb-2 w-full sm:w-56 outline-none font-sans text-[11px] tracking-[0.15em] text-[#555] focus:border-[#222] focus:text-[#222] transition-colors cursor-pointer"
+                <DatePicker 
+                  selected={date}
+                  onChange={(d) => setDate(d)}
+                  locale="tr"
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText="REZERVASYON TARİHİ"
+                  className="bg-transparent border-b border-[#8a8883] pb-2 w-full sm:w-56 outline-none font-sans text-[11px] tracking-[0.15em] placeholder:text-[#555] focus:border-[#222] text-[#222] transition-colors cursor-pointer"
                   required
                 />
               </div>

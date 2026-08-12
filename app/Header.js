@@ -109,8 +109,12 @@ export default function Header() {
             <span className="text-[12px] md:text-[18px] font-sans tracking-[0.2em] text-white/40 group-hover:text-[#c39b53]/60 transition-colors">02</span>
             Menü
           </Link>
-          <Link href="/#rezervasyon" onClick={() => setIsMenuOpen(false)} className="group text-[40px] md:text-[72px] font-serif font-normal tracking-wide hover:text-[#c39b53] transition-colors flex items-center gap-4 md:gap-6">
+          <Link href="/blog" onClick={() => setIsMenuOpen(false)} className="group text-[40px] md:text-[72px] font-serif font-normal tracking-wide hover:text-[#c39b53] transition-colors flex items-center gap-4 md:gap-6">
             <span className="text-[12px] md:text-[18px] font-sans tracking-[0.2em] text-white/40 group-hover:text-[#c39b53]/60 transition-colors">03</span>
+            Rehber
+          </Link>
+          <Link href="/#rezervasyon" onClick={() => setIsMenuOpen(false)} className="group text-[40px] md:text-[72px] font-serif font-normal tracking-wide hover:text-[#c39b53] transition-colors flex items-center gap-4 md:gap-6">
+            <span className="text-[12px] md:text-[18px] font-sans tracking-[0.2em] text-white/40 group-hover:text-[#c39b53]/60 transition-colors">04</span>
             Rezervasyon
           </Link>
         </nav>
@@ -148,7 +152,7 @@ export default function Header() {
           <div className="text-white/60 font-sans text-[10px] md:text-[12px] tracking-[0.2em] uppercase text-center md:text-right leading-relaxed">
             <p className="text-white/90 mb-2">İletişim</p>
             <p>0537 497 50 62</p>
-            <p>Hergün 09:00 - 00:00</p>
+            <p>Her gün 08:00 - 23:00</p>
           </div>
 
         </div>

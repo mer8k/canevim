@@ -1,14 +1,31 @@
 import Image from "next/image";
+import Link from "next/link";
 import FadeIn from "../components/FadeIn";
 
 export const metadata = {
   title: "Menü — Can Evim Şile",
   description: "Can Evim Şile kahvaltı, ana yemekler, tatlılar ve içecek menüsü.",
+  alternates: { canonical: "/menu" },
+  openGraph: {
+    title: "Can Evim Şile Menü",
+    description: "Serpme kahvaltı, gözleme, mantı, ızgara ve yöresel lezzetlerimizi inceleyin.",
+    url: "/menu",
+    images: [{ url: "/images/serpme.jpeg", alt: "Can Evim Şile menüsü" }],
+  },
 };
+
+const menuSchema = [{
+  "@context": "https://schema.org", "@type": "Menu", "@id": "https://www.canevimsile.com/menu#menu",
+  name: "Can Evim Şile Menü", url: "https://www.canevimsile.com/menu", hasMenuSection: [
+    { "@type": "MenuSection", name: "Kahvaltı", hasMenuItem: [{ "@type": "MenuItem", name: "Serpme Kahvaltı" }, { "@type": "MenuItem", name: "Kahvaltı Tabağı" }] },
+    { "@type": "MenuSection", name: "Ana Yemekler", hasMenuItem: ["Gözleme Çeşitleri", "Izgara Köfte", "Izgara Sucuk", "Piliç Izgara", "Sac Kavurma", "Ev Yapımı Mantı", "Çıtır Mantı", "Çiğbörek"].map((name) => ({ "@type": "MenuItem", name })) },
+  ]
+}, { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Can Evim Şile", item: "https://www.canevimsile.com/" }, { "@type": "ListItem", position: 2, name: "Menü", item: "https://www.canevimsile.com/menu" }] }];
 
 export default function MenuPage() {
   return (
     <main className="min-h-screen relative w-full bg-[#fcfaf7] selection:bg-black/10 flex flex-col text-[#222]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(menuSchema).replace(/</g, "\\u003c") }} />
       
       {/* Menu Hero Section */}
       <div className="relative w-full h-[60vh] md:h-[80vh] min-h-[400px] flex flex-col items-center justify-center text-center overflow-hidden">
@@ -50,12 +67,12 @@ export default function MenuPage() {
         {/* --- PART 1: KAHVALTI & SICAKLAR --- */}
         <div className="w-full max-w-[1000px] px-4 md:px-12 pb-16 md:pb-24 flex flex-col gap-16 md:gap-24">
           <FadeIn direction="up">
-            <section className="flex flex-col items-center text-center w-full">
+            <section id="kahvalti" className="flex flex-col items-center text-center w-full scroll-mt-24">
               <h2 className="text-2xl md:text-4xl font-serif text-[#222] mb-10 md:mb-12 border-b border-[#222]/20 pb-4 px-8 md:px-12 uppercase tracking-widest">Kahvaltı</h2>
               
               <div className="w-full flex flex-col gap-10 md:gap-12">
                 <div className="flex flex-col items-center">
-                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3">Serpme Kahvaltı</h3>
+                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/lezzetler/sile-serpme-kahvalti">Serpme Kahvaltı</Link></h3>
                   <p className="font-serif text-[14px] md:text-[17px] text-[#444] leading-relaxed max-w-2xl px-2">
                     Peynir tabağı, yeşil zeytin, siyah zeytin, çizik zeytin, acuka, çilek reçeli, portakal reçeli, çeri domates, salatalık, tereyağ, bal-kaymak, pişi, muska börek, sahanda yumurta, menemen, sınırsız çay.
                   </p>
@@ -72,7 +89,7 @@ export default function MenuPage() {
           </FadeIn>
 
           <FadeIn direction="up">
-            <section className="flex flex-col items-center w-full">
+            <section id="sicaklar" className="flex flex-col items-center w-full scroll-mt-24">
               <h2 className="text-2xl md:text-4xl font-serif text-[#222] mb-10 md:mb-12 border-b border-[#222]/20 pb-4 px-8 md:px-12 uppercase tracking-widest text-center">Ekstra Sıcaklar</h2>
               
               <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-4 md:gap-y-6 max-w-2xl px-4 md:px-0 text-center md:text-left">
@@ -113,19 +130,19 @@ export default function MenuPage() {
         {/* --- PART 2: ANA YEMEKLER, TOSTLAR & SALATALAR --- */}
         <div className="w-full max-w-[1000px] px-4 md:px-12 py-16 md:py-24 flex flex-col gap-16 md:gap-24">
           <FadeIn direction="up">
-            <section className="flex flex-col items-center text-center w-full">
+            <section id="ana-yemekler" className="flex flex-col items-center text-center w-full scroll-mt-24">
               <h2 className="text-2xl md:text-4xl font-serif text-[#222] mb-10 md:mb-12 border-b border-[#222]/20 pb-4 px-8 md:px-12 uppercase tracking-widest">Ana Yemekler</h2>
               
               <div className="w-full flex flex-col gap-10 md:gap-12">
-                <div className="flex flex-col items-center">
-                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3">Gözleme Çeşitleri</h3>
+                <div id="gozleme" className="flex flex-col items-center scroll-mt-24">
+                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/lezzetler/sile-gozleme">Gözleme Çeşitleri</Link></h3>
                   <p className="font-serif text-[14px] md:text-[17px] text-[#444]">
                     Patatesli, Kaşarlı, Beyaz Peynirli, Pazılı, Kıymalı, Sucuklu
                   </p>
                 </div>
                 
-                <div className="flex flex-col items-center">
-                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3">Izgara Etler</h3>
+                <div id="izgara" className="flex flex-col items-center scroll-mt-24">
+                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/lezzetler/sile-izgara-sac-kavurma">Izgara Etler</Link></h3>
                   <p className="font-serif text-[14px] md:text-[17px] text-[#444] leading-loose">
                     Izgara Köfte <span className="text-[#666] italic text-[13px] ml-1">(Pilav, domates ve biber ile)</span><br/>
                     Izgara Sucuk <span className="text-[#666] italic text-[13px] ml-1">(Pilav, domates ve biber ile)</span><br/>
@@ -134,8 +151,8 @@ export default function MenuPage() {
                   </p>
                 </div>
 
-                <div className="flex flex-col items-center">
-                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3">Yöresel Lezzetler</h3>
+                <div id="manti" className="flex flex-col items-center scroll-mt-24">
+                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/lezzetler/sile-ev-yapimi-manti">Yöresel Lezzetler</Link></h3>
                   <p className="font-serif text-[14px] md:text-[17px] text-[#444]">
                     Ev Yapımı Mantı, Çıtır Mantı, Çiğbörek
                   </p>

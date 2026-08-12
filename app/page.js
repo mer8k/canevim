@@ -388,7 +388,7 @@ export default function Home() {
                 Üvezli, Alemdağ Şile Yolu No: 193,<br/>
                 34980 Şile/İstanbul<br/><br/>
                 0537 497 50 62<br/><br/>
-                Açık · Kapanış Saati: 00:00
+                Her gün · 08:00 - 23:00
               </p>
             </div>
             

@@ -1,6 +1,6 @@
 import { getIntentLanding, getMenuLanding, intentLandings, menuLandings } from './seo-data';
 
-export const locales = ['en', 'ar', 'fa'];
+export const locales = ['en'];
 export const localizedSources = [
   ...intentLandings.map((item) => ({ ...item, type: 'sile', sourcePath: `/sile/${item.slug}` })),
   ...menuLandings.map((item) => ({ ...item, type: 'lezzetler', sourcePath: `/lezzetler/${item.slug}` })),

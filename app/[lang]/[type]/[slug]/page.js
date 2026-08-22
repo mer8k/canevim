@@ -12,7 +12,7 @@ export async function generateMetadata({ params }) {
   const item = getLocalizedPage(lang, type, slug);
   if (!item) return {};
   const canonical = `/${lang}/${type}/${slug}`;
-  const languages = { 'tr-TR': `/${type}/${slug}`, en: `/en/${type}/${slug}`, ar: `/ar/${type}/${slug}`, fa: `/fa/${type}/${slug}`, 'x-default': `/${type}/${slug}` };
+  const languages = { 'tr-TR': `/${type}/${slug}`, en: `/en/${type}/${slug}`, 'x-default': `/${type}/${slug}` };
   return { title: `${item.localizedTitle} | Can Evim Şile`, description: item.copy.intro(item.localizedTitle), alternates: { canonical, languages }, openGraph: { type: 'website', locale: lang, url: canonical, title: item.localizedTitle, description: item.copy.intro(item.localizedTitle), images: [{ url: item.image, alt: item.localizedTitle }] } };
 }
 

@@ -17,7 +17,7 @@ export async function generateMetadata({ params }) {
   return {
     title: `${item.name} | Can Evim Şile`,
     description: item.description,
-    alternates: { canonical: path },
+    alternates: { canonical: path, languages: { 'tr-TR': path, en: `/en/sile/${item.slug}`, ar: `/ar/sile/${item.slug}`, fa: `/fa/sile/${item.slug}`, 'x-default': path } },
     openGraph: {
       type: "website",
       locale: "tr_TR",

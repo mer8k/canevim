@@ -13,7 +13,7 @@ export async function generateMetadata({ params }) {
   return {
     title: `${item.name} | Can Evim Şile`,
     description: item.description,
-    alternates: { canonical: path },
+    alternates: { canonical: path, languages: { 'tr-TR': path, en: `/en/lezzetler/${item.slug}`, ar: `/ar/lezzetler/${item.slug}`, fa: `/fa/lezzetler/${item.slug}`, 'x-default': path } },
     openGraph: { title: `${item.name} | Can Evim Şile`, description: item.description, url: path, type: "website", images: [{ url: item.image, alt: item.name }] },
   };
 }

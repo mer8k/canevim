@@ -318,6 +318,20 @@ export default function Home() {
         </div>
       </div>
 
+      <section className="w-full bg-[#161615] text-white px-8 py-16 md:px-16">
+        <div className="max-w-[1200px] mx-auto">
+          <h2 className="font-serif text-3xl md:text-5xl mb-8">Şile’de en çok aranan lezzet ve mekanlar</h2>
+          <nav className="flex flex-wrap gap-3">
+            {[
+              ['Şile Kahvaltı Mekanları','/sile/sile-kahvalti-mekanlari'], ['Üvezli Kahvaltı','/sile/uvezli-kahvalti'],
+              ['Şile Serpme Kahvaltı','/lezzetler/sile-serpme-kahvalti'], ['Şile Köy Kahvaltısı','/lezzetler/sile-koy-kahvaltisi'],
+              ['Şile Aile Restoranı','/lezzetler/sile-aile-restorani'], ['Şile Yolu Kahvaltı','/sile/sile-yolu-kahvalti'],
+              ['Şile Restoran','/sile/sile-restoran'],
+            ].map(([label, href]) => <Link key={href} href={href} className="border border-white/35 px-5 py-3 hover:border-white transition-colors">{label}</Link>)}
+          </nav>
+        </div>
+      </section>
+
       {/* Contact & Footer Section */}
       <div id="rezervasyon" className="relative w-full text-[#333] border-t border-white/20">
         {/* Background Image with Fixed Attachment for Parallax Effect */}

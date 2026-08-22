@@ -56,8 +56,8 @@ export default function Home() {
 
       {/* Hero Content (Bottom Left) */}
       <div className="h-[90vh] flex flex-col justify-end px-8 pb-16 md:px-16 md:pb-24 w-full text-white relative">
-        <h1 className="text-5xl md:text-7xl lg:text-[84px] font-serif mb-6 drop-shadow-md font-normal tracking-tight">
-          Şile 2026
+        <h1 className="text-5xl md:text-7xl lg:text-[84px] font-serif mb-6 drop-shadow-md font-normal tracking-tight max-w-5xl">
+          Şile'de Doğada Kahvaltı
         </h1>
         
         <div className="relative w-fit">

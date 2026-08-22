@@ -79,6 +79,7 @@ export default async function IntentPage({ params }) {
         <aside className="mt-16 bg-[#f0ece4] p-7 md:p-10">
           <h2 className="font-serif text-3xl mb-6">İlgili Şile rehberleri</h2>
           <div className="flex flex-wrap gap-3">
+            {item.slug !== 'sile-kahvalti' && <Link href="/sile/sile-kahvalti" className="border border-[#222] bg-[#222] text-white px-5 py-3 font-serif">Şile Kahvaltı</Link>}
             {item.related.map((relatedSlug) => {
               const related = getIntentLanding(relatedSlug);
               return <Link key={relatedSlug} href={`/sile/${relatedSlug}`} className="border border-[#aaa195] px-5 py-3 font-serif">{related.name}</Link>;

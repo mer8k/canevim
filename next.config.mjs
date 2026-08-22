@@ -5,6 +5,10 @@ const nextConfig = {
       source: '/:lang(ar|fa)/:type(sile|lezzetler)/:slug',
       destination: '/:type/:slug',
       permanent: true,
+    }, {
+      source: '/blog/mihlama-kuymak-farki',
+      destination: '/blog/sile-kahvalti-fiyatlari',
+      permanent: true,
     }];
   },
 };

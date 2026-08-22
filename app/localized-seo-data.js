@@ -8,6 +8,7 @@ export const localizedSources = [
 
 const titles = {
   en: {
+    'sile-kahvalti': 'Breakfast in Şile',
     'sile-kahvalti-mekanlari': 'Breakfast Places in Şile', 'uvezli-kahvalti': 'Breakfast in Üvezli', 'sile-dogada-kahvalti': 'Breakfast in Nature in Şile', 'sile-restoran': 'Restaurant in Şile', 'sile-serpme-kahvalti-menusu': 'Şile Turkish Breakfast Menu', 'sile-yolu-kahvalti': 'Breakfast on Şile Road',
     'sile-serpme-kahvalti': 'Turkish Breakfast in Şile', 'sile-koy-kahvaltisi': 'Village Breakfast in Şile', 'sile-gozleme': 'Gözleme in Şile', 'sile-ev-yapimi-manti': 'Homemade Manti in Şile', 'sile-izgara-sac-kavurma': 'Grill and Sac Kavurma in Şile', 'sile-aile-restorani': 'Family Restaurant in Şile', 'sile-yolu-kahvalti-restoran': 'Breakfast Restaurant on Şile Road',
   },

@@ -3,16 +3,16 @@ import Header from "./Header";
 
 export const metadata = {
   metadataBase: new URL("https://www.canevimsile.com"),
-  title: "Can Evim Şile | Doğada Serpme Kahvaltı & Restoran",
-  description: "Şile Üvezli'de doğayla iç içe serpme kahvaltı ve restoran. Güncel menüyü inceleyin, yol tarifi alın ve rezervasyon yapın.",
+  title: "Şile Kahvaltı ve Şile Restoran | Can Evim",
+  description: "Şile kahvaltı ve Şile restoran aramalarına Can Evim Üvezli'nin serpme kahvaltısı, ana yemekleri, güncel menüsü, yol tarifi ve rezervasyon bilgileriyle yanıt verir.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "tr_TR",
     url: "/",
     siteName: "Can Evim Şile",
-    title: "Can Evim Şile | Doğada Serpme Kahvaltı & Restoran",
-    description: "Şile Üvezli'de doğayla iç içe serpme köy kahvaltısı ve restoran deneyimi.",
+    title: "Şile Kahvaltı ve Şile Restoran | Can Evim",
+    description: "Şile'de serpme kahvaltı, köy kahvaltısı ve restoran deneyimi için Can Evim Üvezli.",
     images: [{ url: "/images/heromasaustu.JPG", width: 1600, height: 1067, alt: "Can Evim Şile" }],
   },
 };

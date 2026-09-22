@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import FadeIn from "./components/FadeIn";
@@ -9,6 +9,9 @@ import tr from "date-fns/locale/tr";
 import { format } from "date-fns";
 
 registerLocale("tr", tr);
+
+const { props: desktopHero } = getImageProps({ src: "/heromasaustu.jpg", alt: "Can Evim Şile", fill: true, sizes: "100vw" });
+const { props: mobileHero } = getImageProps({ src: "/images/kesinkullan.jpeg", alt: "Can Evim Şile", fill: true, sizes: "100vw" });
 
 export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
   const [name, setName] = useState("");
@@ -30,25 +33,11 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
     <main className="min-h-screen relative w-full flex flex-col justify-between selection:bg-white/30">
       {/* Background Image */}
       <div className="absolute inset-0 z-[-1] w-full h-[90vh]">
-        {/* Desktop Image */}
-        <div className="relative w-full h-full hidden md:block">
-          <Image 
-            src="/heromasaustu.jpg"
-            alt="Can Evim Şile"
-            fill
-            priority
-            className="object-cover object-center"
-          />
-        </div>
-        {/* Mobile Image */}
-        <div className="relative w-full h-full block md:hidden">
-          <Image 
-            src="/images/kesinkullan.jpeg"
-            alt="Can Evim Şile Mobil"
-            fill
-            priority
-            className="object-cover object-center"
-          />
+        <div className="relative w-full h-full">
+          <picture>
+            <source media="(min-width: 768px)" srcSet={desktopHero.srcSet} sizes="100vw" />
+            <img {...mobileHero} loading="eager" fetchPriority="high" className="object-cover object-center" />
+          </picture>
         </div>
         {/* Subtle overlay to ensure text readability like noma */}
         <div className="absolute inset-0 bg-black/10" />

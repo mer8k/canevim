@@ -1,11 +1,13 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+
+const MAPS_URL = "https://www.google.com/maps?cid=2837137820972948771";
 
 export default function Header() {
   const [visible, setVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,7 +22,7 @@ export default function Header() {
       // If we are at the top, always show
       if (currentScrollY < 10) {
         setVisible(true);
-      } else if (currentScrollY > lastScrollY) {
+      } else if (currentScrollY > lastScrollY.current) {
         // Scrolling down -> hide
         setVisible(false);
       } else {
@@ -28,12 +30,12 @@ export default function Header() {
         setVisible(true);
       }
       
-      setLastScrollY(currentScrollY);
+      lastScrollY.current = currentScrollY;
     };
     
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY, isMenuOpen]);
+  }, [isMenuOpen]);
 
   return (
     <header className={`fixed top-0 left-0 w-full z-50 transition-transform duration-500 bg-transparent text-white ${visible ? 'translate-y-0' : '-translate-y-full'}`}>
@@ -70,7 +72,7 @@ export default function Header() {
               </svg>
             </a>
             {/* Maps */}
-            <a href="https://www.google.com/maps/place/Can+Evim+%C5%9Eile/@41.1104673,29.4245564,17z/data=!3m1!4b1!4m15!1m8!3m7!1s0x409fd4f3461f9813:0x28012c3f4390e52!2zw5x2ZXpsaSwgQWxlbWRhxJ8gxZ5pbGUgWW9sdSBObzogMTkzLCAzNDk4MCDFnmlsZS_EsHN0YW5idWw!3b1!8m2!3d41.1104887!4d29.425856!16s%2Fg%2F11c1bqkrkk!3m5!1s0x409fd5b99f0c193b:0x275f89d0fdeb1d23!8m2!3d41.1104673!4d29.4258912!16s%2Fg%2F11nptwm57y?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" aria-label="Can Evim Google Haritalar konumu" className="text-white hover:text-white/70 transition-transform hover:scale-110">
+            <a href={MAPS_URL} target="_blank" rel="noreferrer" aria-label="Can Evim Google Haritalar konumu" className="text-white hover:text-white/70 transition-transform hover:scale-110">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="md:w-5 md:h-5">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
@@ -146,7 +148,7 @@ export default function Header() {
                 <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
               </svg>
             </a>
-            <a href="https://www.google.com/maps/place/Can+Evim+%C5%9Eile/@41.1104673,29.4245564,17z/data=!3m1!4b1!4m15!1m8!3m7!1s0x409fd4f3461f9813:0x28012c3f4390e52!2zw5x2ZXpsaSwgQWxlbWRhxJ8gxZ5pbGUgWW9sdSBObzogMTkzLCAzNDk4MCDFnmlsZS_EsHN0YW5idWw!3b1!8m2!3d41.1104887!4d29.425856!16s%2Fg%2F11c1bqkrkk!3m5!1s0x409fd5b99f0c193b:0x275f89d0fdeb1d23!8m2!3d41.1104673!4d29.4258912!16s%2Fg%2F11nptwm57y?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" aria-label="Can Evim Google Haritalar konumu" className="hover:text-[#c39b53] transition-colors">
+            <a href={MAPS_URL} target="_blank" rel="noreferrer" aria-label="Can Evim Google Haritalar konumu" className="hover:text-[#c39b53] transition-colors">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>

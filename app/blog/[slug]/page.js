@@ -116,7 +116,7 @@ export default async function BlogPost({ params }) {
               Güncel menüyü incele
             </Link>
             <a
-              href="https://www.google.com/maps/search/?api=1&query=Can+Evim+Şile"
+              href="https://www.google.com/maps?cid=2837137820972948771"
               target="_blank"
               rel="noreferrer"
               className="border border-[#c9c1b4] px-5 py-3 font-serif"

@@ -37,7 +37,7 @@ export default function MenuPage() {
             sizes="100vw"
             loading="eager"
             fetchPriority="high"
-            decoding="sync"
+            quality={65}
             className="object-cover object-[center_70%]"
           />
         </div>
@@ -125,7 +125,8 @@ export default function MenuPage() {
                 src="/images/kesinkullan.jpeg"
                 alt="Can Evim Kesin Kullan"
                 fill
-                sizes="(min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 1000px) 1000px, 100vw"
+                quality={55}
                 className="object-cover object-[center_60%]"
               />
           </div>
@@ -197,7 +198,8 @@ export default function MenuPage() {
                 src="/images/kesinkullan3.jpeg"
                 alt="Can Evim Lezzetleri"
                 fill
-                sizes="(min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 1000px) 1000px, 100vw"
+                quality={55}
                 className="object-cover object-bottom"
               />
           </div>
@@ -262,6 +264,7 @@ export default function MenuPage() {
             alt=""
             fill
             sizes="100vw"
+            quality={55}
             className="object-cover object-center"
           />
           <div className="absolute inset-0 bg-black/40"></div>

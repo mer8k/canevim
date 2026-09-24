@@ -12,6 +12,15 @@ const nextConfig = {
   turbopack: {
     root: fileURLToPath(new URL(".", import.meta.url)),
   },
+  async headers() {
+    return [{
+      source: "/performance/:path*",
+      headers: [{
+        key: "Cache-Control",
+        value: "public, max-age=31536000, immutable",
+      }],
+    }];
+  },
   async redirects() {
     return [...SEO_CONSOLIDATION_REDIRECTS.map((redirect) => ({
       ...redirect,

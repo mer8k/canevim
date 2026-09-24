@@ -10,6 +10,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
       <div className="absolute inset-0 z-[-1] w-full h-[90vh]">
         <div className="relative w-full h-full">
           <picture>
+            <source media="(max-width: 480px)" srcSet="/performance/hero/home-mobile-480.webp" />
             <source media="(min-width: 1440px)" srcSet="/performance/hero/home-desktop-1920.webp" />
             <source media="(min-width: 768px)" srcSet="/performance/hero/home-desktop-1280.webp" />
             <img
@@ -60,7 +61,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
             <div className="flex flex-col h-full gap-8">
               <div className="relative w-full aspect-[4/3] overflow-hidden">
                 <Image 
-                  src="/section2.jpg"
+                  src="/performance/content/section2-1200.webp"
                   alt="Can Evim Şile Bahçe"
                   fill
                   sizes="(min-width: 768px) 50vw, 100vw"
@@ -122,7 +123,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
         {/* Left Image (Edge to edge on left) */}
         <div className="w-full md:w-1/2 relative h-[50vh] md:h-auto min-h-[500px] lg:min-h-[700px]">
           <Image 
-            src="/images/IMG_5123_7_cropped.JPG"
+            src="/performance/content/about-1600.webp"
             alt="Can Evim Şile Doğaya Dönüş"
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
@@ -162,13 +163,13 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
         <FadeIn>
           <div className="w-full flex gap-1 md:gap-2 px-1 md:px-2">
             <div className="w-1/3 relative aspect-[3/4] md:aspect-[9/16] overflow-hidden">
-              <Image src="/images/galeri/dikey1.JPG" alt="Can Evim bahçesinden masa detayı" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
+              <Image src="/performance/content/gallery-dikey1-1200.webp" alt="Can Evim bahçesinden masa detayı" fill sizes="(min-width: 1600px) 528px, (min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
             <div className="w-1/3 relative aspect-[3/4] md:aspect-[9/16] overflow-hidden">
-              <Image src="/images/galeri/dikey2.jpeg" alt="Can Evim Şile bahçe atmosferi" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
+              <Image src="/images/galeri/dikey2.jpeg" alt="Can Evim Şile bahçe atmosferi" fill sizes="(min-width: 1600px) 528px, (min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
             <div className="w-1/3 relative aspect-[3/4] md:aspect-[9/16] overflow-hidden">
-              <Image src="/images/galeri/dikey3.JPG" alt="Can Evim doğa içindeki oturma alanı" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
+              <Image src="/performance/content/gallery-dikey3-1200.webp" alt="Can Evim doğa içindeki oturma alanı" fill sizes="(min-width: 1600px) 528px, (min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
           </div>
         </FadeIn>
@@ -307,7 +308,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
         {/* Background Image with Fixed Attachment for Parallax Effect */}
         <div className="absolute inset-0 z-[-2]">
           <Image 
-            src="/heromasaustu.jpg"
+            src="/performance/hero/home-desktop-1920.webp"
             alt=""
             fill
             sizes="100vw"
@@ -361,7 +362,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                   </svg>
                 </a>
-                <a href="https://www.google.com/maps/place/Can+Evim+%C5%9Eile/@41.1104673,29.4245564,17z/data=!3m1!4b1!4m15!1m8!3m7!1s0x409fd4f3461f9813:0x28012c3f4390e52!2zw5x2ZXpsaSwgQWxlbWRhxJ8gxZ5pbGUgWW9sdSBObzogMTkzLCAzNDk4MCDFnmlsZS_EsHN0YW5idWw!3b1!8m2!3d41.1104887!4d29.425856!16s%2Fg%2F11c1bqkrkk!3m5!1s0x409fd5b99f0c193b:0x275f89d0fdeb1d23!8m2!3d41.1104673!4d29.4258912!16s%2Fg%2F11nptwm57y?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" aria-label="Can Evim Google Haritalar konumu" className="hover:text-black transition-colors">
+                <a href="https://www.google.com/maps?cid=2837137820972948771" target="_blank" rel="noreferrer" aria-label="Can Evim Google Haritalar konumu" className="hover:text-black transition-colors">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                     <circle cx="12" cy="10" r="3"></circle>

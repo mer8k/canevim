@@ -14,7 +14,7 @@ export const metadata = {
     siteName: "Can Evim Şile",
     title: "Şile Kahvaltı & Restoran | Can Evim Üvezli",
     description: "Şile'de doğayla iç içe serpme kahvaltı ve yöresel yemekler için Can Evim Üvezli'nin menüsünü, konumunu ve rezervasyon bilgisini keşfedin.",
-    images: [{ url: "/images/heromasaustu.JPG", width: 1600, height: 1067, alt: "Can Evim Şile" }],
+    images: [{ url: "/performance/social/can-evim-og.jpg", width: 1200, height: 630, alt: "Can Evim Şile" }],
   },
 };
 
@@ -25,7 +25,7 @@ const restaurantSchema = {
   name: "Can Evim Şile",
   url: "https://www.canevimsile.com/",
   telephone: "+90 537 497 50 62",
-  image: "https://www.canevimsile.com/images/heromasaustu.JPG",
+  image: "https://www.canevimsile.com/performance/social/can-evim-og.jpg",
   hasMenu: "https://www.canevimsile.com/menu",
   servesCuisine: ["Türk mutfağı", "Kahvaltı", "Gözleme"],
   geo: {
@@ -57,8 +57,6 @@ const restaurantSchema = {
 export default function RootLayout({ children }) {
   return (
     <html lang="tr">
-      <head>
-      </head>
       <body>
         <script
           type="application/ld+json"

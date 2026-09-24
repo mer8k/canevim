@@ -19,6 +19,7 @@ export async function generateMetadata({ params }) {
     title: `${post.title} | Can Evim Şile`,
     description: post.excerpt,
     alternates: { canonical: path },
+    robots: { index: false, follow: true },
     openGraph: {
       title: post.title,
       description: post.excerpt,
@@ -68,7 +69,7 @@ export default async function BlogPost({ params }) {
         }}
       />
       <div className="relative h-[58vh] min-h-[450px]">
-        <Image src={post.image} alt={post.title} fill priority className="object-cover" />
+        <Image src={post.image} alt={post.title} fill sizes="100vw" loading="eager" fetchPriority="high" decoding="sync" className="object-cover" />
         <div className="absolute inset-0 bg-black/45" />
         <div className="absolute inset-0 flex items-end">
           <header className="w-full max-w-[1000px] mx-auto px-6 md:px-12 pb-14 text-white">

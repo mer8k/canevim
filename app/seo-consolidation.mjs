@@ -7,9 +7,16 @@ export const SEO_CONSOLIDATION_REDIRECTS = [
   { source: "/sile/uvezli-kahvalti", destination: "/" },
   { source: "/sile/sile-dogada-kahvalti", destination: "/" },
   { source: "/sile/sile-yolu-kahvalti", destination: "/" },
+  { source: "/sile/sile-restoran", destination: "/" },
   { source: "/sile/sile-serpme-kahvalti-menusu", destination: "/menu" },
   { source: "/lezzetler/sile-serpme-kahvalti", destination: "/" },
   { source: "/lezzetler/sile-koy-kahvaltisi", destination: "/" },
+  { source: "/lezzetler/sile-gozleme", destination: "/menu" },
+  { source: "/lezzetler/sile-ev-yapimi-manti", destination: "/menu" },
+  { source: "/lezzetler/sile-izgara-sac-kavurma", destination: "/menu" },
+  { source: "/lezzetler/sile-aile-restorani", destination: "/" },
+  { source: "/lezzetler/sile-yolu-kahvalti-restoran", destination: "/" },
+  { source: "/blog/mihlama-kuymak-farki", destination: "/menu" },
 ];
 
 const destinationByPath = new Map(

@@ -3,6 +3,12 @@ import { fileURLToPath } from "node:url";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    inlineCss: true,
+  },
+  images: {
+    qualities: [55, 65, 75],
+  },
   turbopack: {
     root: fileURLToPath(new URL(".", import.meta.url)),
   },
@@ -11,12 +17,12 @@ const nextConfig = {
       ...redirect,
       permanent: true,
     })), {
-      source: '/:lang(ar|fa)/:type(sile|lezzetler)/:slug',
-      destination: '/:type/:slug',
+      source: '/:lang(en|ar|fa)/sile/:slug',
+      destination: '/',
       permanent: true,
     }, {
-      source: '/blog/mihlama-kuymak-farki',
-      destination: '/blog/sile-kahvalti-fiyatlari',
+      source: '/:lang(en|ar|fa)/lezzetler/:slug',
+      destination: '/menu',
       permanent: true,
     }];
   },

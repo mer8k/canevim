@@ -1,42 +1,27 @@
-"use client";
-import Image, { getImageProps } from "next/image";
+import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import FadeIn from "./components/FadeIn";
-import DatePicker, { registerLocale } from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import tr from "date-fns/locale/tr";
-import { format } from "date-fns";
-
-registerLocale("tr", tr);
-
-const { props: desktopHero } = getImageProps({ src: "/heromasaustu.jpg", alt: "Can Evim Şile", fill: true, sizes: "100vw" });
-const { props: mobileHero } = getImageProps({ src: "/images/kesinkullan.jpeg", alt: "Can Evim Şile", fill: true, sizes: "100vw" });
+import ReservationForm from "./components/ReservationForm";
 
 export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
-  const [name, setName] = useState("");
-  const [date, setDate] = useState(null);
-
-  const handleReservationSubmit = (e) => {
-    e.preventDefault();
-    if (!name || !date) return alert("Lütfen ad soyad ve tarih bilgilerinizi girin.");
-    
-    // Format the WhatsApp message
-    const formattedDate = format(date, "dd/MM/yyyy");
-    const message = `Merhaba Can Evim, ben ${name}. ${formattedDate} tarihi için rezervasyon yaptırmak istiyorum.`;
-    const waUrl = `https://wa.me/905374975062?text=${encodeURIComponent(message)}`;
-    
-    window.open(waUrl, "_blank");
-  };
-
   return (
     <main className="min-h-screen relative w-full flex flex-col justify-between selection:bg-white/30">
       {/* Background Image */}
       <div className="absolute inset-0 z-[-1] w-full h-[90vh]">
         <div className="relative w-full h-full">
           <picture>
-            <source media="(min-width: 768px)" srcSet={desktopHero.srcSet} sizes="100vw" />
-            <img {...mobileHero} loading="eager" fetchPriority="high" className="object-cover object-center" />
+            <source media="(min-width: 1440px)" srcSet="/performance/hero/home-desktop-1920.webp" />
+            <source media="(min-width: 768px)" srcSet="/performance/hero/home-desktop-1280.webp" />
+            <img
+              src="/performance/hero/home-mobile-750.webp"
+              alt="Can Evim Şile"
+              width="750"
+              height="1332"
+              loading="eager"
+              fetchPriority="high"
+              decoding="sync"
+              className="absolute inset-0 h-full w-full object-cover object-center"
+            />
           </picture>
         </div>
         {/* Subtle overlay to ensure text readability like noma */}
@@ -78,6 +63,8 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
                   src="/section2.jpg"
                   alt="Can Evim Şile Bahçe"
                   fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  quality={55}
                   className="object-cover hover:scale-105 transition-transform duration-700 ease-in-out"
                 />
               </div>
@@ -95,6 +82,8 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
                   src="/images/kesinkullan3.jpeg"
                   alt="Can Evim Detay"
                   fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  quality={55}
                   className="object-cover object-bottom"
                 />
               </div>
@@ -109,6 +98,8 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
                 src="/images/serpme.jpeg"
                 alt="Can Evim Şile Serpme Kahvaltı"
                 fill
+                sizes="(min-width: 768px) 50vw, 100vw"
+                quality={55}
                 className="object-cover object-[center_60%] hover:scale-105 transition-transform duration-700 ease-in-out"
               />
             </div>
@@ -134,6 +125,8 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
             src="/images/IMG_5123_7_cropped.JPG"
             alt="Can Evim Şile Doğaya Dönüş"
             fill
+            sizes="(min-width: 768px) 50vw, 100vw"
+            quality={55}
             className="object-cover"
           />
         </div>
@@ -169,13 +162,13 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
         <FadeIn>
           <div className="w-full flex gap-1 md:gap-2 px-1 md:px-2">
             <div className="w-1/3 relative aspect-[3/4] md:aspect-[9/16] overflow-hidden">
-              <Image src="/images/galeri/dikey1.JPG" alt="Can Evim Galeri" fill className="object-cover" />
+              <Image src="/images/galeri/dikey1.JPG" alt="Can Evim bahçesinden masa detayı" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
             <div className="w-1/3 relative aspect-[3/4] md:aspect-[9/16] overflow-hidden">
-              <Image src="/images/galeri/dikey2.jpeg" alt="Can Evim Galeri" fill className="object-cover" />
+              <Image src="/images/galeri/dikey2.jpeg" alt="Can Evim Şile bahçe atmosferi" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
             <div className="w-1/3 relative aspect-[3/4] md:aspect-[9/16] overflow-hidden">
-              <Image src="/images/galeri/dikey3.JPG" alt="Can Evim Galeri" fill className="object-cover" />
+              <Image src="/images/galeri/dikey3.JPG" alt="Can Evim doğa içindeki oturma alanı" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
           </div>
         </FadeIn>
@@ -184,13 +177,13 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
         <FadeIn delay={0.2}>
           <div className="w-full grid grid-cols-3 gap-1 md:gap-2 px-1 md:px-2">
             <div className="w-full relative aspect-square overflow-hidden">
-              <Image src="/images/galeri/kare1.jpeg" alt="Can Evim Galeri" fill className="object-cover" />
+              <Image src="/images/galeri/kare1.jpeg" alt="Can Evim Şile mekan detayı" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
             <div className="w-full relative aspect-square overflow-hidden">
-              <Image src="/images/galeri/kare2.jpeg" alt="Can Evim Galeri" fill className="object-cover" />
+              <Image src="/images/galeri/kare2.jpeg" alt="Can Evim kahvaltı mekanı" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
             <div className="w-full relative aspect-square overflow-hidden">
-              <Image src="/images/galeri/kare4.jpeg" alt="Can Evim Galeri" fill className="object-cover" />
+              <Image src="/images/galeri/kare4.jpeg" alt="Can Evim Üvezli bahçesi" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
           </div>
         </FadeIn>
@@ -209,6 +202,8 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
                   src="/images/kesinkullan2.jpeg"
                   alt="Can Evim Yorumlar"
                   fill
+                  sizes="(min-width: 1024px) 1000px, 100vw"
+                  quality={55}
                   className="object-cover object-center"
                 />
               </div>
@@ -217,7 +212,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
             {/* Title and Overall Rating */}
             <FadeIn delay={0.1}>
               <div className="flex flex-col items-center text-center">
-                <h3 className="text-[32px] md:text-[40px] font-serif text-[#222] mb-4">Misafir Yorumları</h3>
+                <h2 className="text-[32px] md:text-[40px] font-serif text-[#222] mb-4">Misafir Yorumları</h2>
                 <div className="flex items-center gap-3 mb-4">
                   <span className="text-4xl font-sans font-medium tracking-tighter text-[#222]">5,0</span>
                   <div className="flex text-[#c39b53] text-2xl">
@@ -241,7 +236,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
                 </p>
                 <div className="mt-auto pt-6 border-t border-[#e5e3dc]">
                   <p className="font-sans font-medium text-[#222] tracking-wide text-[13px] uppercase">Figen</p>
-                  <p className="font-sans text-[10px] tracking-wider text-[#888] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
+                <p className="font-sans text-[10px] tracking-wider text-[#666] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
                 </div>
               </div>
 
@@ -255,7 +250,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
                 </p>
                 <div className="mt-auto pt-6 border-t border-[#e5e3dc]">
                   <p className="font-sans font-medium text-[#222] tracking-wide text-[13px] uppercase">Halil Genç</p>
-                  <p className="font-sans text-[10px] tracking-wider text-[#888] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
+                  <p className="font-sans text-[10px] tracking-wider text-[#666] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
                 </div>
               </div>
 
@@ -269,7 +264,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
                 </p>
                 <div className="mt-auto pt-6 border-t border-[#e5e3dc]">
                   <p className="font-sans font-medium text-[#222] tracking-wide text-[13px] uppercase">Merve Şengül</p>
-                  <p className="font-sans text-[10px] tracking-wider text-[#888] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
+                  <p className="font-sans text-[10px] tracking-wider text-[#666] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
                 </div>
               </div>
 
@@ -283,7 +278,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
                 </p>
                 <div className="mt-auto pt-6 border-t border-[#e5e3dc]">
                   <p className="font-sans font-medium text-[#222] tracking-wide text-[13px] uppercase">Fatih Dem</p>
-                  <p className="font-sans text-[10px] tracking-wider text-[#888] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
+                  <p className="font-sans text-[10px] tracking-wider text-[#666] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
                 </div>
               </div>
               
@@ -297,7 +292,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
                 </p>
                 <div className="mt-auto pt-6 border-t border-[#e5e3dc]">
                   <p className="font-sans font-medium text-[#222] tracking-wide text-[13px] uppercase">Nida Nur Demirci</p>
-                  <p className="font-sans text-[10px] tracking-wider text-[#888] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
+                  <p className="font-sans text-[10px] tracking-wider text-[#666] uppercase mt-2">Yiyecek: 5/5 | Hizmet: 5/5</p>
                 </div>
               </div>
 
@@ -313,8 +308,10 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
         <div className="absolute inset-0 z-[-2]">
           <Image 
             src="/heromasaustu.jpg"
-            alt="Background"
+            alt=""
             fill
+            sizes="100vw"
+            quality={55}
             className="object-cover object-center"
           />
         </div>
@@ -333,38 +330,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
             </FadeIn>
             
             <FadeIn delay={0.2} direction="left">
-            <form onSubmit={handleReservationSubmit} className="flex flex-col sm:flex-row w-full lg:w-auto gap-8 items-start sm:items-end">
-              <div className="flex flex-col sm:flex-row gap-8 w-full lg:w-auto">
-                <input 
-                  type="text" 
-                  placeholder="AD SOYAD" 
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="bg-transparent border-b border-[#8a8883] pb-2 w-full sm:w-56 outline-none font-sans text-[11px] tracking-[0.15em] placeholder:text-[#555] focus:border-[#222] text-[#222] transition-colors"
-                />
-                <DatePicker 
-                  selected={date}
-                  onChange={(d) => setDate(d)}
-                  locale="tr"
-                  dateFormat="dd/MM/yyyy"
-                  placeholderText="REZERVASYON TARİHİ"
-                  className="bg-transparent border-b border-[#8a8883] pb-2 w-full sm:w-56 outline-none font-sans text-[11px] tracking-[0.15em] placeholder:text-[#555] focus:border-[#222] text-[#222] transition-colors cursor-pointer"
-                  required
-                />
-              </div>
-              
-              <div className="flex items-center gap-3 sm:mb-2 whitespace-nowrap">
-                <div className="relative flex items-center justify-center w-5 h-5 border border-[#8a8883] cursor-pointer">
-                  <input type="checkbox" id="contact_permission" required className="absolute opacity-0 w-full h-full cursor-pointer peer" />
-                  <div className="w-3 h-3 bg-[#4d5b4a] scale-0 peer-checked:scale-100 transition-transform"></div>
-                </div>
-                <label htmlFor="contact_permission" className="text-[10px] font-sans tracking-[0.15em] text-[#444] cursor-pointer mt-0.5">İLETİŞİM İZNİ</label>
-              </div>
-              
-              <button type="submit" className="bg-[#4d5b4a] text-white px-10 py-[14px] font-serif text-[17px] tracking-wide hover:bg-[#323631] transition-colors w-full sm:w-auto shadow-sm">
-                Gönder
-              </button>
-            </form>
+              <ReservationForm />
             </FadeIn>
           </div>
           
@@ -383,19 +349,19 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
             
             <div className="flex flex-col gap-8 md:items-end">
               <div className="flex gap-6 text-[#444]">
-                <a href="https://instagram.com/canevimsile" target="_blank" rel="noreferrer" className="hover:text-black transition-colors">
+                <a href="https://instagram.com/canevimsile" target="_blank" rel="noreferrer" aria-label="Can Evim Instagram hesabı" className="hover:text-black transition-colors">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                   </svg>
                 </a>
-                <a href="https://wa.me/905374975062" target="_blank" rel="noreferrer" className="hover:text-black transition-colors">
+                <a href="https://wa.me/905374975062" target="_blank" rel="noreferrer" aria-label="Can Evim WhatsApp hattı" className="hover:text-black transition-colors">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                   </svg>
                 </a>
-                <a href="https://www.google.com/maps/place/Can+Evim+%C5%9Eile/@41.1104673,29.4245564,17z/data=!3m1!4b1!4m15!1m8!3m7!1s0x409fd4f3461f9813:0x28012c3f4390e52!2zw5x2ZXpsaSwgQWxlbWRhxJ8gxZ5pbGUgWW9sdSBObzogMTkzLCAzNDk4MCDFnmlsZS_EsHN0YW5idWw!3b1!8m2!3d41.1104887!4d29.425856!16s%2Fg%2F11c1bqkrkk!3m5!1s0x409fd5b99f0c193b:0x275f89d0fdeb1d23!8m2!3d41.1104673!4d29.4258912!16s%2Fg%2F11nptwm57y?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" className="hover:text-black transition-colors">
+                <a href="https://www.google.com/maps/place/Can+Evim+%C5%9Eile/@41.1104673,29.4245564,17z/data=!3m1!4b1!4m15!1m8!3m7!1s0x409fd4f3461f9813:0x28012c3f4390e52!2zw5x2ZXpsaSwgQWxlbWRhxJ8gxZ5pbGUgWW9sdSBObzogMTkzLCAzNDk4MCDFnmlsZS_EsHN0YW5idWw!3b1!8m2!3d41.1104887!4d29.425856!16s%2Fg%2F11c1bqkrkk!3m5!1s0x409fd5b99f0c193b:0x275f89d0fdeb1d23!8m2!3d41.1104673!4d29.4258912!16s%2Fg%2F11nptwm57y?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" aria-label="Can Evim Google Haritalar konumu" className="hover:text-black transition-colors">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                     <circle cx="12" cy="10" r="3"></circle>

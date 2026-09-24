@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
 import { useState, useEffect } from "react";
 
 export default function Header() {
@@ -57,7 +56,7 @@ export default function Header() {
           {/* Social Icons */}
           <div className="flex items-center gap-3 md:gap-5 border-r border-white/30 pr-4 md:pr-8">
             {/* Instagram */}
-            <a href="https://instagram.com/canevimsile" target="_blank" rel="noreferrer" className="text-white hover:text-white/70 transition-transform hover:scale-110">
+            <a href="https://instagram.com/canevimsile" target="_blank" rel="noreferrer" aria-label="Can Evim Instagram hesabı" className="text-white hover:text-white/70 transition-transform hover:scale-110">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="md:w-5 md:h-5">
                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                 <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -65,13 +64,13 @@ export default function Header() {
               </svg>
             </a>
             {/* WhatsApp */}
-            <a href="https://wa.me/905374975062" target="_blank" rel="noreferrer" className="text-white hover:text-white/70 transition-transform hover:scale-110">
+            <a href="https://wa.me/905374975062" target="_blank" rel="noreferrer" aria-label="Can Evim WhatsApp hattı" className="text-white hover:text-white/70 transition-transform hover:scale-110">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="md:w-5 md:h-5">
                 <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
               </svg>
             </a>
             {/* Maps */}
-            <a href="https://www.google.com/maps/place/Can+Evim+%C5%9Eile/@41.1104673,29.4245564,17z/data=!3m1!4b1!4m15!1m8!3m7!1s0x409fd4f3461f9813:0x28012c3f4390e52!2zw5x2ZXpsaSwgQWxlbWRhxJ8gxZ5pbGUgWW9sdSBObzogMTkzLCAzNDk4MCDFnmlsZS_EsHN0YW5idWw!3b1!8m2!3d41.1104887!4d29.425856!16s%2Fg%2F11c1bqkrkk!3m5!1s0x409fd5b99f0c193b:0x275f89d0fdeb1d23!8m2!3d41.1104673!4d29.4258912!16s%2Fg%2F11nptwm57y?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" className="text-white hover:text-white/70 transition-transform hover:scale-110">
+            <a href="https://www.google.com/maps/place/Can+Evim+%C5%9Eile/@41.1104673,29.4245564,17z/data=!3m1!4b1!4m15!1m8!3m7!1s0x409fd4f3461f9813:0x28012c3f4390e52!2zw5x2ZXpsaSwgQWxlbWRhxJ8gxZ5pbGUgWW9sdSBObzogMTkzLCAzNDk4MCDFnmlsZS_EsHN0YW5idWw!3b1!8m2!3d41.1104887!4d29.425856!16s%2Fg%2F11c1bqkrkk!3m5!1s0x409fd5b99f0c193b:0x275f89d0fdeb1d23!8m2!3d41.1104673!4d29.4258912!16s%2Fg%2F11nptwm57y?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" aria-label="Can Evim Google Haritalar konumu" className="text-white hover:text-white/70 transition-transform hover:scale-110">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="md:w-5 md:h-5">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
@@ -81,6 +80,10 @@ export default function Header() {
           
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            type="button"
+            aria-label={isMenuOpen ? "Menüyü kapat" : "Menüyü aç"}
+            aria-expanded={isMenuOpen}
+            aria-controls="site-menu"
             className="flex flex-col justify-center items-center gap-[5px] w-8 h-8 hover:opacity-70 transition-opacity cursor-pointer z-[60]"
           >
             <span className={`w-7 h-[1.5px] bg-white block transition-transform duration-300 ${isMenuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`}></span>
@@ -92,6 +95,8 @@ export default function Header() {
       
       {/* Fullscreen Menu Overlay */}
       <div 
+        id="site-menu"
+        aria-hidden={!isMenuOpen}
         className={`fixed inset-0 w-full h-[100dvh] transition-all duration-700 ease-in-out z-[40] flex flex-col justify-between pt-24 pb-8 overflow-y-auto ${
           isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
@@ -129,19 +134,19 @@ export default function Header() {
           </div>
 
           <div className="flex gap-6 text-white/80">
-            <a href="https://instagram.com/canevimsile" target="_blank" rel="noreferrer" className="hover:text-[#c39b53] transition-colors">
+            <a href="https://instagram.com/canevimsile" target="_blank" rel="noreferrer" aria-label="Can Evim Instagram hesabı" className="hover:text-[#c39b53] transition-colors">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                 <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                 <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
               </svg>
             </a>
-            <a href="https://wa.me/905374975062" target="_blank" rel="noreferrer" className="hover:text-[#c39b53] transition-colors">
+            <a href="https://wa.me/905374975062" target="_blank" rel="noreferrer" aria-label="Can Evim WhatsApp hattı" className="hover:text-[#c39b53] transition-colors">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
               </svg>
             </a>
-            <a href="https://www.google.com/maps/place/Can+Evim+%C5%9Eile/@41.1104673,29.4245564,17z/data=!3m1!4b1!4m15!1m8!3m7!1s0x409fd4f3461f9813:0x28012c3f4390e52!2zw5x2ZXpsaSwgQWxlbWRhxJ8gxZ5pbGUgWW9sdSBObzogMTkzLCAzNDk4MCDFnmlsZS_EsHN0YW5idWw!3b1!8m2!3d41.1104887!4d29.425856!16s%2Fg%2F11c1bqkrkk!3m5!1s0x409fd5b99f0c193b:0x275f89d0fdeb1d23!8m2!3d41.1104673!4d29.4258912!16s%2Fg%2F11nptwm57y?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" className="hover:text-[#c39b53] transition-colors">
+            <a href="https://www.google.com/maps/place/Can+Evim+%C5%9Eile/@41.1104673,29.4245564,17z/data=!3m1!4b1!4m15!1m8!3m7!1s0x409fd4f3461f9813:0x28012c3f4390e52!2zw5x2ZXpsaSwgQWxlbWRhxJ8gxZ5pbGUgWW9sdSBObzogMTkzLCAzNDk4MCDFnmlsZS_EsHN0YW5idWw!3b1!8m2!3d41.1104887!4d29.425856!16s%2Fg%2F11c1bqkrkk!3m5!1s0x409fd5b99f0c193b:0x275f89d0fdeb1d23!8m2!3d41.1104673!4d29.4258912!16s%2Fg%2F11nptwm57y?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" aria-label="Can Evim Google Haritalar konumu" className="hover:text-[#c39b53] transition-colors">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>

@@ -34,7 +34,10 @@ export default function MenuPage() {
             src="/images/serpme.jpeg"
             alt="Can Evim Şile Menü"
             fill
-            priority
+            sizes="100vw"
+            loading="eager"
+            fetchPriority="high"
+            decoding="sync"
             className="object-cover object-[center_70%]"
           />
         </div>
@@ -72,7 +75,7 @@ export default function MenuPage() {
               
               <div className="w-full flex flex-col gap-10 md:gap-12">
                 <div className="flex flex-col items-center">
-                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/lezzetler/sile-serpme-kahvalti">Serpme Kahvaltı</Link></h3>
+                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/menu#kahvalti">Serpme Kahvaltı</Link></h3>
                   <p className="font-serif text-[14px] md:text-[17px] text-[#444] leading-relaxed max-w-2xl px-2">
                     Peynir tabağı, yeşil zeytin, siyah zeytin, çizik zeytin, acuka, çilek reçeli, portakal reçeli, çeri domates, salatalık, tereyağ, bal-kaymak, pişi, muska börek, sahanda yumurta, menemen, sınırsız çay.
                   </p>
@@ -122,6 +125,7 @@ export default function MenuPage() {
                 src="/images/kesinkullan.jpeg"
                 alt="Can Evim Kesin Kullan"
                 fill
+                sizes="(min-width: 768px) 50vw, 100vw"
                 className="object-cover object-[center_60%]"
               />
           </div>
@@ -135,14 +139,14 @@ export default function MenuPage() {
               
               <div className="w-full flex flex-col gap-10 md:gap-12">
                 <div id="gozleme" className="flex flex-col items-center scroll-mt-24">
-                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/lezzetler/sile-gozleme">Gözleme Çeşitleri</Link></h3>
+                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/menu#gozleme">Gözleme Çeşitleri</Link></h3>
                   <p className="font-serif text-[14px] md:text-[17px] text-[#444]">
                     Patatesli, Kaşarlı, Beyaz Peynirli, Pazılı, Kıymalı, Sucuklu
                   </p>
                 </div>
                 
                 <div id="izgara" className="flex flex-col items-center scroll-mt-24">
-                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/lezzetler/sile-izgara-sac-kavurma">Izgara Etler</Link></h3>
+                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/menu#izgara">Izgara Etler</Link></h3>
                   <p className="font-serif text-[14px] md:text-[17px] text-[#444] leading-loose">
                     Izgara Köfte <span className="text-[#666] italic text-[13px] ml-1">(Pilav, domates ve biber ile)</span><br/>
                     Izgara Sucuk <span className="text-[#666] italic text-[13px] ml-1">(Pilav, domates ve biber ile)</span><br/>
@@ -152,7 +156,7 @@ export default function MenuPage() {
                 </div>
 
                 <div id="manti" className="flex flex-col items-center scroll-mt-24">
-                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/lezzetler/sile-ev-yapimi-manti">Yöresel Lezzetler</Link></h3>
+                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/menu#manti">Yöresel Lezzetler</Link></h3>
                   <p className="font-serif text-[14px] md:text-[17px] text-[#444]">
                     Ev Yapımı Mantı, Çıtır Mantı, Çiğbörek
                   </p>
@@ -193,6 +197,7 @@ export default function MenuPage() {
                 src="/images/kesinkullan3.jpeg"
                 alt="Can Evim Lezzetleri"
                 fill
+                sizes="(min-width: 768px) 50vw, 100vw"
                 className="object-cover object-bottom"
               />
           </div>
@@ -254,8 +259,9 @@ export default function MenuPage() {
       <div className="w-full h-[50vh] md:h-[60vh] relative overflow-hidden mt-8">
           <Image 
             src="/images/kesinkullan2.jpeg"
-            alt="Footer Arka Plan"
+            alt=""
             fill
+            sizes="100vw"
             className="object-cover object-center"
           />
           <div className="absolute inset-0 bg-black/40"></div>

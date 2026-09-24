@@ -1,19 +1,19 @@
 import "./globals.css";
-import "./local-fonts.css";
+import "./local-fonts-subset.css";
 import Header from "./Header";
 
 export const metadata = {
   metadataBase: new URL("https://www.canevimsile.com"),
-  title: "Şile Kahvaltı ve Şile Restoran | Can Evim",
-  description: "Şile kahvaltı ve Şile restoran aramalarına Can Evim Üvezli'nin serpme kahvaltısı, ana yemekleri, güncel menüsü, yol tarifi ve rezervasyon bilgileriyle yanıt verir.",
+  title: "Şile Kahvaltı & Restoran | Can Evim Üvezli",
+  description: "Şile Üvezli'de doğayla iç içe serpme kahvaltı, gözleme ve yöresel yemekler. Güncel menüyü inceleyin, yol tarifi alın veya rezervasyon yapın.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "tr_TR",
     url: "/",
     siteName: "Can Evim Şile",
-    title: "Şile Kahvaltı ve Şile Restoran | Can Evim",
-    description: "Şile'de serpme kahvaltı, köy kahvaltısı ve restoran deneyimi için Can Evim Üvezli.",
+    title: "Şile Kahvaltı & Restoran | Can Evim Üvezli",
+    description: "Şile'de doğayla iç içe serpme kahvaltı ve yöresel yemekler için Can Evim Üvezli'nin menüsünü, konumunu ve rezervasyon bilgisini keşfedin.",
     images: [{ url: "/images/heromasaustu.JPG", width: 1600, height: 1067, alt: "Can Evim Şile" }],
   },
 };
@@ -25,6 +25,15 @@ const restaurantSchema = {
   name: "Can Evim Şile",
   url: "https://www.canevimsile.com/",
   telephone: "+90 537 497 50 62",
+  image: "https://www.canevimsile.com/images/heromasaustu.JPG",
+  hasMenu: "https://www.canevimsile.com/menu",
+  servesCuisine: ["Türk mutfağı", "Kahvaltı", "Gözleme"],
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 41.1104673,
+    longitude: 29.4258912,
+  },
+  hasMap: "https://www.google.com/maps?cid=2837137820972948771",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Üvezli, Alemdağ Şile Yolu No: 193",
@@ -39,7 +48,10 @@ const restaurantSchema = {
     opens: "08:00",
     closes: "23:00",
   }],
-  sameAs: ["https://instagram.com/canevimsile"],
+  sameAs: [
+    "https://instagram.com/canevimsile",
+    "https://www.google.com/maps?cid=2837137820972948771",
+  ],
 };
 
 export default function RootLayout({ children }) {

@@ -3,12 +3,12 @@ import Link from "next/link";
 import FadeIn from "../components/FadeIn";
 
 export const metadata = {
-  title: "Menü — Can Evim Şile",
-  description: "Can Evim Şile kahvaltı, ana yemekler, tatlılar ve içecek menüsü.",
+  title: "Can Evim Şile Menü | Serpme Kahvaltı, Gözleme ve Mantı",
+  description: "Can Evim Şile'nin serpme kahvaltı, gözleme, ev yapımı mantı, ızgara, sıcaklar, tatlı ve içecek seçeneklerini tek sayfada inceleyin.",
   alternates: { canonical: "/menu" },
   openGraph: {
-    title: "Can Evim Şile Menü",
-    description: "Serpme kahvaltı, gözleme, mantı, ızgara ve yöresel lezzetlerimizi inceleyin.",
+    title: "Can Evim Şile Menü | Serpme Kahvaltı, Gözleme ve Mantı",
+    description: "Serpme kahvaltı, gözleme, ev yapımı mantı, ızgara ve yöresel lezzetlerimizi inceleyin.",
     url: "/menu",
     images: [{ url: "/images/serpme.jpeg", alt: "Can Evim Şile menüsü" }],
   },

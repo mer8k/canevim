@@ -4,16 +4,16 @@ import Header from "./Header";
 
 export const metadata = {
   metadataBase: new URL("https://www.canevimsile.com"),
-  title: "Şile Kahvaltı & Restoran | Can Evim Üvezli",
-  description: "Şile Üvezli'de doğayla iç içe serpme kahvaltı, gözleme ve yöresel yemekler. Güncel menüyü inceleyin, yol tarifi alın veya rezervasyon yapın.",
+  title: "Can Evim Şile | Üvezli Kahvaltı ve Restoran",
+  description: "Can Evim Şile, Üvezli'de doğa içinde serpme kahvaltı, gözleme, mantı ve yöresel yemekler sunar. Menüyü inceleyin, yol tarifi alın veya rezervasyon yapın.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "tr_TR",
     url: "/",
     siteName: "Can Evim Şile",
-    title: "Şile Kahvaltı & Restoran | Can Evim Üvezli",
-    description: "Şile'de doğayla iç içe serpme kahvaltı ve yöresel yemekler için Can Evim Üvezli'nin menüsünü, konumunu ve rezervasyon bilgisini keşfedin.",
+    title: "Can Evim Şile | Üvezli Kahvaltı ve Restoran",
+    description: "Üvezli'de doğa içinde serpme kahvaltı, gözleme, mantı ve yöresel yemekler. Can Evim Şile'nin menüsünü, konumunu ve rezervasyon bilgilerini inceleyin.",
     images: [{ url: "/performance/social/can-evim-og.jpg", width: 1200, height: 630, alt: "Can Evim Şile" }],
   },
 };

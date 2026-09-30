@@ -4,16 +4,16 @@ import Header from "./Header";
 
 export const metadata = {
   metadataBase: new URL("https://www.canevimsile.com"),
-  title: "Can Evim Şile | Üvezli Kahvaltı ve Restoran",
-  description: "Can Evim Şile, Üvezli'de doğa içinde serpme kahvaltı, gözleme, mantı ve yöresel yemekler sunar. Menüyü inceleyin, yol tarifi alın veya rezervasyon yapın.",
+  title: "Şile Kahvaltı ve Serpme Kahvaltı | Can Evim Şile",
+  description: "Şile'de doğa içinde serpme kahvaltı ve köy kahvaltısı için Can Evim Üvezli'yi keşfedin. Gözleme, mantı ve yöresel lezzetler; menü, konum ve rezervasyon bilgileri.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "tr_TR",
     url: "/",
     siteName: "Can Evim Şile",
-    title: "Can Evim Şile | Üvezli Kahvaltı ve Restoran",
-    description: "Üvezli'de doğa içinde serpme kahvaltı, gözleme, mantı ve yöresel yemekler. Can Evim Şile'nin menüsünü, konumunu ve rezervasyon bilgilerini inceleyin.",
+    title: "Şile Kahvaltı ve Serpme Kahvaltı | Can Evim Şile",
+    description: "Şile Üvezli'de doğa içinde serpme kahvaltı, köy kahvaltısı, gözleme, mantı ve yöresel lezzetler.",
     images: [{ url: "/performance/social/can-evim-og.jpg", width: 1200, height: 630, alt: "Can Evim Şile" }],
   },
 };
@@ -27,7 +27,7 @@ const restaurantSchema = {
   telephone: "+90 537 497 50 62",
   image: "https://www.canevimsile.com/performance/social/can-evim-og.jpg",
   hasMenu: "https://www.canevimsile.com/menu",
-  servesCuisine: ["Türk mutfağı", "Kahvaltı", "Gözleme"],
+  servesCuisine: ["Türk mutfağı", "Şile kahvaltı", "Serpme kahvaltı", "Köy kahvaltısı", "Gözleme"],
   geo: {
     "@type": "GeoCoordinates",
     latitude: 41.1104673,

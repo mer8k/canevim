@@ -3,12 +3,12 @@ import Link from "next/link";
 import FadeIn from "../components/FadeIn";
 
 export const metadata = {
-  title: "Can Evim Şile Menü | Serpme Kahvaltı, Gözleme ve Mantı",
-  description: "Can Evim Şile'nin serpme kahvaltı, gözleme, ev yapımı mantı, ızgara, sıcaklar, tatlı ve içecek seçeneklerini tek sayfada inceleyin.",
+  title: "Şile Serpme Kahvaltı ve Gözleme Menüsü | Can Evim",
+  description: "Şile'de serpme kahvaltı, köy kahvaltısı, sıcak gözleme ve ev yapımı mantı seçeneklerini Can Evim menüsünde inceleyin. Üvezli Şile Yolu üzerindeyiz.",
   alternates: { canonical: "/menu" },
   openGraph: {
-    title: "Can Evim Şile Menü | Serpme Kahvaltı, Gözleme ve Mantı",
-    description: "Serpme kahvaltı, gözleme, ev yapımı mantı, ızgara ve yöresel lezzetlerimizi inceleyin.",
+    title: "Şile Serpme Kahvaltı ve Gözleme Menüsü | Can Evim",
+    description: "Şile'de serpme kahvaltı, köy kahvaltısı, sıcak gözleme, ev yapımı mantı ve yöresel lezzetler.",
     url: "/menu",
     images: [{ url: "/images/serpme.jpeg", alt: "Can Evim Şile menüsü" }],
   },
@@ -17,7 +17,7 @@ export const metadata = {
 const menuSchema = [{
   "@context": "https://schema.org", "@type": "Menu", "@id": "https://www.canevimsile.com/menu#menu",
   name: "Can Evim Şile Menü", url: "https://www.canevimsile.com/menu", hasMenuSection: [
-    { "@type": "MenuSection", name: "Kahvaltı", hasMenuItem: [{ "@type": "MenuItem", name: "Serpme Kahvaltı" }, { "@type": "MenuItem", name: "Kahvaltı Tabağı" }] },
+    { "@type": "MenuSection", name: "Şile Serpme Kahvaltı ve Köy Kahvaltısı", hasMenuItem: [{ "@type": "MenuItem", name: "Serpme Kahvaltı" }, { "@type": "MenuItem", name: "Kahvaltı Tabağı" }] },
     { "@type": "MenuSection", name: "Ana Yemekler", hasMenuItem: ["Gözleme Çeşitleri", "Izgara Köfte", "Izgara Sucuk", "Piliç Izgara", "Sac Kavurma", "Ev Yapımı Mantı", "Çıtır Mantı", "Çiğbörek"].map((name) => ({ "@type": "MenuItem", name })) },
   ]
 }, { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Can Evim Şile", item: "https://www.canevimsile.com/" }, { "@type": "ListItem", position: 2, name: "Menü", item: "https://www.canevimsile.com/menu" }] }];
@@ -50,7 +50,7 @@ export default function MenuPage() {
             Doğadan Masanıza
           </p>
           <h1 className="text-5xl md:text-7xl lg:text-[84px] font-serif text-[#222] tracking-wide mb-2">
-            Menü
+            Şile Kahvaltı Menüsü
           </h1>
         </div>
       </div>
@@ -62,7 +62,7 @@ export default function MenuPage() {
         <div className="w-full px-6 pt-4 pb-16 md:pb-24 max-w-[1000px] mx-auto text-center">
           <FadeIn delay={0.1}>
             <p className="font-serif text-[18px] md:text-[24px] text-[#444] max-w-2xl mx-auto leading-relaxed italic">
-              Mevsimin en taze malzemeleriyle, geleneksel reçetelere sadık kalarak hazırladığımız eşsiz seçkilerimiz.
+              Şile serpme kahvaltı, köy kahvaltısı, sıcak gözleme ve ev yapımı mantı seçeneklerimizi tek menüde inceleyin.
             </p>
           </FadeIn>
         </div>
@@ -71,7 +71,7 @@ export default function MenuPage() {
         <div className="w-full max-w-[1000px] px-4 md:px-12 pb-16 md:pb-24 flex flex-col gap-16 md:gap-24">
           <FadeIn direction="up">
             <section id="kahvalti" className="flex flex-col items-center text-center w-full scroll-mt-24">
-              <h2 className="text-2xl md:text-4xl font-serif text-[#222] mb-10 md:mb-12 border-b border-[#222]/20 pb-4 px-8 md:px-12 uppercase tracking-widest">Kahvaltı</h2>
+              <h2 className="text-2xl md:text-4xl font-serif text-[#222] mb-10 md:mb-12 border-b border-[#222]/20 pb-4 px-8 md:px-12 uppercase tracking-widest">Şile Serpme Kahvaltı</h2>
               
               <div className="w-full flex flex-col gap-10 md:gap-12">
                 <div className="flex flex-col items-center">
@@ -140,7 +140,7 @@ export default function MenuPage() {
               
               <div className="w-full flex flex-col gap-10 md:gap-12">
                 <div id="gozleme" className="flex flex-col items-center scroll-mt-24">
-                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/menu#gozleme">Gözleme Çeşitleri</Link></h3>
+                  <h3 className="font-sans text-[14px] md:text-[18px] font-medium tracking-[0.15em] text-[#c39b53] uppercase mb-3"><Link href="/menu#gozleme">Şile Gözleme Çeşitleri</Link></h3>
                   <p className="font-serif text-[14px] md:text-[17px] text-[#444]">
                     Patatesli, Kaşarlı, Beyaz Peynirli, Pazılı, Kıymalı, Sucuklu
                   </p>

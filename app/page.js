@@ -3,7 +3,7 @@ import Link from "next/link";
 import FadeIn from "./components/FadeIn";
 import ReservationForm from "./components/ReservationForm";
 
-export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
+export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
   return (
     <main className="min-h-screen relative w-full flex flex-col justify-between selection:bg-white/30">
       {/* Background Image */}
@@ -106,7 +106,7 @@ export default function Home({ heroTitle = "Şile'de Doğada Kahvaltı" }) {
             </div>
             <div className="px-4 md:px-8 pb-12 flex flex-col items-start">
               <p className="text-[22px] md:text-[26px] lg:text-[30px] font-serif leading-snug text-[#222] mb-6 max-w-lg">
-                Geleneksel tariflerin, en taze yerel malzemeler ve yılların ustalığıyla buluştuğu eşsiz lezzet dünyamızı keşfedin.
+                Şile köy kahvaltısı geleneğini serpme kahvaltı, sıcak gözleme ve yöresel lezzetlerle Üvezli'deki doğa içindeki bahçemizde yaşayın.
               </p>
               <Link href="/menu" className="text-[13px] font-sans font-medium tracking-wide text-[#444] border-b border-[#444] hover:text-black hover:border-black transition-colors pb-1 inline-block">
                 Lezzetlerimizi İncele

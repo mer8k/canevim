@@ -53,6 +53,7 @@ async function pageReady(page, route, { checkInitialLazy = false } = {}) {
       frameworkScriptRequests: performance.getEntriesByType("resource").map(entry => entry.name).filter(url => /\/_next\/.*\.js(?:\?|$)/.test(new URL(url).pathname)),
       frameworkScriptElements: Array.from(document.scripts).map(script => script.getAttribute("src") || "").filter(url => /\/_next\/.*\.js(?:\?|$)/.test(url)),
       nativeUiRequested: performance.getEntriesByType("resource").some(entry => new URL(entry.name).pathname === "/home-ui.js"),
+      deferredStyles: Array.from(document.querySelectorAll("link[data-deferred-styles]")).map(link => ({ href: link.getAttribute("href"), media: link.media, loaded: Boolean(link.sheet), ready: link.getAttribute("data-style-ready") })),
       placeholders: Array.from(document.querySelectorAll("[data-interactive-src]")).map(section => ({ id: section.id, source: section.getAttribute("data-interactive-src"), textLength: section.textContent.trim().length })),
       scrollY,
     }));
@@ -60,6 +61,7 @@ async function pageReady(page, route, { checkInitialLazy = false } = {}) {
     check(!initial.plannerPresent, `Home @ ${page.viewportSize().width}: planner fragment is lazy`, initial);
     check(initial.staticHome && initial.frameworkScriptRequests.length === 0 && initial.frameworkScriptElements.length === 0, `Home @ ${page.viewportSize().width}: genuine static document with zero framework scripts`, initial);
     check(initial.nativeUiRequested, `Home @ ${page.viewportSize().width}: native header/form script loaded`, initial);
+    check(initial.deferredStyles.length > 0 && initial.deferredStyles.every(style => style.media === "all" && style.loaded && style.ready === "true"), `Home @ ${page.viewportSize().width}: complete stylesheet loaded and active`, initial.deferredStyles);
     check(initial.placeholders.some(section => section.id === "kahvalti-planla" && section.source === "/interactive/planner-breakfast") && initial.placeholders.some(section => section.id === "rota-matrisi" && section.source === "/interactive/routes"), `Home @ ${page.viewportSize().width}: accessible fragment anchors exist`, initial);
     result.lazy.push({ width: page.viewportSize().width, ...initial });
   }
@@ -211,6 +213,45 @@ try {
     check(outbound.length === 0, `${width}: no third-party requests with IDs unconfigured`, outbound);
     result.analytics[`normal_${width}_outbound`] = outbound;
     await context.close();
+  }
+
+  result.deferredStyles = [];
+  for (const width of [375, 412]) {
+    const delayedContext = await contextFor(width);
+    let releaseStyles;
+    const styleGate = new Promise(resolve => { releaseStyles = resolve; });
+    const heldStyles = [];
+    await delayedContext.route("**/performance/ui/home-*.css", async route => {
+      heldStyles.push({ url: route.request().url(), requestedAt: Date.now() });
+      await styleGate;
+      await route.continue();
+    });
+    const delayedPage = await delayedContext.newPage();
+    const snapshotBar = () => delayedPage.evaluate(() => {
+      const rect = document.querySelector(".ce-mobile-actions").getBoundingClientRect();
+      return { innerWidth, documentWidth: document.documentElement.scrollWidth, bar: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height }, styles: Array.from(document.querySelectorAll("link[data-deferred-styles]")).map(link => ({ media: link.media, loaded: Boolean(link.sheet) })) };
+    });
+    try {
+      await delayedPage.goto(base + "/", { waitUntil: "domcontentloaded", timeout: 15000 });
+      await delayedPage.waitForFunction(() => Boolean(window.CanEvimLoader));
+      const before = await snapshotBar();
+      await delayedPage.waitForTimeout(500);
+      const pending = await snapshotBar();
+      const heldForMs = heldStyles.length ? Date.now() - heldStyles[0].requestedAt : 0;
+      check(heldStyles.length === 1 && heldForMs >= 500 && pending.styles.some(style => style.media === "print" && !style.loaded), `Critical CSS @ ${width}: full stylesheet genuinely held for 500ms`, { heldStyles, heldForMs, pending });
+      releaseStyles();
+      await delayedPage.waitForFunction(() => Array.from(document.querySelectorAll("link[data-deferred-styles]")).every(link => link.media === "all" && link.sheet), null, { timeout: 15000 });
+      await delayedPage.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      const after = await snapshotBar();
+      const stable = [before, pending, after].every(snapshot => snapshot.innerWidth === width && snapshot.documentWidth <= width + 1 && Math.abs(snapshot.bar.left) <= 1 && Math.abs(snapshot.bar.right - width) <= 1 && Math.abs(snapshot.bar.width - width) <= 1) && Object.keys(before.bar).every(key => Math.abs(before.bar[key] - pending.bar[key]) <= 1 && Math.abs(before.bar[key] - after.bar[key]) <= 1);
+      check(stable, `Critical CSS @ ${width}: viewport and fixed action bar stay stable before/after full styles`, { before, pending, after });
+      result.deferredStyles.push({ width, heldForMs, before, pending, after, stable });
+    } catch (error) {
+      check(false, `Critical CSS @ ${width}: delayed stylesheet test completed`, error.stack);
+    } finally {
+      releaseStyles();
+      await delayedContext.close();
+    }
   }
 
   const lazyContext = await contextFor(375);

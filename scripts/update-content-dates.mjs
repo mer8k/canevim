@@ -14,6 +14,9 @@ const next = {};
 let missing = false;
 
 async function dependencies(source, visited = new Set()) {
+  // Generated landing HTML contains bundler/environment output, not new content.
+  // Its real JSX, CSS and UI sources are explicitly included for the landing route.
+  if (source.startsWith("app/generated/")) return visited;
   if (visited.has(source)) return visited;
   visited.add(source);
   if (![".js", ".jsx", ".mjs", ".ts", ".tsx"].includes(extname(source))) return visited;

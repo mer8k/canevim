@@ -29,6 +29,7 @@ export default function HomeContent() {
               alt="Can Evim Şile"
               width="750"
               height="1332"
+              sizes="100vw"
               loading="eager"
               fetchPriority="high"
               decoding="sync"

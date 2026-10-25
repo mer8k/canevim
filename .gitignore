@@ -46,3 +46,4 @@ next-env.d.ts
 
 # Static landing output is regenerated before every build
 /app/generated/
+/public/performance/ui/home-*.css

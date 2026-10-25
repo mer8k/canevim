@@ -1,7 +1,7 @@
 {
   "/": {
-    "sha256": "329f0cee59f69faa994b86b66188930267597f2690c8d221f8ea0c751037d577",
-    "lastModified": "2026-10-25T12:07:33.213Z",
+    "sha256": "f26fe23c6b5ba0071297c436a8bc1a3615bc847ba10842ad648c4c3ebc922e4d",
+    "lastModified": "2026-10-25T15:08:23.632Z",
     "sources": [
       "app/Header.js",
       "app/components/FadeIn.js",
@@ -12,7 +12,6 @@
       "app/components/SiteLink.js",
       "app/components/StaticImage.js",
       "app/expanded-experiences.js",
-      "app/generated/home-html.json",
       "app/globals.css",
       "app/growth-content.css",
       "app/growth-content.js",

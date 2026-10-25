@@ -1,8 +1,8 @@
 # Can Evim — tüm operasyon kanıtları
 
-25 Ekim 2026 · Next.js 16.3.6 / React 19.2.4 · Final QA tamamlandı
+25 Ekim 2026 · Next.js 16.3.6 / React 19.2.4 · Yerel QA tamamlandı; canlı hedef durumu aşağıdadır
 
-Bu build için canlı yayın henüz doğrulanmadı; yerel çalışma ve yayın sonucu ayrı tutulur.
+Canlı yayın doğrulandı; commit 4843eb1ab7228da0965807f18d1a567408d5ca1c.
 
 ## Üç ayrı başlangıç / sonuç sınırı
 
@@ -45,7 +45,9 @@ HTML toplamı yeni sayfaları içerir; tek sayfa veya sıkıştırılmış ağ t
 
 Final ölçüm yerel: http://127.0.0.1:3100/. LCP 1.87 sn; TBT 0 ms; CLS 0.0000. 98–100 performans hedefi bu koşuda sağlandı. İlk iki sütun yerel koşulardır; canlı final kullanıldığında sunucu ve sıkıştırma koşulları farklıdır. Kanıt: .audit/round2/lighthouse-final-summary.json. Mobil laboratuvar koşusu gerçek kullanıcı Core Web Vitals veya GSC sonucu değildir.
 
-Canlı Lighthouse ölçümü bu yayın için henüz doğrulanmadı; yerel ölçüm canlı ölçüm olarak sunulmaz.
+Canlı https://www.canevimsile.com/ mobil Lighthouse: performans 96, erişilebilirlik 100, SEO 100. LCP 2.18 sn, TBT 7 ms, CLS 0.0000. Ölçüm: 2026-10-25T16:19:39.125Z. Kanıt: .audit/round2/lighthouse-live-summary.json. Bu bir laboratuvar koşusudur.
+
+Canlı 98–100 performans hedefi sağlanmadı; açık madde olarak korunuyor. Bağımsız Google PageSpeed API ölçümü HTTP 429 kota yanıtı nedeniyle alınmadı; ek bir puan üretilmedi.
 
 ## Gerçek GSC bulgusu
 
@@ -117,7 +119,7 @@ HTTP: 203/203. Tarayıcı: Tüm kanonikler kontrol edildi. Kanıt zamanı build'
 
 ## Yayın kanıtı
 
-Bu build için canlı yayın henüz doğrulanmadı; yerel çalışma ve yayın sonucu ayrı tutulur. Read-only hazırlık kontrolü GitHub main dalında ADMIN erişimi ve iki Vercel production entegrasyonu (canevim / canevim-next) gösterdi. Yeni SHA'nın provider durumları ve asıl www sayfaları doğrulanmadan yayın tamamlandı denmez. Public gövde eşleşmesi özel alan adının proje sahipliğini tek başına kanıtlamaz. Kaynak: .audit/round2/deploy-readiness.md ve varsa deployment-verification.json.
+Canlı yayın doğrulandı; commit 4843eb1ab7228da0965807f18d1a567408d5ca1c. Read-only hazırlık kontrolü GitHub main dalında ADMIN erişimi ve iki Vercel production entegrasyonu (canevim / canevim-next) gösterdi. Yeni SHA'nın provider durumları ve asıl www sayfaları doğrulanmadan yayın tamamlandı denmez. Public gövde eşleşmesi özel alan adının proje sahipliğini tek başına kanıtlamaz. Kaynak: .audit/round2/deploy-readiness.md ve varsa deployment-verification.json.
 
 ## Yeniden üretme
 
@@ -202,7 +204,7 @@ Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve bas
 | scripts/build-home.cjs | 0 | 5517 | edcf30aba3ba914ec471c91fe213f899faf795f9172bb3fbfb32a8589d08f15d |
 | scripts/compiled-pages.mjs | 0 | 248 | 16cfb3ff2f158074f4f062b9c6e0a1b1ceb5c6b8643048896fda85cdbcd8d50b |
 | scripts/content-fingerprint.mjs | 0 | 350 | 7f70c6362eb87c8aa7b7ceddc8c7940989c6d949a5c5ca20251aed8dd8aa1e13 |
-| scripts/generate-growth-report.mjs | 0 | 36141 | 4ae9b3449298ecbceef0e74222a54d42b813feb4ebc35a3d92109a06b6e70135 |
+| scripts/generate-growth-report.mjs | 0 | 37122 | f3a22669cecba18137823bdd90782274d72bd8dd4ef65157ebd6e0379e962166 |
 | scripts/growth-loader.cjs | 0 | 4427 | 0c2e4ae70954f6c569d5cc6610b098c72421064091995a500804028f1f48a4d1 |
 | scripts/growth-runtime.cjs | 0 | 17697 | 4ed9f10d8405078db550755fe76c3bc7303b09aefa085872d3808433bbd52ae5 |
 | scripts/gsc-audit.mjs | 0 | 14607 | 606c89fe740b6809ae1af5dbe74156c64478b174a8591c6fe3a184b8450c0097 |
@@ -266,7 +268,7 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | scripts/build-home.cjs | 0 | 5517 | edcf30aba3ba914ec471c91fe213f899faf795f9172bb3fbfb32a8589d08f15d |
 | scripts/compiled-pages.mjs | 0 | 248 | 16cfb3ff2f158074f4f062b9c6e0a1b1ceb5c6b8643048896fda85cdbcd8d50b |
 | scripts/content-fingerprint.mjs | 0 | 350 | 7f70c6362eb87c8aa7b7ceddc8c7940989c6d949a5c5ca20251aed8dd8aa1e13 |
-| scripts/generate-growth-report.mjs | 28901 | 36141 | 4ae9b3449298ecbceef0e74222a54d42b813feb4ebc35a3d92109a06b6e70135 |
+| scripts/generate-growth-report.mjs | 28901 | 37122 | f3a22669cecba18137823bdd90782274d72bd8dd4ef65157ebd6e0379e962166 |
 | scripts/growth-loader.cjs | 0 | 4427 | 0c2e4ae70954f6c569d5cc6610b098c72421064091995a500804028f1f48a4d1 |
 | scripts/home-ui.cjs | 0 | 3125 | 54a554b487b7e567a6edd2d0fe35871b22d0ab95637c8e077f6afb5dcc1fbd1b |
 | scripts/seo-infra-check.mjs | 7616 | 9132 | 952b18c6c99e02a0697e65e009f0e22e23c87027ff06afd8436ed22bf1421245 |

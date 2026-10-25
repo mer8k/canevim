@@ -1,31 +1,16 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from "../components/StaticImage";
+import Link from "../components/SiteLink";
 import FadeIn from "../components/FadeIn";
+import { pageMetadata, experiences } from "../growth-content";
+import { buildPageGraph, safeJsonLd } from "../growth-schema";
+import { QuickGuide, ComparisonTable } from "../components/GrowthContent";
 
-export const metadata = {
-  title: "Şile Serpme Kahvaltı ve Gözleme Menüsü | Can Evim",
-  description: "Şile'de serpme kahvaltı, köy kahvaltısı, sıcak gözleme ve ev yapımı mantı seçeneklerini Can Evim menüsünde inceleyin. Üvezli Şile Yolu üzerindeyiz.",
-  alternates: { canonical: "/menu" },
-  openGraph: {
-    title: "Şile Serpme Kahvaltı ve Gözleme Menüsü | Can Evim",
-    description: "Şile'de serpme kahvaltı, köy kahvaltısı, sıcak gözleme, ev yapımı mantı ve yöresel lezzetler.",
-    url: "/menu",
-    images: [{ url: "/images/serpme.jpeg", alt: "Can Evim Şile menüsü" }],
-  },
-};
-
-const menuSchema = [{
-  "@context": "https://schema.org", "@type": "Menu", "@id": "https://www.canevimsile.com/menu#menu",
-  name: "Can Evim Şile Menü", url: "https://www.canevimsile.com/menu", hasMenuSection: [
-    { "@type": "MenuSection", name: "Şile Serpme Kahvaltı ve Köy Kahvaltısı", hasMenuItem: [{ "@type": "MenuItem", name: "Serpme Kahvaltı" }, { "@type": "MenuItem", name: "Kahvaltı Tabağı" }] },
-    { "@type": "MenuSection", name: "Ana Yemekler", hasMenuItem: ["Gözleme Çeşitleri", "Izgara Köfte", "Izgara Sucuk", "Piliç Izgara", "Sac Kavurma", "Ev Yapımı Mantı", "Çıtır Mantı", "Çiğbörek"].map((name) => ({ "@type": "MenuItem", name })) },
-  ]
-}, { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Can Evim Şile", item: "https://www.canevimsile.com/" }, { "@type": "ListItem", position: 2, name: "Menü", item: "https://www.canevimsile.com/menu" }] }];
+export const metadata = pageMetadata("/menu", "Can Evim Şile Menü 2026 | Kahvaltı, 6 Gözleme & Izgara", "Kahvaltı, altı gözleme çeşidi, sıcaklar, ızgara, mantı, tatlı ve içecekler: Can Evim'in mevcut menüsünü inceleyin. Güncel fiyat ve porsiyon için iletişime geçin.");
 
 export default function MenuPage() {
   return (
-    <main className="min-h-screen relative w-full bg-[#fcfaf7] selection:bg-black/10 flex flex-col text-[#222]">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(menuSchema).replace(/</g, "\\u003c") }} />
+    <main id="main-content" className="min-h-screen relative w-full bg-[#fcfaf7] selection:bg-black/10 flex flex-col text-[#222]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(buildPageGraph({ path: "/menu", title: "Can Evim Şile Menü", description: metadata.description })) }} />
       
       {/* Menu Hero Section */}
       <div className="relative w-full h-[60vh] md:h-[80vh] min-h-[400px] flex flex-col items-center justify-center text-center overflow-hidden">
@@ -54,6 +39,8 @@ export default function MenuPage() {
           </h1>
         </div>
       </div>
+      <QuickGuide menu />
+      <div className="growth-article"><ComparisonTable comparison={experiences[0].comparison} /><nav className="growth-related" aria-label="Ayrıntılı menü rehberleri"><Link href="/sile-serpme-kahvalti">Şile serpme kahvaltı içeriği →</Link><Link href="/sile-gozleme">Şile gözleme çeşitlerini karşılaştır →</Link><Link href="/sile-restoran">Izgara ve restoran rehberi →</Link><Link href="/ulasim">Yol tarifini aç →</Link></nav></div>
 
       {/* Menu Content */}
       <div className="w-full relative z-10 flex flex-col items-center">

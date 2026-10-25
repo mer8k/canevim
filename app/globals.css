@@ -2,8 +2,8 @@
 
 @theme {
   --font-serif: "Playfair Display", serif;
-  --font-sans: "Inter", sans-serif;
-  --font-display: "Jost", sans-serif;
+  --font-sans: Arial, "Helvetica Neue", sans-serif;
+  --font-display: "CanEvim Wordmark", sans-serif;
 }
 
 html, body {
@@ -11,3 +11,6 @@ html, body {
   padding: 0;
   box-sizing: border-box;
 }
+
+img { max-width: 100%; }
+.site-overlay-nav>a{font-family:var(--font-serif),Georgia,serif;font-size:clamp(27px,4vw,42px);line-height:1.3}

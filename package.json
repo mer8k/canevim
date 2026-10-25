@@ -4,8 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "predev": "node scripts/build-growth.mjs && node scripts/build-home.cjs",
+    "prebuild": "node scripts/build-growth.mjs && node scripts/build-home.cjs && node scripts/update-content-dates.mjs",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test:seo": "node scripts/seo-infra-check.mjs",
+    "test:growth": "node scripts/test-growth.mjs",
+    "test:http": "node scripts/test-http.mjs",
+    "test:browser": "node scripts/test-browser.mjs",
+    "report:growth": "node scripts/generate-growth-report.mjs",
+    "test:content-dates": "node scripts/update-content-dates.mjs --check"
   },
   "dependencies": {
     "next": "16.3.6",
@@ -15,5 +23,8 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "tailwindcss": "^4"
+  },
+  "engines": {
+    "node": "24.x"
   }
 }

@@ -1,8 +1,12 @@
-import { SEO_CONSOLIDATION_REDIRECTS } from "./app/seo-consolidation.mjs";
+import { SEO_CONSOLIDATION_REDIRECTS, LEGACY_HTML_REDIRECTS } from "./app/seo-consolidation.mjs";
+import { CANONICAL_ORIGIN } from "./app/seo-routes.mjs";
 import { fileURLToPath } from "node:url";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  trailingSlash: false,
+  // Normalize legacy paths, their slash form and their host in one redirect.
+  skipTrailingSlashRedirect: true,
   experimental: {
     inlineCss: true,
   },
@@ -22,18 +26,21 @@ const nextConfig = {
     }];
   },
   async redirects() {
-    return [...SEO_CONSOLIDATION_REDIRECTS.map((redirect) => ({
-      ...redirect,
-      permanent: true,
-    })), {
-      source: '/:lang(en|ar|fa)/sile/:slug',
-      destination: '/',
-      permanent: true,
-    }, {
-      source: '/:lang(en|ar|fa)/lezzetler/:slug',
-      destination: '/menu',
-      permanent: true,
-    }];
+    const legacy = [...SEO_CONSOLIDATION_REDIRECTS, ...LEGACY_HTML_REDIRECTS];
+    const localized = SEO_CONSOLIDATION_REDIRECTS.filter(({ source }) => /^\/(sile|lezzetler)\//.test(source)).map(({ source, destination }) => ({ source: `/:lang(en|ar|fa)${source}`, destination }));
+    const targets = [...legacy, ...localized,
+      { source: "/:lang(en|ar|fa)/sile/:slug", destination: "/" },
+      { source: "/:lang(en|ar|fa)/lezzetler/:slug", destination: "/menu" },
+    ];
+    return [
+      ...targets.flatMap(({ source, destination }) => [source, `${source}/`].map((variant) => ({
+        source: variant,
+        destination: `${CANONICAL_ORIGIN}${destination}`,
+        permanent: true,
+      }))),
+      { source: "/:path+/", destination: `${CANONICAL_ORIGIN}/:path+`, permanent: true },
+      { source: "/:path*", has: [{ type: "host", value: "canevimsile\\.com" }], destination: `${CANONICAL_ORIGIN}/:path*`, permanent: true },
+    ];
   },
 };
 

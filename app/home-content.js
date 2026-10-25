@@ -1,15 +1,26 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from "./components/StaticImage";
+import Link from "./components/SiteLink";
 import FadeIn from "./components/FadeIn";
 import ReservationForm from "./components/ReservationForm";
+import LazyInteractive from "./components/LazyInteractive";
+import { QuickGuide, ExperienceCards, HomeGuide, IntentMatrix, FullMenuSummary } from "./components/GrowthContent";
+import { buildPageGraph, safeJsonLd } from "./growth-schema";
 
-export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
+export default function HomeContent() {
   return (
-    <main className="min-h-screen relative w-full flex flex-col justify-between selection:bg-white/30">
+    <main id="main-content" className="min-h-screen relative w-full selection:bg-white/30">
+      <link rel="preload" as="image" href="/performance/hero/home-mobile-480.avif" type="image/avif" media="(max-width: 480px)" fetchPriority="high" />
+      <link rel="preload" as="image" href="/performance/hero/home-mobile-750.avif" type="image/avif" media="(min-width: 481px) and (max-width: 767px)" fetchPriority="high" />
+      <link rel="preload" as="image" href="/performance/hero/home-desktop-1280.webp" media="(min-width: 768px) and (max-width: 1439px)" fetchPriority="high" />
+      <link rel="preload" as="image" href="/performance/hero/home-desktop-1920.webp" media="(min-width: 1440px)" fetchPriority="high" />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(buildPageGraph({ path: "/", title: "Şile Kahvaltı, Serpme Köy Kahvaltısı ve Doğa Restoranı", description: "Can Evim Şile Üvezli'de kahvaltı, gözleme, restoran, masa planlayıcı ve ulaşım bilgileri." })) }} />
+      <section className="home-hero relative isolate h-[90vh] overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-[-1] w-full h-[90vh]">
         <div className="relative w-full h-full">
           <picture>
+            <source type="image/avif" media="(max-width: 480px)" srcSet="/performance/hero/home-mobile-480.avif" />
+            <source type="image/avif" media="(max-width: 767px)" srcSet="/performance/hero/home-mobile-750.avif" />
             <source media="(max-width: 480px)" srcSet="/performance/hero/home-mobile-480.webp" />
             <source media="(min-width: 1440px)" srcSet="/performance/hero/home-desktop-1920.webp" />
             <source media="(min-width: 768px)" srcSet="/performance/hero/home-desktop-1280.webp" />
@@ -31,12 +42,13 @@ export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
 
       {/* Hero Content (Bottom Left) */}
       <div className="h-[90vh] flex flex-col justify-end px-8 pb-16 md:px-16 md:pb-24 w-full text-white relative">
-        <h1 className="text-5xl md:text-7xl lg:text-[84px] font-serif mb-6 drop-shadow-md font-normal tracking-tight max-w-5xl">
-          {heroTitle}
+        <h1 className="text-[36px] md:text-6xl lg:text-[72px] font-serif mb-6 drop-shadow-md font-normal tracking-tight max-w-5xl leading-[1.15]">
+          Şile Kahvaltı, Serpme Köy Kahvaltısı ve Doğa Restoranı
         </h1>
+        <p className="text-sm md:text-lg leading-relaxed max-w-xl mb-6 drop-shadow-md">Üvezli'de bahçe masası, sıcak gözleme ve birlikte geçirilen uzun bir sabah.</p>
         
         <div className="relative w-fit">
-          <Link href="/menu" className="group inline-flex items-center gap-4 border border-white/40 px-6 py-3 md:px-8 md:py-[18px] w-fit hover:bg-white/10 hover:border-white/60 transition-all duration-500 relative overflow-hidden backdrop-blur-sm">
+          <Link prefetch={false} href="/menu" className="group inline-flex items-center gap-4 border border-white/40 px-6 py-3 md:px-8 md:py-[18px] w-fit hover:bg-white/10 hover:border-white/60 transition-all duration-500 relative overflow-hidden backdrop-blur-sm">
             <span className="text-[17px] md:text-[20px] font-serif tracking-[0.08em] group-hover:pr-2 transition-all duration-300">Menüye Eriş</span>
             <span className="text-xl font-sans font-light -mt-1 group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
           </Link>
@@ -51,6 +63,9 @@ export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
           </div>
         </div>
       </div>
+      </section>
+      <QuickGuide home />
+      <ExperienceCards />
 
       {/* Two Column Image Showcase Section */}
       <div className="bg-[#f7f6f2] w-full pb-16 pt-12 md:pt-16">
@@ -60,7 +75,7 @@ export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
           <FadeIn delay={0.1}>
             <div className="flex flex-col h-full gap-8">
               <div className="relative w-full aspect-[4/3] overflow-hidden">
-                <Image 
+                <Image loading="lazy" decoding="async" fetchPriority="low"
                   src="/performance/content/section2-1200.webp"
                   alt="Can Evim Şile Bahçe"
                   fill
@@ -73,13 +88,13 @@ export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
                 <p className="text-[22px] md:text-[26px] lg:text-[30px] font-serif leading-snug text-[#222] mb-6 max-w-lg">
                   Şehrin gürültüsünden uzak, huzur dolu bahçemizde sevdiklerinizle özel anlarınızı taçlandırın.
                 </p>
-                <Link href="/menu" className="text-[13px] font-sans font-medium tracking-wide text-[#444] border-b border-[#444] hover:text-black hover:border-black transition-colors pb-1 inline-block">
+                <Link prefetch={false} href="/menu" className="text-[13px] font-sans font-medium tracking-wide text-[#444] border-b border-[#444] hover:text-black hover:border-black transition-colors pb-1 inline-block">
                   Mekanımızı Keşfedin
                 </Link>
               </div>
               {/* Fill remaining space with kesinkullan3 */}
               <div className="relative w-full min-h-[200px] flex-grow overflow-hidden mt-4">
-                <Image 
+                <Image loading="lazy" decoding="async" fetchPriority="low"
                   src="/images/kesinkullan3.jpeg"
                   alt="Can Evim Detay"
                   fill
@@ -95,7 +110,7 @@ export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
           <FadeIn delay={0.3}>
           <div className="flex flex-col h-full gap-8">
             <div className="relative w-full aspect-square md:aspect-[4/5] overflow-hidden">
-              <Image 
+              <Image loading="lazy" decoding="async" fetchPriority="low"
                 src="/images/serpme.jpeg"
                 alt="Can Evim Şile Serpme Kahvaltı"
                 fill
@@ -108,7 +123,7 @@ export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
               <p className="text-[22px] md:text-[26px] lg:text-[30px] font-serif leading-snug text-[#222] mb-6 max-w-lg">
                 Şile köy kahvaltısı geleneğini serpme kahvaltı, sıcak gözleme ve yöresel lezzetlerle Üvezli'deki doğa içindeki bahçemizde yaşayın.
               </p>
-              <Link href="/menu" className="text-[13px] font-sans font-medium tracking-wide text-[#444] border-b border-[#444] hover:text-black hover:border-black transition-colors pb-1 inline-block">
+              <Link prefetch={false} href="/menu" className="text-[13px] font-sans font-medium tracking-wide text-[#444] border-b border-[#444] hover:text-black hover:border-black transition-colors pb-1 inline-block">
                 Lezzetlerimizi İncele
               </Link>
             </div>
@@ -118,11 +133,17 @@ export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
         </div>
       </div>
 
+      <HomeGuide />
+      <LazyInteractive />
+      <IntentMatrix />
+      <LazyInteractive id="rota-matrisi" module="routes" />
+      <FullMenuSummary />
+
       {/* Editorial About Us Section */}
       <div id="hakkimizda" className="w-full bg-[#fcfaf7] flex flex-col md:flex-row border-b border-[#e5e3dc] items-stretch">
         {/* Left Image (Edge to edge on left) */}
         <div className="w-full md:w-1/2 relative h-[50vh] md:h-auto min-h-[500px] lg:min-h-[700px]">
-          <Image 
+          <Image loading="lazy" decoding="async" fetchPriority="low"
             src="/performance/content/about-1600.webp"
             alt="Can Evim Şile Doğaya Dönüş"
             fill
@@ -163,13 +184,13 @@ export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
         <FadeIn>
           <div className="w-full flex gap-1 md:gap-2 px-1 md:px-2">
             <div className="w-1/3 relative aspect-[3/4] md:aspect-[9/16] overflow-hidden">
-              <Image src="/performance/content/gallery-dikey1-1200.webp" alt="Can Evim bahçesinden masa detayı" fill sizes="(min-width: 1600px) 528px, (min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
+              <Image loading="lazy" decoding="async" fetchPriority="low" src="/performance/content/gallery-dikey1-1200.webp" alt="Can Evim bahçesinden masa detayı" fill sizes="(min-width: 1600px) 528px, (min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
             <div className="w-1/3 relative aspect-[3/4] md:aspect-[9/16] overflow-hidden">
-              <Image src="/images/galeri/dikey2.jpeg" alt="Can Evim Şile bahçe atmosferi" fill sizes="(min-width: 1600px) 528px, (min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
+              <Image loading="lazy" decoding="async" fetchPriority="low" src="/images/galeri/dikey2.jpeg" alt="Can Evim Şile bahçe atmosferi" fill sizes="(min-width: 1600px) 528px, (min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
             <div className="w-1/3 relative aspect-[3/4] md:aspect-[9/16] overflow-hidden">
-              <Image src="/performance/content/gallery-dikey3-1200.webp" alt="Can Evim doğa içindeki oturma alanı" fill sizes="(min-width: 1600px) 528px, (min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
+              <Image loading="lazy" decoding="async" fetchPriority="low" src="/performance/content/gallery-dikey3-1200.webp" alt="Can Evim doğa içindeki oturma alanı" fill sizes="(min-width: 1600px) 528px, (min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
           </div>
         </FadeIn>
@@ -178,13 +199,13 @@ export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
         <FadeIn delay={0.2}>
           <div className="w-full grid grid-cols-3 gap-1 md:gap-2 px-1 md:px-2">
             <div className="w-full relative aspect-square overflow-hidden">
-              <Image src="/images/galeri/kare1.jpeg" alt="Can Evim Şile mekan detayı" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
+              <Image loading="lazy" decoding="async" fetchPriority="low" src="/images/galeri/kare1.jpeg" alt="Can Evim Şile mekan detayı" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
             <div className="w-full relative aspect-square overflow-hidden">
-              <Image src="/images/galeri/kare2.jpeg" alt="Can Evim kahvaltı mekanı" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
+              <Image loading="lazy" decoding="async" fetchPriority="low" src="/images/galeri/kare2.jpeg" alt="Can Evim kahvaltı mekanı" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
             <div className="w-full relative aspect-square overflow-hidden">
-              <Image src="/images/galeri/kare4.jpeg" alt="Can Evim Üvezli bahçesi" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
+              <Image loading="lazy" decoding="async" fetchPriority="low" src="/images/galeri/kare4.jpeg" alt="Can Evim Üvezli bahçesi" fill sizes="(min-width: 768px) 33vw, 32vw" quality={55} className="object-cover" />
             </div>
           </div>
         </FadeIn>
@@ -199,7 +220,7 @@ export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
             {/* Top Image: Full Width Rectangle */}
             <FadeIn>
               <div className="relative w-full h-[40vh] md:h-[450px] lg:h-[550px] max-w-[1000px] mx-auto overflow-hidden rounded-xl shadow-sm border border-[#e5e3dc]">
-                <Image 
+                <Image loading="lazy" decoding="async" fetchPriority="low"
                   src="/images/kesinkullan2.jpeg"
                   alt="Can Evim Yorumlar"
                   fill
@@ -214,13 +235,7 @@ export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
             <FadeIn delay={0.1}>
               <div className="flex flex-col items-center text-center">
                 <h2 className="text-[32px] md:text-[40px] font-serif text-[#222] mb-4">Misafir Yorumları</h2>
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-4xl font-sans font-medium tracking-tighter text-[#222]">5,0</span>
-                  <div className="flex text-[#c39b53] text-2xl">
-                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                  </div>
-                </div>
-                <p className="text-[12px] font-sans tracking-[0.15em] text-[#666] uppercase border-b border-[#666] pb-1">Google'da 88 Değerlendirme</p>
+                <a href="https://www.google.com/maps?cid=2837137820972948771" target="_blank" rel="noopener noreferrer" className="text-[12px] font-sans tracking-[0.1em] text-[#444] uppercase border-b border-[#444] pb-2 leading-relaxed">Google Haritalar'da güncel değerlendirmeleri inceleyin ↗</a>
               </div>
             </FadeIn>
 
@@ -307,7 +322,7 @@ export default function Home({ heroTitle = "Şile'de Serpme Kahvaltı" }) {
       <div id="rezervasyon" className="relative w-full text-[#333] border-t border-white/20">
         {/* Background Image with Fixed Attachment for Parallax Effect */}
         <div className="absolute inset-0 z-[-2]">
-          <Image 
+          <Image loading="lazy" decoding="async" fetchPriority="low"
             src="/performance/hero/home-desktop-1920.webp"
             alt=""
             fill

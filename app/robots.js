@@ -1,9 +1,9 @@
-const BASE_URL = "https://www.canevimsile.com";
+import { CANONICAL_ORIGIN } from "./seo-routes.mjs";
 
 export default function robots() {
   return {
     rules: { userAgent: "*", allow: "/" },
-    sitemap: `${BASE_URL}/sitemap.xml`,
-    host: BASE_URL,
+    sitemap: `${CANONICAL_ORIGIN}/sitemap.xml`,
+    host: CANONICAL_ORIGIN,
   };
 }

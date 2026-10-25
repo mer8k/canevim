@@ -15,7 +15,11 @@ export default function ReservationForm() {
     event.preventDefault();
     if (!name || !date) return;
 
-    const message = `Merhaba Can Evim, ben ${name}. ${formatDate(date)} tarihi için rezervasyon yaptırmak istiyorum.`;
+    const message = `Merhaba Can Evim, ben ${name}. ${formatDate(date)} tarihi için masa uygunluğunu sormak istiyorum. Rezervasyonun işletme onayıyla kesinleştiğini biliyorum.`;
+    window.CanEvimGrowth?.track("whatsapp_click", {
+      placement: "reservation_form",
+      action: "reservation_request",
+    });
     window.open(
       `https://wa.me/905374975062?text=${encodeURIComponent(message)}`,
       "_blank",
@@ -24,8 +28,8 @@ export default function ReservationForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row w-full lg:w-auto gap-8 items-start sm:items-end">
-      <div className="flex flex-col sm:flex-row gap-8 w-full lg:w-auto">
+    <form onSubmit={handleSubmit} data-growth-location="reservation_form" className="flex flex-col w-full min-w-0 max-w-2xl gap-6 items-start">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full min-w-0">
         <label className="sr-only" htmlFor="reservation_name">Ad soyad</label>
         <input
           id="reservation_name"
@@ -35,7 +39,7 @@ export default function ReservationForm() {
           placeholder="AD SOYAD"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="bg-transparent border-b border-[#8a8883] pb-2 w-full sm:w-56 outline-none font-sans text-[11px] tracking-[0.15em] placeholder:text-[#555] focus:border-[#222] text-[#222] transition-colors"
+          className="bg-transparent border-b border-[#8a8883] pb-2 w-full min-w-0 outline-none font-sans text-[11px] tracking-[0.15em] placeholder:text-[#555] focus:border-[#222] text-[#222] transition-colors"
           required
         />
         <label className="sr-only" htmlFor="reservation_date">Rezervasyon tarihi</label>
@@ -45,12 +49,12 @@ export default function ReservationForm() {
           type="date"
           value={date}
           onChange={(event) => setDate(event.target.value)}
-          className="bg-transparent border-b border-[#8a8883] pb-2 w-full sm:w-56 outline-none font-sans text-[11px] tracking-[0.15em] focus:border-[#222] text-[#222] transition-colors cursor-pointer"
+          className="bg-transparent border-b border-[#8a8883] pb-2 w-full min-w-0 outline-none font-sans text-[11px] tracking-[0.15em] focus:border-[#222] text-[#222] transition-colors cursor-pointer"
           required
         />
       </div>
 
-      <div className="flex items-center gap-3 sm:mb-2 whitespace-nowrap">
+      <div className="flex items-center gap-3 min-h-11">
         <input
           type="checkbox"
           id="contact_permission"
@@ -58,7 +62,7 @@ export default function ReservationForm() {
           className="h-5 w-5 accent-[#4d5b4a] cursor-pointer"
         />
         <label htmlFor="contact_permission" className="text-[10px] font-sans tracking-[0.15em] text-[#444] cursor-pointer mt-0.5">
-          İLETİŞİM İZNİ
+          WHATSAPP İLETİŞİMİ
         </label>
       </div>
 

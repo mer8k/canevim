@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "./components/SiteLink";
 import { useState, useEffect, useRef } from "react";
 
 const MAPS_URL = "https://www.google.com/maps?cid=2837137820972948771";
@@ -7,6 +7,7 @@ const MAPS_URL = "https://www.google.com/maps?cid=2837137820972948771";
 export default function Header() {
   const [visible, setVisible] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -18,6 +19,7 @@ export default function Header() {
       }
       
       const currentScrollY = window.scrollY;
+      setIsScrolled(currentScrollY > 30);
       
       // If we are at the top, always show
       if (currentScrollY < 10) {
@@ -37,28 +39,37 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    function handleKey(event) { if (event.key === "Escape") { setIsMenuOpen(false); document.getElementById("menu-toggle")?.focus(); } }
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKey);
+    return () => { document.body.style.overflow = original; window.removeEventListener("keydown", handleKey); };
+  }, [isMenuOpen]);
+
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 transition-transform duration-500 bg-transparent text-white ${visible ? 'translate-y-0' : '-translate-y-full'}`}>
-      <div className="w-full px-8 py-8 md:px-16 flex justify-between items-center">
+    <header className={`fixed top-0 left-0 w-full z-50 transition-transform duration-500 text-white ${isScrolled || isMenuOpen ? 'bg-[#213326]' : 'bg-gradient-to-b from-black/40 to-transparent'} ${visible ? 'translate-y-0' : '-translate-y-full'}`}>
+      <div className="w-full px-5 py-5 md:px-12 md:py-6 flex justify-between items-center relative z-50">
         {/* Logo */}
-        <Link href="/" className="text-4xl md:text-5xl font-display font-light tracking-normal flex-1">
+        <Link prefetch={false} href="/" className="text-3xl md:text-5xl font-display font-light tracking-normal flex-1 min-w-0">
           canevim
         </Link>
         
         {/* Center link (Rezervasyon) */}
         <div className="hidden md:flex flex-1 justify-center">
-          <Link href="/#rezervasyon" className="text-xl md:text-[22px] font-serif tracking-wide hover:text-white/70 transition-colors">
+          <Link prefetch={false} href="/#rezervasyon" className="text-xl md:text-[22px] font-serif tracking-wide hover:text-white/70 transition-colors">
             Rezervasyon
           </Link>
         </div>
         
         {/* Right Section */}
-        <div className="flex items-center justify-end flex-1 gap-4 md:gap-8">
+        <div className="flex items-center justify-end flex-none md:flex-1 gap-3 md:gap-8">
           
           {/* Social Icons */}
-          <div className="flex items-center gap-3 md:gap-5 border-r border-white/30 pr-4 md:pr-8">
+          <div className="flex items-center gap-3 md:gap-5 border-r border-white/30 pr-3 md:pr-8">
             {/* Instagram */}
-            <a href="https://instagram.com/canevimsile" target="_blank" rel="noreferrer" aria-label="Can Evim Instagram hesabı" className="text-white hover:text-white/70 transition-transform hover:scale-110">
+            <a href="https://instagram.com/canevimsile" target="_blank" rel="noreferrer" aria-label="Can Evim Instagram hesabı" className="inline-flex items-center justify-center w-6 h-6 shrink-0 text-white hover:text-white/70 transition-transform hover:scale-110">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="md:w-5 md:h-5">
                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                 <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -66,13 +77,13 @@ export default function Header() {
               </svg>
             </a>
             {/* WhatsApp */}
-            <a href="https://wa.me/905374975062" target="_blank" rel="noreferrer" aria-label="Can Evim WhatsApp hattı" className="text-white hover:text-white/70 transition-transform hover:scale-110">
+            <a href="https://wa.me/905374975062" target="_blank" rel="noreferrer" aria-label="Can Evim WhatsApp hattı" className="inline-flex items-center justify-center w-6 h-6 shrink-0 text-white hover:text-white/70 transition-transform hover:scale-110">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="md:w-5 md:h-5">
                 <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
               </svg>
             </a>
             {/* Maps */}
-            <a href={MAPS_URL} target="_blank" rel="noreferrer" aria-label="Can Evim Google Haritalar konumu" className="text-white hover:text-white/70 transition-transform hover:scale-110">
+            <a href={MAPS_URL} target="_blank" rel="noreferrer" aria-label="Can Evim Google Haritalar konumu" className="inline-flex items-center justify-center w-6 h-6 shrink-0 text-white hover:text-white/70 transition-transform hover:scale-110">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="md:w-5 md:h-5">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
@@ -81,12 +92,13 @@ export default function Header() {
           </div>
           
           <button 
+            id="menu-toggle"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             type="button"
             aria-label={isMenuOpen ? "Menüyü kapat" : "Menüyü aç"}
             aria-expanded={isMenuOpen}
             aria-controls="site-menu"
-            className="flex flex-col justify-center items-center gap-[5px] w-8 h-8 hover:opacity-70 transition-opacity cursor-pointer z-[60]"
+            className="flex flex-col justify-center items-center gap-[5px] w-11 h-11 shrink-0 hover:opacity-70 transition-opacity cursor-pointer z-[60]"
           >
             <span className={`w-7 h-[1.5px] bg-white block transition-transform duration-300 ${isMenuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`}></span>
             <span className={`w-7 h-[1.5px] bg-white block transition-opacity duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}></span>
@@ -99,6 +111,7 @@ export default function Header() {
       <div 
         id="site-menu"
         aria-hidden={!isMenuOpen}
+        inert={!isMenuOpen}
         className={`fixed inset-0 w-full h-[100dvh] transition-all duration-700 ease-in-out z-[40] flex flex-col justify-between pt-24 pb-8 overflow-y-auto ${
           isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
@@ -107,20 +120,24 @@ export default function Header() {
         <div className="absolute inset-0 bg-[#161615] z-0"></div>
         
         {/* Menu Links */}
-        <nav className="flex flex-col items-center justify-center flex-grow gap-8 md:gap-16 text-white/90 relative z-10 py-8 min-h-[300px]">
-          <Link href="/" onClick={() => setIsMenuOpen(false)} className="group text-[40px] md:text-[72px] font-serif font-normal tracking-wide hover:text-[#c39b53] transition-colors flex items-center gap-4 md:gap-6">
+        <nav className="site-overlay-nav flex flex-col items-center justify-center flex-grow gap-5 md:gap-6 text-white/90 relative z-10 py-8 min-h-[300px]">
+          <Link prefetch={false} href="/" onClick={() => setIsMenuOpen(false)} className="group text-[40px] md:text-[72px] font-serif font-normal tracking-wide hover:text-[#c39b53] transition-colors flex items-center gap-4 md:gap-6">
             <span className="text-[12px] md:text-[18px] font-sans tracking-[0.2em] text-white/40 group-hover:text-[#c39b53]/60 transition-colors">01</span>
             Anasayfa
           </Link>
-          <Link href="/menu" onClick={() => setIsMenuOpen(false)} className="group text-[40px] md:text-[72px] font-serif font-normal tracking-wide hover:text-[#c39b53] transition-colors flex items-center gap-4 md:gap-6">
+          <Link prefetch={false} href="/menu" onClick={() => setIsMenuOpen(false)} className="group text-[40px] md:text-[72px] font-serif font-normal tracking-wide hover:text-[#c39b53] transition-colors flex items-center gap-4 md:gap-6">
             <span className="text-[12px] md:text-[18px] font-sans tracking-[0.2em] text-white/40 group-hover:text-[#c39b53]/60 transition-colors">02</span>
             Menü
           </Link>
-          <Link href="/blog" onClick={() => setIsMenuOpen(false)} className="group text-[40px] md:text-[72px] font-serif font-normal tracking-wide hover:text-[#c39b53] transition-colors flex items-center gap-4 md:gap-6">
+          <Link prefetch={false} href="/sile-serpme-kahvalti" onClick={() => setIsMenuOpen(false)} className="group text-[40px] md:text-[72px] font-serif font-normal tracking-wide hover:text-[#c39b53] transition-colors flex items-center gap-4 md:gap-6">
             <span className="text-[12px] md:text-[18px] font-sans tracking-[0.2em] text-white/40 group-hover:text-[#c39b53]/60 transition-colors">03</span>
-            Rehber
+            Serpme Kahvaltı
           </Link>
-          <Link href="/#rezervasyon" onClick={() => setIsMenuOpen(false)} className="group text-[40px] md:text-[72px] font-serif font-normal tracking-wide hover:text-[#c39b53] transition-colors flex items-center gap-4 md:gap-6">
+          <Link prefetch={false} href="/sile-gozleme" onClick={() => setIsMenuOpen(false)}>Gözleme</Link>
+          <Link prefetch={false} href="/sile-doga-kahvaltisi" onClick={() => setIsMenuOpen(false)}>Doğa &amp; Aile</Link>
+          <Link prefetch={false} href="/sile-restoran" onClick={() => setIsMenuOpen(false)}>Restoran</Link>
+          <Link prefetch={false} href="/ulasim" onClick={() => setIsMenuOpen(false)}>Ulaşım</Link>
+          <Link prefetch={false} href="/#rezervasyon" onClick={() => setIsMenuOpen(false)} className="group text-[40px] md:text-[72px] font-serif font-normal tracking-wide hover:text-[#c39b53] transition-colors flex items-center gap-4 md:gap-6">
             <span className="text-[12px] md:text-[18px] font-sans tracking-[0.2em] text-white/40 group-hover:text-[#c39b53]/60 transition-colors">04</span>
             Rezervasyon
           </Link>

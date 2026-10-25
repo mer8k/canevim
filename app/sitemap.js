@@ -1,8 +1,11 @@
-import { BASE_URL } from "./seo-data";
+import { CANONICAL_ORIGIN, CONTENT_ROUTES } from "./seo-routes.mjs";
+import contentDates from "./content-dates.json";
 
 export default function sitemap() {
-  return [
-    { url: `${BASE_URL}/`, changeFrequency: "weekly", priority: 1 },
-    { url: `${BASE_URL}/menu`, changeFrequency: "weekly", priority: 0.9 },
-  ];
+  return CONTENT_ROUTES.map(({ path, priority }) => ({
+    url: `${CANONICAL_ORIGIN}${path}`,
+    ...(contentDates[path]?.lastModified ? { lastModified: contentDates[path].lastModified } : {}),
+    changeFrequency: "weekly",
+    priority,
+  }));
 }

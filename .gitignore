@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.audit/
 /out/
 
 # production
@@ -42,3 +43,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# Static landing output is regenerated before every build
+/app/generated/

@@ -1,0 +1,62 @@
+/* Keep long-form HTML available to search, find-in-page, focus and anchors.
+   Only offscreen rendering is deferred; the hero and quick guide stay eager. */
+@supports (content-visibility: auto) {
+  #main-content > :is(.growth-experiences, .growth-home-guide, .growth-intents, .ce-planner, .route-matrix, .growth-menu-summary),
+  #main-content:has(> .growth-home-guide) > div:not(.absolute):not(:has(h1)),
+  .growth-footer {
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 850px;
+  }
+
+  #main-content > .growth-home-guide {
+    contain-intrinsic-block-size: auto 2600px;
+  }
+
+  #main-content > .growth-intents {
+    contain-intrinsic-block-size: auto 1700px;
+  }
+
+  #main-content > .route-matrix {
+    contain-intrinsic-block-size: auto 550px;
+  }
+
+  #main-content > .growth-menu-summary {
+    contain-intrinsic-block-size: auto 200px;
+  }
+
+  /* Within article grids, rows can render as the reader reaches them. */
+  .growth-article-grid > section,
+  .route-matrix__grid > article {
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 420px;
+  }
+
+  /* A deep link receives full layout immediately, including nested targets. */
+  #main-content :is(section, article, div):target,
+  #main-content :is(section, article, div):has(:target),
+  #main-content :is(section, article, div):focus-within,
+  .growth-footer:focus-within {
+    content-visibility: visible;
+  }
+
+  /* Closed navigation is already inert/aria-hidden. Avoid hidden menu layout. */
+  #site-menu[aria-hidden="true"] {
+    content-visibility: hidden;
+  }
+
+  @media (min-width: 768px) {
+    #main-content > .growth-home-guide { contain-intrinsic-block-size: auto 1500px; }
+    #main-content > .growth-intents { contain-intrinsic-block-size: auto 1300px; }
+  }
+
+  @media print {
+    #main-content > *,
+    .growth-article-grid > section,
+    .route-matrix__grid > article,
+    .growth-footer {
+      content-visibility: visible;
+      contain-intrinsic-block-size: none;
+    }
+    #site-menu[aria-hidden="true"] { display: none; }
+  }
+}

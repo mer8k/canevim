@@ -9,7 +9,7 @@ import { buildPageGraph, safeJsonLd } from "./growth-schema";
 export default function HomeContent() {
   return (
     <main id="main-content" className="min-h-screen relative w-full selection:bg-white/30">
-      <link rel="preload" as="image" href="/performance/hero/home-mobile-480.avif" type="image/avif" media="(max-width: 480px)" fetchPriority="high" />
+      <link rel="preload" as="image" href="/performance/hero/home-mobile-480-fast.webp" type="image/webp" media="(max-width: 480px)" fetchPriority="high" />
       <link rel="preload" as="image" href="/performance/hero/home-mobile-750.avif" type="image/avif" media="(min-width: 481px) and (max-width: 767px)" fetchPriority="high" />
       <link rel="preload" as="image" href="/performance/hero/home-desktop-1280.webp" media="(min-width: 768px) and (max-width: 1439px)" fetchPriority="high" />
       <link rel="preload" as="image" href="/performance/hero/home-desktop-1920.webp" media="(min-width: 1440px)" fetchPriority="high" />
@@ -19,7 +19,7 @@ export default function HomeContent() {
       <div className="absolute inset-0 z-[-1] w-full h-[90vh]">
         <div className="relative w-full h-full">
           <picture>
-            <source type="image/avif" media="(max-width: 480px)" srcSet="/performance/hero/home-mobile-480.avif" />
+            <source type="image/webp" media="(max-width: 480px)" srcSet="/performance/hero/home-mobile-480-fast.webp" />
             <source type="image/avif" media="(max-width: 767px)" srcSet="/performance/hero/home-mobile-750.avif" />
             <source media="(max-width: 480px)" srcSet="/performance/hero/home-mobile-480.webp" />
             <source media="(min-width: 1440px)" srcSet="/performance/hero/home-desktop-1920.webp" />
@@ -32,7 +32,7 @@ export default function HomeContent() {
               sizes="100vw"
               loading="eager"
               fetchPriority="high"
-              decoding="sync"
+              decoding="async"
               className="absolute inset-0 h-full w-full object-cover object-center"
             />
           </picture>

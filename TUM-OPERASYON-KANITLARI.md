@@ -8,13 +8,13 @@ Bu build için canlı yayın henüz doğrulanmadı; yerel çalışma ve yayın s
 
 1. İlk başlangıç: **2 sayfa, 348.150 byte**. .audit/baseline.json ve baseline-html.json.
 2. İkinci tur başlangıcı / ilk tur sonu: **7 sayfa, 2.211.399 byte**. .audit/round2/baseline.json ve before-final-metrics.json. Bu, ilk başlangıçla aynı veri değildir.
-3. Güncel kapsam: **17 kanonik URL, 14 bağımsız makale**. Derlenmiş 17/17 dosya; tam HTML toplamı 4.391.806 byte. İlk başlangıca oran 12.61 kat; ikinci tur başlangıcına oran 1.99 kat.
+3. Güncel kapsam: **17 kanonik URL, 14 bağımsız makale**. Derlenmiş 17/17 dosya; tam HTML toplamı 4.391.817 byte. İlk başlangıca oran 12.61 kat; ikinci tur başlangıcına oran 1.99 kat.
 
 HTML toplamı yeni sayfaları içerir; tek sayfa veya sıkıştırılmış ağ transferi büyümesi değildir. Rapor/.audit/404/noindex arşiv toplamdan çıkarılır.
 
 | Kanonik URL | Derlenmiş HTML byte | Görünür toplam kelime | Ana makale kelimesi |
 |---|---:|---:|---:|
-| / | 98.356 | 1.715 | Bekleniyor |
+| / | 98.367 | 1.715 | Bekleniyor |
 | /menu | 256.237 | 474 | Bekleniyor |
 | /sile-serpme-kahvalti | 264.426 | 1.446 | 1.049 |
 | /sile-gozleme | 261.325 | 1.436 | 1.038 |
@@ -43,7 +43,7 @@ HTML toplamı yeni sayfaları içerir; tek sayfa veya sıkıştırılmış ağ t
 | En iyi uygulamalar | 100 | 100 | 100 |
 | SEO | 100 | 100 | 100 |
 
-Final LCP 2.11 sn; TBT 136 ms; CLS 0.0000. 98–100 performans hedefi bu koşuda sağlandı. Kanıt: .audit/round2/lighthouse-final-summary.json. Mobil laboratuvar koşusu gerçek kullanıcı Core Web Vitals veya GSC sonucu değildir.
+Final LCP 2.03 sn; TBT 100 ms; CLS 0.0000. 98–100 performans hedefi bu koşuda sağlandı. Kanıt: .audit/round2/lighthouse-final-summary.json. Mobil laboratuvar koşusu gerçek kullanıcı Core Web Vitals veya GSC sonucu değildir.
 
 Canlı Lighthouse ölçümü bu yayın için henüz doğrulanmadı; yerel ölçüm canlı ölçüm olarak sunulmaz.
 
@@ -153,7 +153,7 @@ Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve bas
 | app/components/RouteMatrix.js | 0 | 2883 | 531054cb0bf7bed1ca9d562d9991eb875f3de8feefa4190d1936d60a741800f6 |
 | app/components/SiteLink.js | 0 | 361 | 32d94124fc58e6e37b9c53af866214c7dc0db954d2788754551a0fed9a8a4e4d |
 | app/components/StaticImage.js | 0 | 326 | 82ac052212edb221edf39724d51a74d90a1f64419e1e60fd4e2b4c7b03fceb81 |
-| app/content-dates.json | 0 | 24409 | 57c9dab628d397f82c300fd7546605821691494ac808f86ad22c511c3480db8a |
+| app/content-dates.json | 0 | 24414 | 7afcb85a6caed1076effde73c69fd8f6348a5f61ed432d7af3df1705e906e081 |
 | app/expanded-experiences.js | 0 | 93903 | e2a77e1f288e5d188cc8e2c225f9a8bc3b54e610e90dc2c916d444f076fa4eaf |
 | app/globals.css | 229 | 398 | 53cdc71f8615fd4cc6c969913bdb748262bd1e945aeeab1cfd230b2daf3cad38 |
 | app/growth-content.css | 0 | 9894 | 8ca17bdd97c1644c48aa492d868041b6c2b5c526e353b9c9dbe8d71b602c2524 |
@@ -163,7 +163,7 @@ Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve bas
 | app/growth-routes.css | 0 | 3424 | 57e24647fc84cde8598c5982f1536fe185759cd84ef2f29349a737f97f8b0aa0 |
 | app/growth-routes.js | 0 | 14919 | 0836f521dfbb18df80cf2892650e9238db43adf6805df282347f73f0b83e2f69 |
 | app/growth-schema.js | 0 | 7425 | 5815211e83048670fc96aa20179f83f99be9cd18012d8a505374e3273fb2a586 |
-| app/home-content.js | 0 | 25250 | d2ca52652e9f4c19808398f167e305544a963dfbe0fe2a30d1e6c08ff1230019 |
+| app/home-content.js | 0 | 25261 | a6e7c80b1b85c570aa9740a582c9fe091f23537e72ecf1cfff3de22bc5f760c4 |
 | app/interactive/[module]/page.js | 0 | 1160 | 2de08cae2a2fbab3c3af6465f7eb4811cf1ad42a075101990ca8d1ad0523ce13 |
 | app/layout.js | 2457 | 1446 | 5505a684c3ac8701c71c3ac262822b5ac2f73c9dd0bcede4719a8f2e1b3292d5 |
 | app/local-fonts-subset.css | 1862 | 2073 | 027eabb60ba2e61c17d754279db2f5edf7844262c0f634ce162bcd8c73801835 |
@@ -193,6 +193,7 @@ Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve bas
 | public/performance/fonts/canevim-wordmark.woff2 | 0 | 1136 | d3df4dfc0ad808d7273a4387b3f5b9860162658f2c990a9da75988e6c6d4ddb9 |
 | public/performance/fonts/playfair-latin-400.woff2 | 0 | 18184 | 989a9735d43ea84ab4dd5af17d5bef457f5ba2ef7a7d5a7a21cdcde6abf6c507 |
 | public/performance/fonts/playfair-tr-400.woff2 | 0 | 1768 | c147e6207fe61c7dfbb6a1a464b5d5462cb50193f9db0bcb1bfb37c9e3cf847e |
+| public/performance/hero/home-mobile-480-fast.webp | 0 | 14366 | 5fdf68be1e92b8e57a41cc68eb8a076cc86b2a14d436133012a4e1b0cd82b674 |
 | public/performance/hero/home-mobile-480.avif | 0 | 7996 | e3f60f32ac185be2f7d95b3617499aae9ce41defe0f00c837b4c0d433e6b5df4 |
 | public/performance/hero/home-mobile-750.avif | 0 | 24750 | 81f3091b2b9c9c7f1aed61062a3c8fc6cd16ebcf2edf4c05a86a1737dc32c500 |
 | public/performance/ui/interactive.css | 0 | 6611 | b6deba9fb884c16e220cdb78383b23142be7d1649b382d20ade87d2e581555d7 |
@@ -230,11 +231,11 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | app/components/LazyInteractive.js | 0 | 1251 | 1c7736110d90856a1804b6535b1d14a09ddd42a74611beb784dc804636764b52 |
 | app/components/SiteLink.js | 0 | 361 | 32d94124fc58e6e37b9c53af866214c7dc0db954d2788754551a0fed9a8a4e4d |
 | app/components/StaticImage.js | 0 | 326 | 82ac052212edb221edf39724d51a74d90a1f64419e1e60fd4e2b4c7b03fceb81 |
-| app/content-dates.json | 8934 | 24409 | 57c9dab628d397f82c300fd7546605821691494ac808f86ad22c511c3480db8a |
+| app/content-dates.json | 8934 | 24414 | 7afcb85a6caed1076effde73c69fd8f6348a5f61ed432d7af3df1705e906e081 |
 | app/expanded-experiences.js | 0 | 93903 | e2a77e1f288e5d188cc8e2c225f9a8bc3b54e610e90dc2c916d444f076fa4eaf |
 | app/globals.css | 370 | 398 | 53cdc71f8615fd4cc6c969913bdb748262bd1e945aeeab1cfd230b2daf3cad38 |
 | app/growth-content.js | 41474 | 41668 | c3d7d965391bf9f5c56c21d62001bd54733a9cf5d949275419842dae9cec0150 |
-| app/home-content.js | 0 | 25250 | d2ca52652e9f4c19808398f167e305544a963dfbe0fe2a30d1e6c08ff1230019 |
+| app/home-content.js | 0 | 25261 | a6e7c80b1b85c570aa9740a582c9fe091f23537e72ecf1cfff3de22bc5f760c4 |
 | app/interactive/[module]/page.js | 0 | 1160 | 2de08cae2a2fbab3c3af6465f7eb4811cf1ad42a075101990ca8d1ad0523ce13 |
 | app/layout.js | 1480 | 1446 | 5505a684c3ac8701c71c3ac262822b5ac2f73c9dd0bcede4719a8f2e1b3292d5 |
 | app/local-fonts-subset.css | 1862 | 2073 | 027eabb60ba2e61c17d754279db2f5edf7844262c0f634ce162bcd8c73801835 |
@@ -256,6 +257,7 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | public/performance/fonts/canevim-wordmark.woff2 | 0 | 1136 | d3df4dfc0ad808d7273a4387b3f5b9860162658f2c990a9da75988e6c6d4ddb9 |
 | public/performance/fonts/playfair-latin-400.woff2 | 0 | 18184 | 989a9735d43ea84ab4dd5af17d5bef457f5ba2ef7a7d5a7a21cdcde6abf6c507 |
 | public/performance/fonts/playfair-tr-400.woff2 | 0 | 1768 | c147e6207fe61c7dfbb6a1a464b5d5462cb50193f9db0bcb1bfb37c9e3cf847e |
+| public/performance/hero/home-mobile-480-fast.webp | 0 | 14366 | 5fdf68be1e92b8e57a41cc68eb8a076cc86b2a14d436133012a4e1b0cd82b674 |
 | public/performance/hero/home-mobile-480.avif | 0 | 7996 | e3f60f32ac185be2f7d95b3617499aae9ce41defe0f00c837b4c0d433e6b5df4 |
 | public/performance/hero/home-mobile-750.avif | 0 | 24750 | 81f3091b2b9c9c7f1aed61062a3c8fc6cd16ebcf2edf4c05a86a1737dc32c500 |
 | public/performance/ui/interactive.css | 0 | 6611 | b6deba9fb884c16e220cdb78383b23142be7d1649b382d20ade87d2e581555d7 |

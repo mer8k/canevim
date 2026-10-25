@@ -1,7 +1,7 @@
 {
   "/": {
-    "sha256": "f26fe23c6b5ba0071297c436a8bc1a3615bc847ba10842ad648c4c3ebc922e4d",
-    "lastModified": "2026-10-25T15:08:23.632Z",
+    "sha256": "0b9872663cb4ed5951efdeb3d9569a598695ad6e8176acf0a28c7bc314d956f0",
+    "lastModified": "2026-10-25T15:18:56.884Z",
     "sources": [
       "app/Header.js",
       "app/components/FadeIn.js",
@@ -46,7 +46,7 @@
       "public/performance/fonts/playfair-tr-400.woff2",
       "public/performance/hero/home-desktop-1280.webp",
       "public/performance/hero/home-desktop-1920.webp",
-      "public/performance/hero/home-mobile-480.avif",
+      "public/performance/hero/home-mobile-480-fast.webp",
       "public/performance/hero/home-mobile-480.webp",
       "public/performance/hero/home-mobile-750.avif",
       "public/performance/hero/home-mobile-750.webp",

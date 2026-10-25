@@ -1,6 +1,6 @@
 # Can Evim — tüm operasyon kanıtları
 
-25 Ekim 2026 · Next.js 16.3.6 / React 19.2.4 · Final yerel QA tamamlandı
+25 Ekim 2026 · Next.js 16.3.6 / React 19.2.4 · TASLAK: final kanıtlar bekleniyor
 
 Bu build için canlı yayın henüz doğrulanmadı; yerel çalışma ve yayın sonucu ayrı tutulur.
 
@@ -8,13 +8,13 @@ Bu build için canlı yayın henüz doğrulanmadı; yerel çalışma ve yayın s
 
 1. İlk başlangıç: **2 sayfa, 348.150 byte**. .audit/baseline.json ve baseline-html.json.
 2. İkinci tur başlangıcı / ilk tur sonu: **7 sayfa, 2.211.399 byte**. .audit/round2/baseline.json ve before-final-metrics.json. Bu, ilk başlangıçla aynı veri değildir.
-3. Güncel kapsam: **17 kanonik URL, 14 bağımsız makale**. Derlenmiş 17/17 dosya; tam HTML toplamı 4.411.756 byte. İlk başlangıca oran 12.67 kat; ikinci tur başlangıcına oran 2.00 kat.
+3. Güncel kapsam: **17 kanonik URL, 14 bağımsız makale**. Derlenmiş 17/17 dosya; tam HTML toplamı 4.465.509 byte. İlk başlangıca oran 12.83 kat; ikinci tur başlangıcına oran 2.02 kat.
 
 HTML toplamı yeni sayfaları içerir; tek sayfa veya sıkıştırılmış ağ transferi büyümesi değildir. Rapor/.audit/404/noindex arşiv toplamdan çıkarılır.
 
 | Kanonik URL | Derlenmiş HTML byte | Görünür toplam kelime | Ana makale kelimesi |
 |---|---:|---:|---:|
-| / | 118.306 | 1.715 | Bekleniyor |
+| / | 172.059 | 1.715 | Bekleniyor |
 | /menu | 256.237 | 474 | Bekleniyor |
 | /sile-serpme-kahvalti | 264.426 | 1.446 | 1.049 |
 | /sile-gozleme | 261.325 | 1.436 | 1.038 |
@@ -38,12 +38,12 @@ HTML toplamı yeni sayfaları içerir; tek sayfa veya sıkıştırılmış ağ t
 
 | Kategori | İlk başlangıç | İlk tur sonu | İkinci tur final |
 |---|---:|---:|---:|
-| Performans | 86 | 87 | 98 |
-| Erişilebilirlik | 100 | 100 | 100 |
-| En iyi uygulamalar | 100 | 100 | 100 |
-| SEO | 100 | 100 | 100 |
+| Performans | 86 | 87 | Final ölçüm bekleniyor |
+| Erişilebilirlik | 100 | 100 | Final ölçüm bekleniyor |
+| En iyi uygulamalar | 100 | 100 | Final ölçüm bekleniyor |
+| SEO | 100 | 100 | Final ölçüm bekleniyor |
 
-Final LCP 2.18 sn; TBT 106 ms; CLS 0.0027. 98–100 performans hedefi bu koşuda sağlandı. Kanıt: .audit/round2/lighthouse-final-summary.json. Mobil laboratuvar koşusu gerçek kullanıcı Core Web Vitals veya GSC sonucu değildir.
+İkinci turun final Lighthouse ölçümü bekleniyor. İlk tur ve deneysel koşular final başarı olarak gösterilmedi. 98–100 hedefinin sağlandığı henüz söylenmiyor. Mobil laboratuvar koşusu gerçek kullanıcı Core Web Vitals veya GSC sonucu değildir.
 
 Canlı Lighthouse ölçümü bu yayın için henüz doğrulanmadı; yerel ölçüm canlı ölçüm olarak sunulmaz.
 
@@ -74,7 +74,7 @@ GSC hesabı kullanıcının ekranında açıktı; sitemap gönderimi 24 Eylül, 
 6. **Yapısal veri:** 54 gerçek ürün, 9 menü bölümü; görünür içerikle aynı tek graf. 73–74 üst seviye düğüm.
 7. **Masa planlayıcı:** Kişi sayısı, konsept ve tercihleri WhatsApp talebine dönüştürür; kullanıcı bütçesini çarpar. İşletme tarifesi veya kesin masa onayı değil.
 8. **Dönüşüm ve ölçüm:** Mobil eylem barı, hassas veriyi dışlayan izinli olay kuyruğu ve geri alma. Gerçek GA4 / DebugView doğrulaması ayrı.
-9. **Hız ve altyapı:** Statik içerik, duyarlı görseller, font/CSS iyileştirmeleri ve içerik hash'ine bağlı lastmod. Mobil performans 87 → 98.
+9. **Hız ve altyapı:** Statik içerik, duyarlı görseller, font/CSS iyileştirmeleri ve içerik hash'ine bağlı lastmod. Final Lighthouse ölçümü bekleniyor.
 10. **Kalite ve kanıt:** Build, özgün makale uzunluğu, schema, HTTP, tarayıcı, mobil ve dosya hash kayıtları. 203 HTTP kontrolü geçti.
 
 app/growth-content.js ve expanded-experiences.js içerikleri; app/[experience]/page.js statik üretimi; GrowthContent.js karşılaştırma/bağlantı/görünür menüyü sağlar. Ana sayfa, home-content.js + ortak Header/MobileActions bileşenlerinden scripts/build-home.cjs ile derleme sırasında gerçek statik HTML üretilerek app/route.js üzerinden sunulur. Ana sayfada Next.js istemci framework isteği ve hidrasyonu yoktur; menü/rezervasyon public/home-ui.js ile çalışır. Detay sayfaları App Router kullanır; ana sayfaya dönüş yeni belge açar. Planlayıcı ve ana sayfa rota listesi IntersectionObserver ile yaklaşıldığında HTML/CSS olarak yüklenir; tam /ulasim içeriği sunucuda görünür. Üretilmiş HTML her build öncesi yeniden hazırlanır; Next scriptleri sonradan silinmez. Fiyat, tedarikçi, organik sertifika veya tesis özelliği doğrulanmadan eklenmez. 54 menü ürünü ve görünür SSS schema ile eşleşir. Sahte Offer, puan, 30 km hizmet alanı veya Wikidata yoktur. Düğüm sayısı sıralama/zengin sonuç garantisi değildir. Analitik dataLayer aktarımı Google alım kanıtı değildir; sıfır kayıp iddiası yoktur. Gerçek kimlik ve DebugView testi ayrıdır.
@@ -88,7 +88,7 @@ app/growth-content.js ve expanded-experiences.js içerikleri; app/[experience]/p
 | seo | Geçti |
 | http | Geçti |
 | browser | Geçti |
-| lighthouse | Geçti |
+| lighthouse | Final kanıt bekleniyor |
 
 HTTP: 203/203. Tarayıcı: Tüm kanonikler kontrol edildi. Kanıt zamanı build'den sonra olmalıdır. Eski başarılı koşu yeni final sonuç diye sunulmaz.
 
@@ -140,7 +140,7 @@ Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve bas
 | Dosya | before_bytes | after_bytes | SHA-256 (son durum) |
 |---|---:|---:|---|
 | .gitignore | 539 | 660 | f3e4ce36af89977f02406c31719d76193e5cee36331f068fea37b7fe502aac80 |
-| GROWTH-INTERACTIVE-INTEGRATION.md | 0 | 13988 | 99b8f2b32f7072332f595db2af9f80cac86001ecd94d89dd0898845bb3f82933 |
+| GROWTH-INTERACTIVE-INTEGRATION.md | 0 | 14212 | dd00c61635292ecd50290bdbbf8296da7309f06e0b99c485262d0bd003c451d2 |
 | app/Header.js | 10100 | 11639 | f7cfd433bf032c087f1f496455e7388a48995d529c191453f52fcde296d878d5 |
 | app/[experience]/page.js | 0 | 3174 | b66903131bccea56a5ca57fccf55c528220a0da60f5f3a4a5ccbade27cd4a1f6 |
 | app/blog/page.js | 801 | 1281 | e3e60d00feb853c6cc21532e45e20361e2384420c86962de2b98d1a2065c4706 |
@@ -153,7 +153,7 @@ Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve bas
 | app/components/RouteMatrix.js | 0 | 2883 | 531054cb0bf7bed1ca9d562d9991eb875f3de8feefa4190d1936d60a741800f6 |
 | app/components/SiteLink.js | 0 | 361 | 32d94124fc58e6e37b9c53af866214c7dc0db954d2788754551a0fed9a8a4e4d |
 | app/components/StaticImage.js | 0 | 326 | 82ac052212edb221edf39724d51a74d90a1f64419e1e60fd4e2b4c7b03fceb81 |
-| app/content-dates.json | 0 | 24414 | dba664b83aa42ecf57d371a44aed0aff0145e432bd8b4732dcf036b9f5ca47c7 |
+| app/content-dates.json | 0 | 24414 | b97b29f3d22de87e242206e5549a0d40d3f2e4c403bddf2014aeff5dcd5bb4bc |
 | app/expanded-experiences.js | 0 | 93903 | e2a77e1f288e5d188cc8e2c225f9a8bc3b54e610e90dc2c916d444f076fa4eaf |
 | app/globals.css | 229 | 398 | 53cdc71f8615fd4cc6c969913bdb748262bd1e945aeeab1cfd230b2daf3cad38 |
 | app/growth-content.css | 0 | 9894 | 8ca17bdd97c1644c48aa492d868041b6c2b5c526e353b9c9dbe8d71b602c2524 |
@@ -171,7 +171,7 @@ Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve bas
 | app/mobile-actions.css | 0 | 2932 | 0567939bf7c54547a043b40d12ffbc6072be8798fbd0d7b0409588b20fc82c2d |
 | app/page.js | 22875 | 0 | Silindi |
 | app/robots.js | 214 | 235 | f66432a51359ca896b215afa27aec3ad1c44d7d77c0600715612c6ddad12ed75 |
-| app/route.js | 0 | 614 | 9f94ac6a427c5602b9ad66caa903516f91487b36ab12f01c0086d030fe9ff37e |
+| app/route.js | 0 | 372 | 55f33bb494faa64a7235e847f7fe5c74779cf23ce5fad911aab67760fc74e01b |
 | app/seo-consolidation.mjs | 1616 | 3443 | f7f57e1a5ea161ec2b441c7ce4cedcb38b65c60add23c4085717d1d1880f1a30 |
 | app/seo-routes.mjs | 0 | 1559 | b522d5ad90b0ebb22a43249509b7beacfa65e59776c98dd3714e6f8b785c93b6 |
 | app/sitemap.js | 241 | 405 | acc5a36ea01aeb5d54b9e0c527d0e654543453aca3ac4081456845b2e4a94242 |
@@ -181,7 +181,7 @@ Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve bas
 | package.json | 367 | 928 | 8900efb7b740e91d1b9f0ca3e52d32c14b1d8e3f142630d3eb0f92ab33e84e6d |
 | public/growth-loader.js | 0 | 2952 | bcd717aebde868b2cc889340f0274331b84c0654f844c43e4e2140b761c155c8 |
 | public/growth.js | 0 | 10824 | d89977df35e24ce2e15445484376f8ffadade12c7276082b3b8a40c886ff2d35 |
-| public/home-ui.js | 0 | 2300 | dc1e39f4793b22097eb43eb9961bffe0f6bfa1cd1091c589808df8612045ca7b |
+| public/home-ui.js | 0 | 2100 | 4fe45c481517b38a21c96d8c8f2f72755086aa577b453211ac2a68a7aa23e3c8 |
 | public/performance/content/bahce-card.avif | 0 | 11906 | 2795e4b816951ba58f782a49871893badc89b6ead0ca1a2da9260edcbe024fd8 |
 | public/performance/content/gozleme-480.webp | 0 | 36322 | ab051f46e0a31ebc5b2cdafe4458379164536e37f3c363ecca7dcbea5d5a635f |
 | public/performance/content/gozleme-960.webp | 0 | 96002 | a8fb89c56a7c8361cf408a9fe625dc974453a3482b70f92048432ce1493b55ab |
@@ -199,16 +199,16 @@ Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve bas
 | public/performance/ui/interactive.css | 0 | 6611 | b6deba9fb884c16e220cdb78383b23142be7d1649b382d20ade87d2e581555d7 |
 | public/performance/ui/routes.css | 0 | 3424 | 57e24647fc84cde8598c5982f1536fe185759cd84ef2f29349a737f97f8b0aa0 |
 | scripts/build-growth.mjs | 0 | 1837 | bcab9b983bb44493db0e8b6528b7db44ca00ceb6b2e6bb2f5896be169f30a6a4 |
-| scripts/build-home.cjs | 0 | 7372 | bfff7d2ad903ab75095a336a94cf19560b8c63d321f3bcbfc109585edcdba1d7 |
+| scripts/build-home.cjs | 0 | 5414 | dc4650ee30409aee14cb243dac36636e19c3526c922373fed6b99427620171ad |
 | scripts/compiled-pages.mjs | 0 | 248 | 16cfb3ff2f158074f4f062b9c6e0a1b1ceb5c6b8643048896fda85cdbcd8d50b |
 | scripts/content-fingerprint.mjs | 0 | 350 | 7f70c6362eb87c8aa7b7ceddc8c7940989c6d949a5c5ca20251aed8dd8aa1e13 |
 | scripts/generate-growth-report.mjs | 0 | 35602 | 9e1d0eb3816f4cee566267ad47b1d55909500e1398c3a52149a059fcd23f6337 |
 | scripts/growth-loader.cjs | 0 | 4427 | 0c2e4ae70954f6c569d5cc6610b098c72421064091995a500804028f1f48a4d1 |
 | scripts/growth-runtime.cjs | 0 | 17697 | 4ed9f10d8405078db550755fe76c3bc7303b09aefa085872d3808433bbd52ae5 |
 | scripts/gsc-audit.mjs | 0 | 14607 | 606c89fe740b6809ae1af5dbe74156c64478b174a8591c6fe3a184b8450c0097 |
-| scripts/home-ui.cjs | 0 | 3417 | 29ba926f7472c17b706d0c135cf1e09694770a2be88f430880a14ff794d43ff5 |
+| scripts/home-ui.cjs | 0 | 3125 | 54a554b487b7e567a6edd2d0fe35871b22d0ab95637c8e077f6afb5dcc1fbd1b |
 | scripts/seo-infra-check.mjs | 0 | 9132 | 952b18c6c99e02a0697e65e009f0e22e23c87027ff06afd8436ed22bf1421245 |
-| scripts/test-browser.mjs | 0 | 37878 | cc54927441c1356a141dd911305686b3135280b177f376bcf3bc1fe0ae3bb74e |
+| scripts/test-browser.mjs | 0 | 41024 | 7d39427018448640969c2ce780985992631fba53e6a316cedad00732fd6ffc72 |
 | scripts/test-growth.mjs | 0 | 7148 | 0187e766f9ba21bd1dd52402799c078e0aae9cd818a721c65c39afde80a6504a |
 | scripts/test-http.mjs | 0 | 9926 | 393207dde38fefbd4dc97af9ebf9ee2ab1f22baff7127804b73cd4833aa5c400 |
 | scripts/test-links.mjs | 0 | 1592 | 15807d821044ebcce73c7416b5d5453191a59db8357682c4f47ff667b293d796 |
@@ -223,7 +223,7 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | Dosya | before_bytes | after_bytes | SHA-256 (son durum) |
 |---|---:|---:|---|
 | .gitignore | 549 | 660 | f3e4ce36af89977f02406c31719d76193e5cee36331f068fea37b7fe502aac80 |
-| GROWTH-INTERACTIVE-INTEGRATION.md | 7111 | 13988 | 99b8f2b32f7072332f595db2af9f80cac86001ecd94d89dd0898845bb3f82933 |
+| GROWTH-INTERACTIVE-INTEGRATION.md | 7111 | 14212 | dd00c61635292ecd50290bdbbf8296da7309f06e0b99c485262d0bd003c451d2 |
 | app/Header.js | 11457 | 11639 | f7cfd433bf032c087f1f496455e7388a48995d529c191453f52fcde296d878d5 |
 | app/[experience]/page.js | 3024 | 3174 | b66903131bccea56a5ca57fccf55c528220a0da60f5f3a4a5ccbade27cd4a1f6 |
 | app/blog/page.js | 1234 | 1281 | e3e60d00feb853c6cc21532e45e20361e2384420c86962de2b98d1a2065c4706 |
@@ -231,7 +231,7 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | app/components/LazyInteractive.js | 0 | 1251 | 1c7736110d90856a1804b6535b1d14a09ddd42a74611beb784dc804636764b52 |
 | app/components/SiteLink.js | 0 | 361 | 32d94124fc58e6e37b9c53af866214c7dc0db954d2788754551a0fed9a8a4e4d |
 | app/components/StaticImage.js | 0 | 326 | 82ac052212edb221edf39724d51a74d90a1f64419e1e60fd4e2b4c7b03fceb81 |
-| app/content-dates.json | 8934 | 24414 | dba664b83aa42ecf57d371a44aed0aff0145e432bd8b4732dcf036b9f5ca47c7 |
+| app/content-dates.json | 8934 | 24414 | b97b29f3d22de87e242206e5549a0d40d3f2e4c403bddf2014aeff5dcd5bb4bc |
 | app/expanded-experiences.js | 0 | 93903 | e2a77e1f288e5d188cc8e2c225f9a8bc3b54e610e90dc2c916d444f076fa4eaf |
 | app/globals.css | 370 | 398 | 53cdc71f8615fd4cc6c969913bdb748262bd1e945aeeab1cfd230b2daf3cad38 |
 | app/growth-content.js | 41474 | 41668 | c3d7d965391bf9f5c56c21d62001bd54733a9cf5d949275419842dae9cec0150 |
@@ -242,14 +242,14 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | app/menu/page.js | 17156 | 17184 | e2439022eeea6dad67faad205d4b75ebd28f312a8871f094496f5231ae8edab1 |
 | app/mobile-actions.css | 0 | 2932 | 0567939bf7c54547a043b40d12ffbc6072be8798fbd0d7b0409588b20fc82c2d |
 | app/page.js | 24234 | 0 | Silindi |
-| app/route.js | 0 | 614 | 9f94ac6a427c5602b9ad66caa903516f91487b36ab12f01c0086d030fe9ff37e |
+| app/route.js | 0 | 372 | 55f33bb494faa64a7235e847f7fe5c74779cf23ce5fad911aab67760fc74e01b |
 | app/seo-consolidation.mjs | 3381 | 3443 | f7f57e1a5ea161ec2b441c7ce4cedcb38b65c60add23c4085717d1d1880f1a30 |
 | app/seo-routes.mjs | 621 | 1559 | b522d5ad90b0ebb22a43249509b7beacfa65e59776c98dd3714e6f8b785c93b6 |
 | app/ulasim/page.js | 4549 | 4680 | 8fd4dc6a8e14b372f629ba975c2dc5d691be3c841c73170207ead0add27072b3 |
 | package-lock.json | 55450 | 53857 | 2c4be83a8c31cb95b05d21b05d6446615475a86bffb9a5c946b92e73c0a96627 |
 | package.json | 806 | 928 | 8900efb7b740e91d1b9f0ca3e52d32c14b1d8e3f142630d3eb0f92ab33e84e6d |
 | public/growth-loader.js | 0 | 2952 | bcd717aebde868b2cc889340f0274331b84c0654f844c43e4e2140b761c155c8 |
-| public/home-ui.js | 0 | 2300 | dc1e39f4793b22097eb43eb9961bffe0f6bfa1cd1091c589808df8612045ca7b |
+| public/home-ui.js | 0 | 2100 | 4fe45c481517b38a21c96d8c8f2f72755086aa577b453211ac2a68a7aa23e3c8 |
 | public/performance/content/bahce-card.avif | 0 | 11906 | 2795e4b816951ba58f782a49871893badc89b6ead0ca1a2da9260edcbe024fd8 |
 | public/performance/content/gozleme-card.avif | 0 | 14839 | 029b589d01d5b05b41d02b5cfe68ea21e05abae3ac7c185cfc9874f01b0228c4 |
 | public/performance/content/sac-kavurma-card.avif | 0 | 10600 | f370152fd56e61dd17e2189972ea00e35104a57893debeff5f9c3ce06457f19d |
@@ -263,14 +263,14 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | public/performance/ui/interactive.css | 0 | 6611 | b6deba9fb884c16e220cdb78383b23142be7d1649b382d20ade87d2e581555d7 |
 | public/performance/ui/routes.css | 0 | 3424 | 57e24647fc84cde8598c5982f1536fe185759cd84ef2f29349a737f97f8b0aa0 |
 | scripts/build-growth.mjs | 775 | 1837 | bcab9b983bb44493db0e8b6528b7db44ca00ceb6b2e6bb2f5896be169f30a6a4 |
-| scripts/build-home.cjs | 0 | 7372 | bfff7d2ad903ab75095a336a94cf19560b8c63d321f3bcbfc109585edcdba1d7 |
+| scripts/build-home.cjs | 0 | 5414 | dc4650ee30409aee14cb243dac36636e19c3526c922373fed6b99427620171ad |
 | scripts/compiled-pages.mjs | 0 | 248 | 16cfb3ff2f158074f4f062b9c6e0a1b1ceb5c6b8643048896fda85cdbcd8d50b |
 | scripts/content-fingerprint.mjs | 0 | 350 | 7f70c6362eb87c8aa7b7ceddc8c7940989c6d949a5c5ca20251aed8dd8aa1e13 |
 | scripts/generate-growth-report.mjs | 28901 | 35602 | 9e1d0eb3816f4cee566267ad47b1d55909500e1398c3a52149a059fcd23f6337 |
 | scripts/growth-loader.cjs | 0 | 4427 | 0c2e4ae70954f6c569d5cc6610b098c72421064091995a500804028f1f48a4d1 |
-| scripts/home-ui.cjs | 0 | 3417 | 29ba926f7472c17b706d0c135cf1e09694770a2be88f430880a14ff794d43ff5 |
+| scripts/home-ui.cjs | 0 | 3125 | 54a554b487b7e567a6edd2d0fe35871b22d0ab95637c8e077f6afb5dcc1fbd1b |
 | scripts/seo-infra-check.mjs | 7616 | 9132 | 952b18c6c99e02a0697e65e009f0e22e23c87027ff06afd8436ed22bf1421245 |
-| scripts/test-browser.mjs | 23268 | 37878 | cc54927441c1356a141dd911305686b3135280b177f376bcf3bc1fe0ae3bb74e |
+| scripts/test-browser.mjs | 23268 | 41024 | 7d39427018448640969c2ce780985992631fba53e6a316cedad00732fd6ffc72 |
 | scripts/test-links.mjs | 1578 | 1592 | 15807d821044ebcce73c7416b5d5453191a59db8357682c4f47ff667b293d796 |
 | scripts/test-report.mjs | 0 | 6507 | 17345f0e2bebdcd7437a933b28e06d1d0e5d587977456f57c8958d62eb25651e |
 | scripts/update-content-dates.mjs | 3610 | 4219 | b828ce97c8082df61e6754e15e0fc58a1d438955cd6d74e10eb5aeb58d9e0173 |

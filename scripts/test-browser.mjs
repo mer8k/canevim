@@ -40,6 +40,36 @@ async function revealPlanner(page) {
   await page.locator("[data-breakfast-planner]").waitFor();
   await page.waitForFunction(() => Boolean(window.CanEvimGrowth && document.querySelector("[data-breakfast-planner]")?.__growthReady), null, { timeout: 15000 });
 }
+async function homeStyleInfo(page) {
+  await page.evaluate(() => document.fonts.ready);
+  return page.evaluate(() => {
+    const sheets = Array.from(document.querySelectorAll('style[data-home-styles="complete"]'));
+    const resources = performance.getEntriesByType("resource").map(entry => entry.name);
+    const externalFonts = resources.filter(url => !url.startsWith("data:") && /\.(?:woff2?|otf|ttf)(?:\?|$)/i.test(new URL(url).pathname));
+    const embeddedFaces = sheets.flatMap(sheet => Array.from(sheet.sheet?.cssRules || []).filter(rule => rule.type === CSSRule.FONT_FACE_RULE && /data:font\/woff2;base64,/.test(rule.style.getPropertyValue("src"))).map(rule => ({ family: rule.style.getPropertyValue("font-family"), range: rule.style.getPropertyValue("unicode-range") })));
+    const usedFaces = Array.from(document.fonts).filter(face => ["CanEvim Wordmark", "Playfair Display"].includes(face.family.replaceAll(/["']/g, "")) && face.style === "normal" && face.weight === "400").map(face => ({ family: face.family, range: face.unicodeRange, status: face.status }));
+    return {
+      inlineSheets: sheets.map(sheet => ({ bytes: sheet.textContent.length, ruleCount: sheet.sheet?.cssRules.length || 0 })),
+      embeddedFaces,
+      usedFaces,
+      fontStatus: document.fonts.status,
+      wordmarkLoaded: document.fonts.check('400 16px "CanEvim Wordmark"', "canevim"),
+      headingLoaded: document.fonts.check('400 16px "Playfair Display"', "Şile Kahvaltı"),
+      headingFont: getComputedStyle(document.querySelector("h1")).fontFamily,
+      wordmarkFont: getComputedStyle(document.querySelector('header a[href="/"]')).fontFamily,
+      externalHomeStyles: resources.filter(url => /\/performance\/ui\/home-[a-f0-9]+\.css$/.test(new URL(url).pathname)),
+      externalFonts,
+      homeStylesheetLinks: Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(link => link.getAttribute("href")).filter(url => /\/performance\/ui\/home-[a-f0-9]+\.css/.test(url)),
+      deferredStyleLinks: document.querySelectorAll("link[data-deferred-styles]").length,
+      fontPreloads: document.querySelectorAll('link[rel="preload"][as="font"]').length,
+    };
+  });
+}
+function checkInlineHomeStyles(styles, where) {
+  check(styles.inlineSheets.length === 1 && styles.inlineSheets[0].ruleCount > 0 && styles.embeddedFaces.length === 3, `${where}: complete inline stylesheet contains three embedded fonts`, styles);
+  check(styles.externalHomeStyles.length === 0 && styles.homeStylesheetLinks.length === 0 && styles.deferredStyleLinks === 0 && styles.externalFonts.length === 0 && styles.fontPreloads === 0, `${where}: no external home stylesheet or font requests/preloads`, styles);
+  check(styles.fontStatus === "loaded" && styles.usedFaces.length === 3 && styles.usedFaces.every(face => face.status === "loaded") && styles.wordmarkLoaded && styles.headingLoaded && styles.headingFont.includes("Playfair Display") && styles.wordmarkFont.includes("CanEvim Wordmark"), `${where}: computed heading and wordmark fonts are loaded`, styles);
+}
 async function pageReady(page, route, { checkInitialLazy = false } = {}) {
   const response = await page.goto(base + route, { waitUntil: "load", timeout: 45000 });
   await page.locator("h1").waitFor();
@@ -53,7 +83,6 @@ async function pageReady(page, route, { checkInitialLazy = false } = {}) {
       frameworkScriptRequests: performance.getEntriesByType("resource").map(entry => entry.name).filter(url => /\/_next\/.*\.js(?:\?|$)/.test(new URL(url).pathname)),
       frameworkScriptElements: Array.from(document.scripts).map(script => script.getAttribute("src") || "").filter(url => /\/_next\/.*\.js(?:\?|$)/.test(url)),
       nativeUiRequested: performance.getEntriesByType("resource").some(entry => new URL(entry.name).pathname === "/home-ui.js"),
-      deferredStyles: Array.from(document.querySelectorAll("link[data-deferred-styles]")).map(link => ({ href: link.getAttribute("href"), media: link.media, loaded: Boolean(link.sheet), ready: link.getAttribute("data-style-ready") })),
       placeholders: Array.from(document.querySelectorAll("[data-interactive-src]")).map(section => ({ id: section.id, source: section.getAttribute("data-interactive-src"), textLength: section.textContent.trim().length })),
       scrollY,
     }));
@@ -61,7 +90,8 @@ async function pageReady(page, route, { checkInitialLazy = false } = {}) {
     check(!initial.plannerPresent, `Home @ ${page.viewportSize().width}: planner fragment is lazy`, initial);
     check(initial.staticHome && initial.frameworkScriptRequests.length === 0 && initial.frameworkScriptElements.length === 0, `Home @ ${page.viewportSize().width}: genuine static document with zero framework scripts`, initial);
     check(initial.nativeUiRequested, `Home @ ${page.viewportSize().width}: native header/form script loaded`, initial);
-    check(initial.deferredStyles.length > 0 && initial.deferredStyles.every(style => style.media === "all" && style.loaded && style.ready === "true"), `Home @ ${page.viewportSize().width}: complete stylesheet loaded and active`, initial.deferredStyles);
+    initial.styles = await homeStyleInfo(page);
+    checkInlineHomeStyles(initial.styles, `Home @ ${page.viewportSize().width}`);
     check(initial.placeholders.some(section => section.id === "kahvalti-planla" && section.source === "/interactive/planner-breakfast") && initial.placeholders.some(section => section.id === "rota-matrisi" && section.source === "/interactive/routes"), `Home @ ${page.viewportSize().width}: accessible fragment anchors exist`, initial);
     result.lazy.push({ width: page.viewportSize().width, ...initial });
   }
@@ -215,42 +245,41 @@ try {
     await context.close();
   }
 
-  result.deferredStyles = [];
+  result.inlineStyles = [];
   for (const width of [375, 412]) {
-    const delayedContext = await contextFor(width);
-    let releaseStyles;
-    const styleGate = new Promise(resolve => { releaseStyles = resolve; });
-    const heldStyles = [];
-    await delayedContext.route("**/performance/ui/home-*.css", async route => {
-      heldStyles.push({ url: route.request().url(), requestedAt: Date.now() });
-      await styleGate;
-      await route.continue();
-    });
-    const delayedPage = await delayedContext.newPage();
-    const snapshotBar = () => delayedPage.evaluate(() => {
+    const styleContext = await contextFor(width);
+    const stylePage = await styleContext.newPage();
+    const snapshotBar = () => stylePage.evaluate(() => {
       const rect = document.querySelector(".ce-mobile-actions").getBoundingClientRect();
-      return { innerWidth, documentWidth: document.documentElement.scrollWidth, bar: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height }, styles: Array.from(document.querySelectorAll("link[data-deferred-styles]")).map(link => ({ media: link.media, loaded: Boolean(link.sheet) })) };
+      return { innerWidth, documentWidth: document.documentElement.scrollWidth, bar: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height } };
     });
     try {
-      await delayedPage.goto(base + "/", { waitUntil: "domcontentloaded", timeout: 15000 });
-      await delayedPage.waitForFunction(() => Boolean(window.CanEvimLoader));
+      await stylePage.goto(base + "/", { waitUntil: "domcontentloaded", timeout: 15000 });
+      await stylePage.waitForFunction(() => Boolean(window.CanEvimLoader));
+      const initialStyles = await homeStyleInfo(stylePage);
+      checkInlineHomeStyles(initialStyles, `Inline CSS @ ${width}`);
       const before = await snapshotBar();
-      await delayedPage.waitForTimeout(500);
-      const pending = await snapshotBar();
-      const heldForMs = heldStyles.length ? Date.now() - heldStyles[0].requestedAt : 0;
-      check(heldStyles.length === 1 && heldForMs >= 500 && pending.styles.some(style => style.media === "print" && !style.loaded), `Critical CSS @ ${width}: full stylesheet genuinely held for 500ms`, { heldStyles, heldForMs, pending });
-      releaseStyles();
-      await delayedPage.waitForFunction(() => Array.from(document.querySelectorAll("link[data-deferred-styles]")).every(link => link.media === "all" && link.sheet), null, { timeout: 15000 });
-      await delayedPage.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      await stylePage.locator("#menu-toggle").click();
+      await stylePage.waitForFunction(() => document.getElementById("menu-toggle").getAttribute("aria-expanded") === "true");
+      const menu = await snapshotBar();
+      await stylePage.keyboard.press("Escape");
+      await stylePage.waitForLoadState("load");
+      const article = stylePage.locator(".growth-home-guide .growth-article-grid > section").first();
+      await article.scrollIntoViewIfNeeded();
+      await stylePage.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      const copy = await article.evaluate(element => { const rect = element.getBoundingClientRect(); const paragraph = element.querySelector("p"); return { visible: element.checkVisibility({ contentVisibilityAuto: true }), textLength: paragraph?.textContent.trim().length || 0, paragraphFontSize: paragraph && getComputedStyle(paragraph).fontSize, top: rect.top, bottom: rect.bottom, viewportHeight: innerHeight, width: rect.width }; });
+      check(copy.visible && copy.textLength > 0 && copy.top < copy.viewportHeight && copy.bottom > 0 && copy.width > 0 && copy.width <= width && copy.paragraphFontSize === "15px", `Inline CSS @ ${width}: below-fold editorial copy has complete layout`, copy);
+      await stylePage.evaluate(async () => { window.scrollTo(0, 0); await document.fonts.ready; await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))); });
       const after = await snapshotBar();
-      const stable = [before, pending, after].every(snapshot => snapshot.innerWidth === width && snapshot.documentWidth <= width + 1 && Math.abs(snapshot.bar.left) <= 1 && Math.abs(snapshot.bar.right - width) <= 1 && Math.abs(snapshot.bar.width - width) <= 1) && Object.keys(before.bar).every(key => Math.abs(before.bar[key] - pending.bar[key]) <= 1 && Math.abs(before.bar[key] - after.bar[key]) <= 1);
-      check(stable, `Critical CSS @ ${width}: viewport and fixed action bar stay stable before/after full styles`, { before, pending, after });
-      result.deferredStyles.push({ width, heldForMs, before, pending, after, stable });
+      const finalStyles = await homeStyleInfo(stylePage);
+      checkInlineHomeStyles(finalStyles, `Inline CSS after menu/scroll @ ${width}`);
+      const stable = [before, menu, after].every(snapshot => snapshot.innerWidth === width && snapshot.documentWidth <= width + 1 && Math.abs(snapshot.bar.left) <= 1 && Math.abs(snapshot.bar.right - width) <= 1 && Math.abs(snapshot.bar.width - width) <= 1) && Object.keys(before.bar).every(key => Math.abs(before.bar[key] - menu.bar[key]) <= 1 && Math.abs(before.bar[key] - after.bar[key]) <= 1);
+      check(stable, `Inline CSS @ ${width}: viewport and fixed action bar stay stable through menu/load/scroll`, { before, menu, after });
+      result.inlineStyles.push({ width, initialStyles, finalStyles, before, menu, after, copy, stable });
     } catch (error) {
-      check(false, `Critical CSS @ ${width}: delayed stylesheet test completed`, error.stack);
+      check(false, `Inline CSS @ ${width}: layout test completed`, error.stack);
     } finally {
-      releaseStyles();
-      await delayedContext.close();
+      await styleContext.close();
     }
   }
 

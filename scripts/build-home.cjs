@@ -2,7 +2,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const Module = require("node:module");
-const { createHash } = require("node:crypto");
 const root = path.resolve(__dirname, "..");
 process.chdir(root);
 
@@ -37,35 +36,13 @@ async function build() {
     const cssPaths = ["globals.css", "local-fonts-subset.css", "growth-content.css", "mobile-actions.css", "growth-performance.css"];
     const cssSource = cssPaths.map(file => fs.readFileSync(path.join(appRoot, file), "utf8")).join("\n");
     const processed = await postcss([tailwind({ base: root })]).process(cssSource, { from: path.join(appRoot, "globals.css") });
-    const css = optimize(processed.css, { minify: true }).code;
+    let css = optimize(processed.css, { minify: true }).code;
+    // These small, always-visible fonts travel with the first document.
+    for (const file of ["canevim-wordmark.woff2", "playfair-latin-400.woff2", "playfair-tr-400.woff2"]) {
+      const encoded = fs.readFileSync(path.join(root, "public/performance/fonts", file)).toString("base64");
+      css = css.replaceAll(`/performance/fonts/${file}`, `data:font/woff2;base64,${encoded}`);
+    }
     const h = React.createElement;
-    // Keep the first screen styled immediately; defer the complete shared sheet.
-    const headerMarkup = renderToStaticMarkup(h(Header)).split('id="site-menu"')[0];
-    const heroMarkup = renderToStaticMarkup(h(Home)).match(/<section class="home-hero[\s\S]*?<\/section>/)?.[0] || "";
-    const criticalMarkup = headerMarkup + heroMarkup + renderToStaticMarkup(h(MobileActions)) + 'class="skip-link"';
-    const classes = new Set([...criticalMarkup.matchAll(/\bclass="([^"]+)"/g)].flatMap(match => match[1].split(/\s+/)));
-    // Tables below the fold must not widen the mobile layout viewport while the
-    // complete sheet is still loading (which would move the fixed action bar).
-    classes.add("growth-table-scroll");
-    const critical = postcss.parse(css);
-    critical.walkRules(rule => {
-      // Offscreen containment is needed before the deferred sheet arrives;
-      // otherwise the first layout traverses every long-form section.
-      if (rule.nodes.some(node => node.type === "decl" && /^(content-visibility|contain-intrinsic-)/.test(node.prop))) return;
-      const selectors = rule.selectors.filter(selector => {
-        const required = [...selector.matchAll(/\.((?:\\.|[\w-])+)/g)].map(match => match[1].replace(/\\(.)/g, "$1"));
-        return !required.length || required.every(name => classes.has(name));
-      });
-      if (selectors.length) rule.selectors = selectors;
-      else rule.remove();
-    });
-    critical.walkAtRules(rule => { if (rule.nodes && !rule.nodes.length) rule.remove(); });
-    const criticalCSS = critical.toString() + 'html,body{max-width:100%;overflow-x:clip}#site-menu[aria-hidden="true"]{visibility:hidden;pointer-events:none}';
-    const stylesheet = `home-${createHash("sha256").update(css).digest("hex").slice(0, 16)}.css`;
-    const styleDir = path.join(root, "public/performance/ui");
-    fs.mkdirSync(styleDir, { recursive: true });
-    fs.writeFileSync(path.join(styleDir, stylesheet), css);
-    const styleUrl = "/performance/ui/" + stylesheet;
     const origin = metadata.metadataBase.origin;
     const socialImage = origin + metadata.openGraph.images[0].url;
     // One small WebP avoids a round trip for the narrow-screen LCP image.
@@ -84,10 +61,7 @@ async function build() {
         meta("twitter:card", "summary_large_image"), meta("twitter:title", metadata.title), meta("twitter:description", metadata.description), meta("twitter:image", socialImage),
         h("link", { rel: "icon", href: "/icon.svg", type: "image/svg+xml" }),
         h("link", { rel: "apple-touch-icon", href: "/apple-icon.png" }),
-        ...["canevim-wordmark.woff2", "playfair-latin-400.woff2", "playfair-tr-400.woff2"].map(file => h("link", { key: file, rel: "preload", href: "/performance/fonts/" + file, as: "font", type: "font/woff2", crossOrigin: "anonymous" })),
-        h("style", { dangerouslySetInnerHTML: { __html: criticalCSS.replace(/<\/style/gi, "<\\/style") } }),
-        h("link", { rel: "stylesheet", href: styleUrl, media: "print", "data-deferred-styles": "" }),
-        h("noscript", null, h("link", { rel: "stylesheet", href: styleUrl }))
+        h("style", { "data-home-styles": "complete", dangerouslySetInnerHTML: { __html: (css + 'html,body{max-width:100%;overflow-x:clip}#site-menu[aria-hidden="true"]{visibility:hidden;pointer-events:none}').replace(/<\/style/gi, "<\\/style") } })
       ),
       h("body", { "data-static-home": "true" },
         h("a", { href: "#main-content", className: "skip-link" }, "İçeriğe geç"),
@@ -100,7 +74,7 @@ async function build() {
     const output = JSON.stringify({ html }) + "\n";
     fs.mkdirSync(path.dirname(target), { recursive: true });
     if (!fs.existsSync(target) || fs.readFileSync(target, "utf8") !== output) fs.writeFileSync(target, output);
-    console.log(`Static landing: ${Buffer.byteLength(html)} HTML bytes; CSS ${Buffer.byteLength(criticalCSS)} critical / ${Buffer.byteLength(css)} complete; no framework hydration.`);
+    console.log(`Static landing: ${Buffer.byteLength(html)} HTML bytes; CSS ${Buffer.byteLength(css)} complete with embedded first-screen fonts; no framework hydration.`);
   } finally {
     Module._extensions[".js"] = previousJS;
     if (previousCSS) Module._extensions[".css"] = previousCSS;

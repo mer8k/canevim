@@ -1,11 +1,6 @@
 /* Native interactions for the static landing document. No framework runtime. */
 (function () {
   "use strict";
-  document.querySelectorAll("link[data-deferred-styles]").forEach(function (link) {
-    function applyStyles() { link.media = "all"; link.setAttribute("data-style-ready", "true"); }
-    if (link.sheet) applyStyles();
-    else link.addEventListener("load", applyStyles, { once: true });
-  });
   var button = document.getElementById("menu-toggle");
   var menu = document.getElementById("site-menu");
   var header = button && button.closest("header");

@@ -36,12 +36,7 @@ async function build() {
     const cssPaths = ["globals.css", "local-fonts-subset.css", "growth-content.css", "mobile-actions.css", "growth-performance.css"];
     const cssSource = cssPaths.map(file => fs.readFileSync(path.join(appRoot, file), "utf8")).join("\n");
     const processed = await postcss([tailwind({ base: root })]).process(cssSource, { from: path.join(appRoot, "globals.css") });
-    let css = optimize(processed.css, { minify: true }).code;
-    // These small, always-visible fonts travel with the first document.
-    for (const file of ["canevim-wordmark.woff2", "playfair-latin-400.woff2", "playfair-tr-400.woff2"]) {
-      const encoded = fs.readFileSync(path.join(root, "public/performance/fonts", file)).toString("base64");
-      css = css.replaceAll(`/performance/fonts/${file}`, `data:font/woff2;base64,${encoded}`);
-    }
+    const css = optimize(processed.css, { minify: true }).code;
     const h = React.createElement;
     const origin = metadata.metadataBase.origin;
     const socialImage = origin + metadata.openGraph.images[0].url;
@@ -61,6 +56,7 @@ async function build() {
         meta("twitter:card", "summary_large_image"), meta("twitter:title", metadata.title), meta("twitter:description", metadata.description), meta("twitter:image", socialImage),
         h("link", { rel: "icon", href: "/icon.svg", type: "image/svg+xml" }),
         h("link", { rel: "apple-touch-icon", href: "/apple-icon.png" }),
+        ...["canevim-wordmark.woff2", "playfair-latin-400.woff2", "playfair-tr-400.woff2"].map(file => h("link", { key: file, rel: "preload", href: "/performance/fonts/" + file, as: "font", type: "font/woff2", crossOrigin: "anonymous" })),
         h("style", { "data-home-styles": "complete", dangerouslySetInnerHTML: { __html: (css + 'html,body{max-width:100%;overflow-x:clip}#site-menu[aria-hidden="true"]{visibility:hidden;pointer-events:none}').replace(/<\/style/gi, "<\\/style") } })
       ),
       h("body", { "data-static-home": "true" },
@@ -74,7 +70,7 @@ async function build() {
     const output = JSON.stringify({ html }) + "\n";
     fs.mkdirSync(path.dirname(target), { recursive: true });
     if (!fs.existsSync(target) || fs.readFileSync(target, "utf8") !== output) fs.writeFileSync(target, output);
-    console.log(`Static landing: ${Buffer.byteLength(html)} HTML bytes; CSS ${Buffer.byteLength(css)} complete with embedded first-screen fonts; no framework hydration.`);
+    console.log(`Static landing: ${Buffer.byteLength(html)} HTML bytes; CSS ${Buffer.byteLength(css)} complete; three cached fonts preloaded; no framework hydration.`);
   } finally {
     Module._extensions[".js"] = previousJS;
     if (previousCSS) Module._extensions[".css"] = previousCSS;

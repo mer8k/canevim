@@ -8,6 +8,7 @@ const { minify } = require("next/dist/compiled/terser");
 const base = (process.env.TEST_BASE_URL || "http://127.0.0.1:3100").replace(/\/$/, "");
 const localOrigin = new URL(base).origin;
 const canonicalOrigin = "https://www.canevimsile.com";
+const homeFontPaths = ["canevim-wordmark.woff2", "playfair-latin-400.woff2", "playfair-tr-400.woff2"].map(file => "/performance/fonts/" + file);
 const routes = CONTENT_ROUTES.map(({ path }) => path);
 const outputDir = process.env.BROWSER_AUDIT_DIR || ".audit/round2";
 const outputPath = name => path.join(outputDir, name);
@@ -46,11 +47,13 @@ async function homeStyleInfo(page) {
     const sheets = Array.from(document.querySelectorAll('style[data-home-styles="complete"]'));
     const resources = performance.getEntriesByType("resource").map(entry => entry.name);
     const externalFonts = resources.filter(url => !url.startsWith("data:") && /\.(?:woff2?|otf|ttf)(?:\?|$)/i.test(new URL(url).pathname));
-    const embeddedFaces = sheets.flatMap(sheet => Array.from(sheet.sheet?.cssRules || []).filter(rule => rule.type === CSSRule.FONT_FACE_RULE && /data:font\/woff2;base64,/.test(rule.style.getPropertyValue("src"))).map(rule => ({ family: rule.style.getPropertyValue("font-family"), range: rule.style.getPropertyValue("unicode-range") })));
+    const fontFaces = sheets.flatMap(sheet => Array.from(sheet.sheet?.cssRules || []).filter(rule => rule.type === CSSRule.FONT_FACE_RULE).map(rule => ({ family: rule.style.getPropertyValue("font-family").replaceAll(/["']/g, ""), style: rule.style.getPropertyValue("font-style"), weight: rule.style.getPropertyValue("font-weight"), source: rule.style.getPropertyValue("src"), range: rule.style.getPropertyValue("unicode-range") })));
+    const primaryFaces = fontFaces.filter(face => ["CanEvim Wordmark", "Playfair Display"].includes(face.family) && face.style === "normal" && face.weight === "400");
     const usedFaces = Array.from(document.fonts).filter(face => ["CanEvim Wordmark", "Playfair Display"].includes(face.family.replaceAll(/["']/g, "")) && face.style === "normal" && face.weight === "400").map(face => ({ family: face.family, range: face.unicodeRange, status: face.status }));
     return {
       inlineSheets: sheets.map(sheet => ({ bytes: sheet.textContent.length, ruleCount: sheet.sheet?.cssRules.length || 0 })),
-      embeddedFaces,
+      primaryFaces,
+      embeddedFontFaces: fontFaces.filter(face => /data:font\//.test(face.source)).length,
       usedFaces,
       fontStatus: document.fonts.status,
       wordmarkLoaded: document.fonts.check('400 16px "CanEvim Wordmark"', "canevim"),
@@ -61,13 +64,15 @@ async function homeStyleInfo(page) {
       externalFonts,
       homeStylesheetLinks: Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(link => link.getAttribute("href")).filter(url => /\/performance\/ui\/home-[a-f0-9]+\.css/.test(url)),
       deferredStyleLinks: document.querySelectorAll("link[data-deferred-styles]").length,
-      fontPreloads: document.querySelectorAll('link[rel="preload"][as="font"]').length,
+      fontPreloads: Array.from(document.querySelectorAll('link[rel="preload"][as="font"]')).map(link => ({ href: link.href, type: link.type, crossOrigin: link.crossOrigin })),
     };
   });
 }
 function checkInlineHomeStyles(styles, where) {
-  check(styles.inlineSheets.length === 1 && styles.inlineSheets[0].ruleCount > 0 && styles.embeddedFaces.length === 3, `${where}: complete inline stylesheet contains three embedded fonts`, styles);
-  check(styles.externalHomeStyles.length === 0 && styles.homeStylesheetLinks.length === 0 && styles.deferredStyleLinks === 0 && styles.externalFonts.length === 0 && styles.fontPreloads === 0, `${where}: no external home stylesheet or font requests/preloads`, styles);
+  check(styles.inlineSheets.length === 1 && styles.inlineSheets[0].ruleCount > 0 && styles.embeddedFontFaces === 0 && styles.primaryFaces.length === 3 && homeFontPaths.every(path => styles.primaryFaces.filter(face => face.source.includes(path)).length === 1), `${where}: complete inline stylesheet references three external primary fonts`, styles);
+  check(styles.externalHomeStyles.length === 0 && styles.homeStylesheetLinks.length === 0 && styles.deferredStyleLinks === 0, `${where}: no external home stylesheet`, styles);
+  check(styles.externalFonts.length === 3 && homeFontPaths.every(path => styles.externalFonts.filter(url => new URL(url).origin === localOrigin && new URL(url).pathname === path).length === 1), `${where}: only three expected font assets requested`, styles.externalFonts);
+  check(styles.fontPreloads.length === 3 && homeFontPaths.every(path => styles.fontPreloads.filter(preload => new URL(preload.href).origin === localOrigin && new URL(preload.href).pathname === path && preload.type === "font/woff2" && preload.crossOrigin === "anonymous").length === 1), `${where}: exact three HTML font preloads use CORS`, styles.fontPreloads);
   check(styles.fontStatus === "loaded" && styles.usedFaces.length === 3 && styles.usedFaces.every(face => face.status === "loaded") && styles.wordmarkLoaded && styles.headingLoaded && styles.headingFont.includes("Playfair Display") && styles.wordmarkFont.includes("CanEvim Wordmark"), `${where}: computed heading and wordmark fonts are loaded`, styles);
 }
 async function pageReady(page, route, { checkInitialLazy = false } = {}) {
@@ -90,6 +95,8 @@ async function pageReady(page, route, { checkInitialLazy = false } = {}) {
     check(!initial.plannerPresent, `Home @ ${page.viewportSize().width}: planner fragment is lazy`, initial);
     check(initial.staticHome && initial.frameworkScriptRequests.length === 0 && initial.frameworkScriptElements.length === 0, `Home @ ${page.viewportSize().width}: genuine static document with zero framework scripts`, initial);
     check(initial.nativeUiRequested, `Home @ ${page.viewportSize().width}: native header/form script loaded`, initial);
+    initial.linkResponseHeader = response.headers().link || "";
+    check(!/as\s*=\s*["']?font\b/i.test(initial.linkResponseHeader), `Home @ ${page.viewportSize().width}: no font preload response header`, initial.linkResponseHeader);
     initial.styles = await homeStyleInfo(page);
     checkInlineHomeStyles(initial.styles, `Home @ ${page.viewportSize().width}`);
     check(initial.placeholders.some(section => section.id === "kahvalti-planla" && section.source === "/interactive/planner-breakfast") && initial.placeholders.some(section => section.id === "rota-matrisi" && section.source === "/interactive/routes"), `Home @ ${page.viewportSize().width}: accessible fragment anchors exist`, initial);

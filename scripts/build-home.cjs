@@ -49,6 +49,9 @@ async function build() {
     classes.add("growth-table-scroll");
     const critical = postcss.parse(css);
     critical.walkRules(rule => {
+      // Offscreen containment is needed before the deferred sheet arrives;
+      // otherwise the first layout traverses every long-form section.
+      if (rule.nodes.some(node => node.type === "decl" && /^(content-visibility|contain-intrinsic-)/.test(node.prop))) return;
       const selectors = rule.selectors.filter(selector => {
         const required = [...selector.matchAll(/\.((?:\\.|[\w-])+)/g)].map(match => match[1].replace(/\\(.)/g, "$1"));
         return !required.length || required.every(name => classes.has(name));

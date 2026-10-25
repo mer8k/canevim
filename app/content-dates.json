@@ -1,7 +1,7 @@
 {
   "/": {
-    "sha256": "0b9872663cb4ed5951efdeb3d9569a598695ad6e8176acf0a28c7bc314d956f0",
-    "lastModified": "2026-10-25T15:18:56.884Z",
+    "sha256": "b963a18bfcc6483cb9b4a9bcb1a24f784bf68334679349c5c6eca75c06e9c78e",
+    "lastModified": "2026-10-25T15:29:37.834Z",
     "sources": [
       "app/Header.js",
       "app/components/FadeIn.js",

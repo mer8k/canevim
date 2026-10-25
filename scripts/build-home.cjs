@@ -68,6 +68,9 @@ async function build() {
     const styleUrl = "/performance/ui/" + stylesheet;
     const origin = metadata.metadataBase.origin;
     const socialImage = origin + metadata.openGraph.images[0].url;
+    // One small WebP avoids a round trip for the narrow-screen LCP image.
+    // Larger screens retain the responsive external image sources.
+    const mobileHeroSrc = "data:image/webp;base64," + fs.readFileSync(path.join(root, "public/performance/hero/home-mobile-480-fast.webp")).toString("base64");
     const meta = (name, content) => h("meta", { name, content });
     const og = (property, content) => h("meta", { property, content });
     const html = "<!DOCTYPE html>" + renderToStaticMarkup(h("html", { lang: "tr" },
@@ -88,7 +91,7 @@ async function build() {
       ),
       h("body", { "data-static-home": "true" },
         h("a", { href: "#main-content", className: "skip-link" }, "İçeriğe geç"),
-        h(Header), h(Home), h(MobileActions),
+        h(Header), h(Home, { mobileHeroSrc }), h(MobileActions),
         h("script", { defer: true, src: "/home-ui.js" }),
         h("script", { defer: true, src: "/growth-loader.js", "data-gtm-id": process.env.NEXT_PUBLIC_GTM_ID || "", "data-ga4-id": process.env.NEXT_PUBLIC_GA4_ID || "" })
       )

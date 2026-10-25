@@ -8,7 +8,6 @@ const { minify } = require("next/dist/compiled/terser");
 const base = (process.env.TEST_BASE_URL || "http://127.0.0.1:3100").replace(/\/$/, "");
 const localOrigin = new URL(base).origin;
 const canonicalOrigin = "https://www.canevimsile.com";
-const homeFontPaths = ["canevim-wordmark.woff2", "playfair-latin-400.woff2", "playfair-tr-400.woff2"].map(file => "/performance/fonts/" + file);
 const routes = CONTENT_ROUTES.map(({ path }) => path);
 const outputDir = process.env.BROWSER_AUDIT_DIR || ".audit/round2";
 const outputPath = name => path.join(outputDir, name);
@@ -48,16 +47,16 @@ async function homeStyleInfo(page) {
     const resources = performance.getEntriesByType("resource").map(entry => entry.name);
     const externalFonts = resources.filter(url => !url.startsWith("data:") && /\.(?:woff2?|otf|ttf)(?:\?|$)/i.test(new URL(url).pathname));
     const fontFaces = sheets.flatMap(sheet => Array.from(sheet.sheet?.cssRules || []).filter(rule => rule.type === CSSRule.FONT_FACE_RULE).map(rule => ({ family: rule.style.getPropertyValue("font-family").replaceAll(/["']/g, ""), style: rule.style.getPropertyValue("font-style"), weight: rule.style.getPropertyValue("font-weight"), source: rule.style.getPropertyValue("src"), range: rule.style.getPropertyValue("unicode-range") })));
-    const primaryFaces = fontFaces.filter(face => ["CanEvim Wordmark", "Playfair Display"].includes(face.family) && face.style === "normal" && face.weight === "400");
-    const usedFaces = Array.from(document.fonts).filter(face => ["CanEvim Wordmark", "Playfair Display"].includes(face.family.replaceAll(/["']/g, "")) && face.style === "normal" && face.weight === "400").map(face => ({ family: face.family, range: face.unicodeRange, status: face.status }));
+    const wordmarkFaces = fontFaces.filter(face => face.family === "CanEvim Wordmark" && face.style === "normal" && face.weight === "400");
+    const usedFaces = Array.from(document.fonts).filter(face => face.family.replaceAll(/["']/g, "") === "CanEvim Wordmark" && face.style === "normal" && face.weight === "400").map(face => ({ family: face.family, range: face.unicodeRange, status: face.status }));
     return {
       inlineSheets: sheets.map(sheet => ({ bytes: sheet.textContent.length, ruleCount: sheet.sheet?.cssRules.length || 0 })),
-      primaryFaces,
+      wordmarkFaces,
       embeddedFontFaces: fontFaces.filter(face => /data:font\//.test(face.source)).length,
       usedFaces,
       fontStatus: document.fonts.status,
       wordmarkLoaded: document.fonts.check('400 16px "CanEvim Wordmark"', "canevim"),
-      headingLoaded: document.fonts.check('400 16px "Playfair Display"', "Şile Kahvaltı"),
+      headingLoaded: document.fonts.check("400 16px Georgia", "Şile Kahvaltı"),
       headingFont: getComputedStyle(document.querySelector("h1")).fontFamily,
       wordmarkFont: getComputedStyle(document.querySelector('header a[href="/"]')).fontFamily,
       externalHomeStyles: resources.filter(url => /\/performance\/ui\/home-[a-f0-9]+\.css$/.test(new URL(url).pathname)),
@@ -69,11 +68,10 @@ async function homeStyleInfo(page) {
   });
 }
 function checkInlineHomeStyles(styles, where) {
-  check(styles.inlineSheets.length === 1 && styles.inlineSheets[0].ruleCount > 0 && styles.embeddedFontFaces === 0 && styles.primaryFaces.length === 3 && homeFontPaths.every(path => styles.primaryFaces.filter(face => face.source.includes(path)).length === 1), `${where}: complete inline stylesheet references three external primary fonts`, styles);
+  check(styles.inlineSheets.length === 1 && styles.inlineSheets[0].ruleCount > 0 && styles.embeddedFontFaces === 1 && styles.wordmarkFaces.length === 1 && /data:font\/woff2;base64,/.test(styles.wordmarkFaces[0].source), `${where}: complete inline stylesheet embeds only the wordmark font`, styles);
   check(styles.externalHomeStyles.length === 0 && styles.homeStylesheetLinks.length === 0 && styles.deferredStyleLinks === 0, `${where}: no external home stylesheet`, styles);
-  check(styles.externalFonts.length === 3 && homeFontPaths.every(path => styles.externalFonts.filter(url => new URL(url).origin === localOrigin && new URL(url).pathname === path).length === 1), `${where}: only three expected font assets requested`, styles.externalFonts);
-  check(styles.fontPreloads.length === 3 && homeFontPaths.every(path => styles.fontPreloads.filter(preload => new URL(preload.href).origin === localOrigin && new URL(preload.href).pathname === path && preload.type === "font/woff2" && preload.crossOrigin === "anonymous").length === 1), `${where}: exact three HTML font preloads use CORS`, styles.fontPreloads);
-  check(styles.fontStatus === "loaded" && styles.usedFaces.length === 3 && styles.usedFaces.every(face => face.status === "loaded") && styles.wordmarkLoaded && styles.headingLoaded && styles.headingFont.includes("Playfair Display") && styles.wordmarkFont.includes("CanEvim Wordmark"), `${where}: computed heading and wordmark fonts are loaded`, styles);
+  check(styles.externalFonts.length === 0 && styles.fontPreloads.length === 0, `${where}: no external font requests or font preloads`, { externalFonts: styles.externalFonts, fontPreloads: styles.fontPreloads });
+  check(styles.fontStatus === "loaded" && styles.usedFaces.length === 1 && styles.usedFaces[0].status === "loaded" && styles.wordmarkLoaded && styles.headingLoaded && /^Georgia(?:,|$)/i.test(styles.headingFont) && styles.wordmarkFont.includes("CanEvim Wordmark"), `${where}: computed hero uses system Georgia and embedded wordmark is loaded`, styles);
 }
 async function pageReady(page, route, { checkInitialLazy = false } = {}) {
   const response = await page.goto(base + route, { waitUntil: "load", timeout: 45000 });
@@ -212,6 +210,12 @@ try {
         check(forbidden.length === 0, `${where}: no unsupported offers/prices/reviews`, forbidden);
         const closedOverflow = await measureOverflow(page);
         check(closedOverflow.overflow <= 1, `${where}: closed-details horizontal overflow`, closedOverflow);
+        if (route === "/" && [375, 1440].includes(width)) {
+          const viewportScreenshot = outputPath(`after-${width === 375 ? "mobile-375" : "desktop"}-viewport.png`);
+          await page.evaluate(() => new Promise(resolve => { window.scrollTo(0, 0); requestAnimationFrame(() => requestAnimationFrame(resolve)); }));
+          await page.screenshot({ path: viewportScreenshot });
+          result.screenshots.push(viewportScreenshot);
+        }
         if (route === "/" && [320, 1440].includes(width)) {
           if (width === 320) {
             // This viewport capture uses normal product rendering, before any

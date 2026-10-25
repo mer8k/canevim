@@ -36,7 +36,12 @@ async function build() {
     const cssPaths = ["globals.css", "local-fonts-subset.css", "growth-content.css", "mobile-actions.css", "growth-performance.css"];
     const cssSource = cssPaths.map(file => fs.readFileSync(path.join(appRoot, file), "utf8")).join("\n");
     const processed = await postcss([tailwind({ base: root })]).process(cssSource, { from: path.join(appRoot, "globals.css") });
-    const css = optimize(processed.css, { minify: true }).code;
+    let css = optimize(processed.css, { minify: true }).code;
+    // Keep the brand glyphs exact; use the device's serif face for the landing
+    // document so its first screen needs no font requests or large font embeds.
+    const wordmark = fs.readFileSync(path.join(root, "public/performance/fonts/canevim-wordmark.woff2")).toString("base64");
+    css = css.replaceAll("/performance/fonts/canevim-wordmark.woff2", "data:font/woff2;base64," + wordmark);
+    css += 'body[data-static-home="true"]{--font-serif:Georgia,"Times New Roman",serif}';
     const h = React.createElement;
     const origin = metadata.metadataBase.origin;
     const socialImage = origin + metadata.openGraph.images[0].url;
@@ -56,7 +61,6 @@ async function build() {
         meta("twitter:card", "summary_large_image"), meta("twitter:title", metadata.title), meta("twitter:description", metadata.description), meta("twitter:image", socialImage),
         h("link", { rel: "icon", href: "/icon.svg", type: "image/svg+xml" }),
         h("link", { rel: "apple-touch-icon", href: "/apple-icon.png" }),
-        ...["canevim-wordmark.woff2", "playfair-latin-400.woff2", "playfair-tr-400.woff2"].map(file => h("link", { key: file, rel: "preload", href: "/performance/fonts/" + file, as: "font", type: "font/woff2", crossOrigin: "anonymous" })),
         h("style", { "data-home-styles": "complete", dangerouslySetInnerHTML: { __html: (css + 'html,body{max-width:100%;overflow-x:clip}#site-menu[aria-hidden="true"]{visibility:hidden;pointer-events:none}').replace(/<\/style/gi, "<\\/style") } })
       ),
       h("body", { "data-static-home": "true" },
@@ -70,7 +74,7 @@ async function build() {
     const output = JSON.stringify({ html }) + "\n";
     fs.mkdirSync(path.dirname(target), { recursive: true });
     if (!fs.existsSync(target) || fs.readFileSync(target, "utf8") !== output) fs.writeFileSync(target, output);
-    console.log(`Static landing: ${Buffer.byteLength(html)} HTML bytes; CSS ${Buffer.byteLength(css)} complete; three cached fonts preloaded; no framework hydration.`);
+    console.log(`Static landing: ${Buffer.byteLength(html)} HTML bytes; CSS ${Buffer.byteLength(css)} complete; system serif and embedded 1KB wordmark; no framework hydration.`);
   } finally {
     Module._extensions[".js"] = previousJS;
     if (previousCSS) Module._extensions[".css"] = previousCSS;

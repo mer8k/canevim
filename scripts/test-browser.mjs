@@ -43,14 +43,14 @@ async function revealPlanner(page) {
 async function homeStyleInfo(page) {
   await page.evaluate(() => document.fonts.ready);
   return page.evaluate(() => {
-    const sheets = Array.from(document.querySelectorAll('style[data-home-styles="complete"]'));
+    const sheets = Array.from(document.querySelectorAll('style[data-home-styles="critical"]'));
     const resources = performance.getEntriesByType("resource").map(entry => entry.name);
     const externalFonts = resources.filter(url => !url.startsWith("data:") && /\.(?:woff2?|otf|ttf)(?:\?|$)/i.test(new URL(url).pathname));
     const fontFaces = sheets.flatMap(sheet => Array.from(sheet.sheet?.cssRules || []).filter(rule => rule.type === CSSRule.FONT_FACE_RULE).map(rule => ({ family: rule.style.getPropertyValue("font-family").replaceAll(/["']/g, ""), style: rule.style.getPropertyValue("font-style"), weight: rule.style.getPropertyValue("font-weight"), source: rule.style.getPropertyValue("src"), range: rule.style.getPropertyValue("unicode-range") })));
     const wordmarkFaces = fontFaces.filter(face => face.family === "CanEvim Wordmark" && face.style === "normal" && face.weight === "400");
     const usedFaces = Array.from(document.fonts).filter(face => face.family.replaceAll(/["']/g, "") === "CanEvim Wordmark" && face.style === "normal" && face.weight === "400").map(face => ({ family: face.family, range: face.unicodeRange, status: face.status }));
     return {
-      inlineSheets: sheets.map(sheet => ({ bytes: sheet.textContent.length, ruleCount: sheet.sheet?.cssRules.length || 0 })),
+      criticalSheets: sheets.map(sheet => ({ bytes: sheet.textContent.length, ruleCount: sheet.sheet?.cssRules.length || 0 })),
       wordmarkFaces,
       embeddedFontFaces: fontFaces.filter(face => /data:font\//.test(face.source)).length,
       usedFaces,
@@ -61,17 +61,22 @@ async function homeStyleInfo(page) {
       wordmarkFont: getComputedStyle(document.querySelector('header a[href="/"]')).fontFamily,
       externalHomeStyles: resources.filter(url => /\/performance\/ui\/home-[a-f0-9]+\.css$/.test(new URL(url).pathname)),
       externalFonts,
-      homeStylesheetLinks: Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(link => link.getAttribute("href")).filter(url => /\/performance\/ui\/home-[a-f0-9]+\.css/.test(url)),
+      homeStylesheetLinks: Array.from(document.querySelectorAll('link[rel="stylesheet"]')).filter(link => /\/performance\/ui\/home-[a-f0-9]+\.css/.test(link.getAttribute("href"))).map(link => ({ href: link.href, media: link.media, loaded: Boolean(link.sheet), ready: link.getAttribute("data-style-ready") })),
       deferredStyleLinks: document.querySelectorAll("link[data-deferred-styles]").length,
       fontPreloads: Array.from(document.querySelectorAll('link[rel="preload"][as="font"]')).map(link => ({ href: link.href, type: link.type, crossOrigin: link.crossOrigin })),
     };
   });
 }
-function checkInlineHomeStyles(styles, where) {
-  check(styles.inlineSheets.length === 1 && styles.inlineSheets[0].ruleCount > 0 && styles.embeddedFontFaces === 1 && styles.wordmarkFaces.length === 1 && /data:font\/woff2;base64,/.test(styles.wordmarkFaces[0].source), `${where}: complete inline stylesheet embeds only the wordmark font`, styles);
-  check(styles.externalHomeStyles.length === 0 && styles.homeStylesheetLinks.length === 0 && styles.deferredStyleLinks === 0, `${where}: no external home stylesheet`, styles);
+function checkHomeStyles(styles, where, { pending = false } = {}) {
+  check(styles.criticalSheets.length === 1 && styles.criticalSheets[0].ruleCount > 0 && styles.embeddedFontFaces === 1 && styles.wordmarkFaces.length === 1 && /data:font\/woff2;base64,/.test(styles.wordmarkFaces[0].source), `${where}: critical stylesheet embeds only the wordmark font`, styles);
+  check(styles.homeStylesheetLinks.length === 1 && styles.deferredStyleLinks === 1, `${where}: one deferred complete stylesheet`, styles.homeStylesheetLinks);
+  if (pending) check(styles.externalHomeStyles.length === 0 && styles.homeStylesheetLinks.every(style => style.media === "print" && !style.loaded && style.ready !== "true"), `${where}: full stylesheet remains pending`, styles);
+  else check(styles.externalHomeStyles.length === 1 && styles.homeStylesheetLinks.every(style => style.media === "all" && style.loaded && style.ready === "true"), `${where}: full stylesheet loaded and activated`, styles);
   check(styles.externalFonts.length === 0 && styles.fontPreloads.length === 0, `${where}: no external font requests or font preloads`, { externalFonts: styles.externalFonts, fontPreloads: styles.fontPreloads });
-  check(styles.fontStatus === "loaded" && styles.usedFaces.length === 1 && styles.usedFaces[0].status === "loaded" && styles.wordmarkLoaded && styles.headingLoaded && /^Georgia(?:,|$)/i.test(styles.headingFont) && styles.wordmarkFont.includes("CanEvim Wordmark"), `${where}: computed hero uses system Georgia and embedded wordmark is loaded`, styles);
+  // The complete sheet can repeat the same font-face declaration. Test the
+  // active embedded face and loaded font, rather than requiring unused duplicate
+  // declarations to load or treating them as a second network font asset.
+  check(styles.fontStatus === "loaded" && styles.usedFaces.some(face => face.status === "loaded") && styles.wordmarkLoaded && styles.headingLoaded && /^Georgia(?:,|$)/i.test(styles.headingFont) && styles.wordmarkFont.includes("CanEvim Wordmark"), `${where}: computed hero uses system Georgia and embedded wordmark is loaded`, styles);
 }
 async function pageReady(page, route, { checkInitialLazy = false } = {}) {
   const response = await page.goto(base + route, { waitUntil: "load", timeout: 45000 });
@@ -96,7 +101,7 @@ async function pageReady(page, route, { checkInitialLazy = false } = {}) {
     initial.linkResponseHeader = response.headers().link || "";
     check(!/as\s*=\s*["']?font\b/i.test(initial.linkResponseHeader), `Home @ ${page.viewportSize().width}: no font preload response header`, initial.linkResponseHeader);
     initial.styles = await homeStyleInfo(page);
-    checkInlineHomeStyles(initial.styles, `Home @ ${page.viewportSize().width}`);
+    checkHomeStyles(initial.styles, `Home @ ${page.viewportSize().width}`);
     check(initial.placeholders.some(section => section.id === "kahvalti-planla" && section.source === "/interactive/planner-breakfast") && initial.placeholders.some(section => section.id === "rota-matrisi" && section.source === "/interactive/routes"), `Home @ ${page.viewportSize().width}: accessible fragment anchors exist`, initial);
     result.lazy.push({ width: page.viewportSize().width, ...initial });
   }
@@ -256,9 +261,17 @@ try {
     await context.close();
   }
 
-  result.inlineStyles = [];
+  result.deferredStyles = [];
   for (const width of [375, 412]) {
     const styleContext = await contextFor(width);
+    const heldStyles = [];
+    let releaseStyles;
+    const styleGate = new Promise(resolve => { releaseStyles = resolve; });
+    await styleContext.route("**/performance/ui/home-*.css", async route => {
+      heldStyles.push({ url: route.request().url(), requestedAt: Date.now() });
+      await styleGate;
+      await route.continue();
+    });
     const stylePage = await styleContext.newPage();
     const snapshotBar = () => stylePage.evaluate(() => {
       const rect = document.querySelector(".ce-mobile-actions").getBoundingClientRect();
@@ -268,28 +281,48 @@ try {
       await stylePage.goto(base + "/", { waitUntil: "domcontentloaded", timeout: 15000 });
       await stylePage.waitForFunction(() => Boolean(window.CanEvimLoader));
       const initialStyles = await homeStyleInfo(stylePage);
-      checkInlineHomeStyles(initialStyles, `Inline CSS @ ${width}`);
+      checkHomeStyles(initialStyles, `Critical CSS @ ${width}`, { pending: true });
       const before = await snapshotBar();
+      await stylePage.waitForTimeout(500);
+      const heldForMs = heldStyles.length ? Date.now() - heldStyles[0].requestedAt : 0;
+      check(heldStyles.length === 1 && heldForMs >= 500, `Critical CSS @ ${width}: full stylesheet genuinely held for at least 500ms`, { heldStyles, heldForMs });
       await stylePage.locator("#menu-toggle").click();
       await stylePage.waitForFunction(() => document.getElementById("menu-toggle").getAttribute("aria-expanded") === "true");
       const menu = await snapshotBar();
+      const pendingMenu = await stylePage.locator("#site-menu").evaluate(element => {
+        const rect = element.getBoundingClientRect(), link = element.querySelector('a[href="/menu"]'), linkRect = link.getBoundingClientRect(), background = element.firstElementChild;
+        return { visible: element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }), ariaHidden: element.getAttribute("aria-hidden"), left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, viewportHeight: innerHeight, display: getComputedStyle(element).display, background: getComputedStyle(background).backgroundColor, linkFont: getComputedStyle(link).fontFamily, linkFontSize: getComputedStyle(link).fontSize, linkLeft: linkRect.left, linkRight: linkRect.right, linkTop: linkRect.top, linkBottom: linkRect.bottom };
+      });
+      check(pendingMenu.visible && pendingMenu.ariaHidden === "false" && pendingMenu.display === "flex" && pendingMenu.background !== "rgba(0, 0, 0, 0)" && Math.abs(pendingMenu.left) <= 1 && Math.abs(pendingMenu.right - width) <= 1 && pendingMenu.top <= 1 && pendingMenu.bottom >= pendingMenu.viewportHeight - 1 && pendingMenu.linkFont.includes("Georgia") && parseFloat(pendingMenu.linkFontSize) >= 27 && pendingMenu.linkLeft >= 0 && pendingMenu.linkRight <= width && pendingMenu.linkTop >= 0 && pendingMenu.linkBottom <= pendingMenu.viewportHeight, `Critical CSS @ ${width}: complete header/menu layout is visible before full CSS`, pendingMenu);
+      await stylePage.keyboard.press("Tab");
+      const keyboardFocus = await stylePage.evaluate(() => { const active = document.activeElement, style = getComputedStyle(active); return { insideMenu: Boolean(active.closest("#site-menu")), tag: active.tagName, focusVisible: active.matches(":focus-visible"), outlineStyle: style.outlineStyle, outlineWidth: style.outlineWidth }; });
+      check(keyboardFocus.insideMenu && keyboardFocus.tag === "A" && keyboardFocus.focusVisible && keyboardFocus.outlineStyle !== "none" && parseFloat(keyboardFocus.outlineWidth) > 0, `Critical CSS @ ${width}: keyboard focus is visible before full CSS`, keyboardFocus);
+      const pendingScreenshot = outputPath(`critical-menu-${width}.png`);
+      await stylePage.screenshot({ path: pendingScreenshot });
+      result.screenshots.push(pendingScreenshot);
       await stylePage.keyboard.press("Escape");
+      check(await stylePage.evaluate(() => document.getElementById("menu-toggle").getAttribute("aria-expanded") === "false" && document.activeElement?.id === "menu-toggle"), `Critical CSS @ ${width}: Escape closes menu and restores focus before full CSS`);
+      const pendingStyles = await homeStyleInfo(stylePage);
+      checkHomeStyles(pendingStyles, `Critical CSS after menu @ ${width}`, { pending: true });
+      releaseStyles();
       await stylePage.waitForLoadState("load");
+      await stylePage.waitForFunction(() => Array.from(document.querySelectorAll("link[data-deferred-styles]")).every(link => link.media === "all" && link.sheet && link.getAttribute("data-style-ready") === "true"), null, { timeout: 15000 });
       const article = stylePage.locator(".growth-home-guide .growth-article-grid > section").first();
       await article.scrollIntoViewIfNeeded();
       await stylePage.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       const copy = await article.evaluate(element => { const rect = element.getBoundingClientRect(); const paragraph = element.querySelector("p"); return { visible: element.checkVisibility({ contentVisibilityAuto: true }), textLength: paragraph?.textContent.trim().length || 0, paragraphFontSize: paragraph && getComputedStyle(paragraph).fontSize, top: rect.top, bottom: rect.bottom, viewportHeight: innerHeight, width: rect.width }; });
-      check(copy.visible && copy.textLength > 0 && copy.top < copy.viewportHeight && copy.bottom > 0 && copy.width > 0 && copy.width <= width && copy.paragraphFontSize === "15px", `Inline CSS @ ${width}: below-fold editorial copy has complete layout`, copy);
+      check(copy.visible && copy.textLength > 0 && copy.top < copy.viewportHeight && copy.bottom > 0 && copy.width > 0 && copy.width <= width && copy.paragraphFontSize === "15px", `Complete CSS @ ${width}: below-fold editorial copy has complete layout`, copy);
       await stylePage.evaluate(async () => { window.scrollTo(0, 0); await document.fonts.ready; await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))); });
       const after = await snapshotBar();
       const finalStyles = await homeStyleInfo(stylePage);
-      checkInlineHomeStyles(finalStyles, `Inline CSS after menu/scroll @ ${width}`);
+      checkHomeStyles(finalStyles, `Complete CSS after menu/scroll @ ${width}`);
       const stable = [before, menu, after].every(snapshot => snapshot.innerWidth === width && snapshot.documentWidth <= width + 1 && Math.abs(snapshot.bar.left) <= 1 && Math.abs(snapshot.bar.right - width) <= 1 && Math.abs(snapshot.bar.width - width) <= 1) && Object.keys(before.bar).every(key => Math.abs(before.bar[key] - menu.bar[key]) <= 1 && Math.abs(before.bar[key] - after.bar[key]) <= 1);
-      check(stable, `Inline CSS @ ${width}: viewport and fixed action bar stay stable through menu/load/scroll`, { before, menu, after });
-      result.inlineStyles.push({ width, initialStyles, finalStyles, before, menu, after, copy, stable });
+      check(stable, `Critical CSS @ ${width}: viewport and fixed action bar stay stable before/after complete CSS`, { before, menu, after });
+      result.deferredStyles.push({ width, heldForMs, initialStyles, pendingStyles, finalStyles, pendingMenu, keyboardFocus, pendingScreenshot, before, menu, after, copy, stable });
     } catch (error) {
-      check(false, `Inline CSS @ ${width}: layout test completed`, error.stack);
+      check(false, `Critical CSS @ ${width}: delayed stylesheet/layout test completed`, error.stack);
     } finally {
+      releaseStyles();
       await styleContext.close();
     }
   }

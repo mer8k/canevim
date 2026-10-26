@@ -1,20 +1,20 @@
 # Can Evim — tüm operasyon kanıtları
 
-25 Ekim 2026 · Next.js 16.3.6 / React 19.2.4 · Yerel QA tamamlandı; canlı hedef durumu aşağıdadır
+26 Ekim 2026 · Next.js 16.3.6 / React 19.2.4 · Yerel QA tamamlandı; canlı hedef durumu aşağıdadır
 
-Canlı yayın doğrulandı; commit 4843eb1ab7228da0965807f18d1a567408d5ca1c.
+Bu build için canlı yayın henüz doğrulanmadı; yerel çalışma ve yayın sonucu ayrı tutulur.
 
 ## Üç ayrı başlangıç / sonuç sınırı
 
 1. İlk başlangıç: **2 sayfa, 348.150 byte**. .audit/baseline.json ve baseline-html.json.
 2. İkinci tur başlangıcı / ilk tur sonu: **7 sayfa, 2.211.399 byte**. .audit/round2/baseline.json ve before-final-metrics.json. Bu, ilk başlangıçla aynı veri değildir.
-3. Güncel kapsam: **17 kanonik URL, 14 bağımsız makale**. Derlenmiş 17/17 dosya; tam HTML toplamı 4.440.140 byte. İlk başlangıca oran 12.75 kat; ikinci tur başlangıcına oran 2.01 kat.
+3. Güncel kapsam: **17 kanonik URL, 14 bağımsız makale**. Derlenmiş 17/17 dosya; tam HTML toplamı 4.416.214 byte. İlk başlangıca oran 12.68 kat; ikinci tur başlangıcına oran 2.00 kat.
 
 HTML toplamı yeni sayfaları içerir; tek sayfa veya sıkıştırılmış ağ transferi büyümesi değildir. Rapor/.audit/404/noindex arşiv toplamdan çıkarılır.
 
 | Kanonik URL | Derlenmiş HTML byte | Görünür toplam kelime | Ana makale kelimesi |
 |---|---:|---:|---:|
-| / | 145.586 | 1.715 | Bekleniyor |
+| / | 121.660 | 1.715 | Bekleniyor |
 | /menu | 256.306 | 474 | Bekleniyor |
 | /sile-serpme-kahvalti | 264.495 | 1.446 | 1.049 |
 | /sile-gozleme | 261.394 | 1.436 | 1.038 |
@@ -43,33 +43,66 @@ HTML toplamı yeni sayfaları içerir; tek sayfa veya sıkıştırılmış ağ t
 | En iyi uygulamalar | 100 | 100 | 100 |
 | SEO | 100 | 100 | 100 |
 
-Final ölçüm yerel: http://127.0.0.1:3100/. LCP 1.87 sn; TBT 0 ms; CLS 0.0000. 98–100 performans hedefi bu koşuda sağlandı. İlk iki sütun yerel koşulardır; canlı final kullanıldığında sunucu ve sıkıştırma koşulları farklıdır. Kanıt: .audit/round2/lighthouse-final-summary.json. Mobil laboratuvar koşusu gerçek kullanıcı Core Web Vitals veya GSC sonucu değildir.
+Final ölçüm yerel: http://127.0.0.1:3100/. LCP 1.88 sn; TBT 29 ms; CLS 0.0027. 98–100 performans hedefi bu koşuda sağlandı. İlk iki sütun yerel koşulardır; canlı final kullanıldığında sunucu ve sıkıştırma koşulları farklıdır. Kanıt: .audit/round2/lighthouse-final-summary.json. Mobil laboratuvar koşusu gerçek kullanıcı Core Web Vitals veya GSC sonucu değildir.
 
-Canlı https://www.canevimsile.com/ mobil Lighthouse: performans 96, erişilebilirlik 100, SEO 100. LCP 2.18 sn, TBT 7 ms, CLS 0.0000. Ölçüm: 2026-10-25T16:19:39.125Z. Kanıt: .audit/round2/lighthouse-live-summary.json. Bu bir laboratuvar koşusudur.
+Canlı Lighthouse ölçümü bu yayın için henüz doğrulanmadı; yerel ölçüm canlı ölçüm olarak sunulmaz.
 
-Canlı 98–100 performans hedefi sağlanmadı; açık madde olarak korunuyor. Bağımsız Google PageSpeed API ölçümü HTTP 429 kota yanıtı nedeniyle alınmadı; ek bir puan üretilmedi.
+Canlı performans hedefi için doğrulanmış ölçüm bekleniyor.
 
 ## Gerçek GSC bulgusu
 
-Gerçek yerel Can Evim dosyası canevimsile.com-Performance-on-Search-2026-08-22.xlsx bulundu. Filtre etiketi “Son 3 ay” olsa da günlük veri 2026-08-01–2026-08-19, 19 gündür. Dosya 123 sorgu ve 7 sayfa satırı içerir; 16 aylık veri veya bugünkü trafik değildir. Kaynak değiştirilmedi: 11.517 byte; SHA-256 93b810a829d83a23cbc8c2fb398419b1e0229533341f2effb00ba5f9a33a2161. Mobil 44/49 tıklama, %89,8. Ayrı sorgu ve sayfa sekmeleri ortak sorgu–sayfa satırı sağlamaz; bunlar hayali biçimde birleştirilmedi. Belirli sorgunun tıklaması bir URL'ye atanmadı, yamyamlık kanıtlandı denmedi. Tarihsel ortalama pozisyon 1.54 bugünün Google sırası değildir. Mülk, sayfa ve sorgu toplamları zorla eşitlenmedi.
+Kullanıcının sağladığı gsc-canevim-2026-10-26 paketi incelendi. Filtre “Son 16 ay”, mevcut günlük veri 2026-08-01–2026-10-24, 85 gündür; 16 aylık dolu geçmiş değildir. 250 sorgu, 13 sayfa satırı ve 20 sorgu filtresinden 60 sorgu–URL eşleşmesi incelendi. Filtre operatörü dışa aktarımda açık değil; gün+sorgu+sayfa serisi yok. Kaynaklar değiştirilmedi; manifest 78.482 byte, SHA-256 7489f9f32e7c70b953c960109a3ec96c780af99ba8ea316a2bc3335d76091e6b. Hash uyumu paket bütünlüğünü gösterir; GSC oturumuna bağımsız erişim veya ekran aktarımının doğruluğunu tasdik etmez. Mobil 136/154 tıklama (%88,3). Veri 24 Ekim'de biter; 25 Ekim dağıtımının etkisini ölçmez. Konum bugünün Google sırası değildir; mülk/sayfa/sorgu toplamları aynı kapsam sayılmadı.
 
 | Kapsam | Tıklama | Gösterim | TO | Kaynak |
 |---|---:|---:|---:|---|
-| Günlük mülk toplamı | 49 | 2.423 | %2,02 | Grafik A2:E20 |
-| HTTPS ana sayfa | 29 | 2.341 | %1,24 | 'Sayfa sayısı'!A2:E2 |
-| Menü | 17 | 493 | %3,45 | 'Sayfa sayısı'!A3:E3 |
-| şile kahvaltı sorgusu | 1 | 269 | %0,37 | Sorgular!A7:E7 |
-| şile serpme kahvaltı sorgusu | 2 | 49 | %4,08 | Sorgular!A6:E6 |
-| şile gözleme sorgusu | 0 | 23 | %0,00 | Sorgular!A18:E18 |
+| Günlük mülk toplamı | 154 | 10.135 | %1,52 | Grafik A2:E86 |
+| HTTPS ana sayfa | 99 | 9.831 | %1,01 | sayfalar.csv:A2:E2 |
+| Menü | 47 | 1.974 | %2,38 | sayfalar.csv:A3:E3 |
+| şile kahvaltı sorgusu | 7 | 1.237 | %0,57 | sorgular.csv:A6:E6 |
+| şile serpme kahvaltı sorgusu | 3 | 164 | %1,83 | sorgular.csv:A8:E8 |
+| şile gözleme sorgusu | 0 | 143 | %0,00 | sorgular.csv:A26:E26 |
 
-Desteklenen öncelikler: tarihsel ana sorgunun düşük TO'su için net ana sayfa/snippet, HTTP ve ürün URL'lerinin doğru hedefi ve mobil dönüşüm akışı. Kanıtlar .audit/round2/gsc-evidence.json, findings.md ve gsc-local-export-analysis.json içinde. Başka işletmenin Serradent verisi Can Evim metriği yapılmadı.
 
-GSC hesabı kullanıcının ekranında açıktı; sitemap gönderimi 24 Eylül, son okuma 14 Ekim görünüyordu. Tarayıcı okuma/navigasyonu kayıtlı izin veya yönetilen politika nedeniyle reddedildi. Bu red çerez, başka tarayıcı veya oturum protokolüyle aşılmadı. Process/User/Machine token/ADC varlık kontrolü kimlik bulmadı; canlı API çağrısı **0**. Yerel Excel bulgusu ile canlı API erişimi ayrı durumlardır. scripts/gsc-audit.mjs gerçek ortak query-page CSV/JSON veya yetkili API kullanır; ayrı sekmeleri uydurma eşleştirmez.
+### 28 günlük karşılaştırma
+
+Önceki dönem 2026-08-29–2026-09-25; son dönem 2026-09-26–2026-10-23.
+
+| Kapsam | Önceki tıklama | Son tıklama | Önceki gösterim | Son gösterim |
+|---|---:|---:|---:|---:|
+| Mülk toplamı | 54 | 35 | 3142 | 3121 |
+| Görünen markalı sorgular | 20 | 10 | 367 | 214 |
+| Görünen markasız sorgular | 12 | 17 | 1587 | 1917 |
+| Sorgu tablosunda temsil edilmeyen | 22 | 8 | 1188 | 990 |
+
+Marka ayrımı görünen sorgu metninden türetildi; eksik sorgular marka/markasız diye dağıtılmadı. Önceki yılın sıfırları güvenilir bir büyüme bazına çevrilmedi.
+
+### Ana sorgu ve URL kanıtı
+
+| Sorgu | URL | Tıklama | Gösterim |
+|---|---|---:|---:|
+| şile kahvaltı | / | 4 | 1227 |
+| şile kahvaltı | /menu | 2 | 140 |
+| şile kahvaltı | /sile/sile-kahvalti-mekanlari | 1 | 15 |
+| şile kahvaltı | / | 0 | 1 |
+| şile kahvaltı mekanları | / | 11 | 1393 |
+| şile kahvaltı mekanları | /menu | 5 | 180 |
+| şile kahvaltı mekanları | /sile/sile-kahvalti-mekanlari | 0 | 9 |
+
+İncelenen ana sorgularda eski rehberin ana sayfayı bastırdığı iddiası desteklenmiyor. Görünen markasız sorgular artarken toplam tıklama düşüyor; kayıp yalnız başlığa, sıralamaya veya tek bir sorgu grubuna bağlanmadı. Ayrı genel sorgu ve sayfa tabloları yapay biçimde birleştirilmedi.
+
+### GSC işlemlerinde açık kalanlar
+
+GSC aktarımındaki 14/17 dizin durumu, üç tarihsel canonical farkı ve sitemap'te iki keşif iddiası bağımsız doğrulanmadı. Üç canonical kaydı URL dışında başka kayıtlarla tamamen aynı; sitemap görselinde satır görünmüyor. Canlı HTTP kontrolü 17/17 doğru canonical gösterir; bu Google indeks durumu değildir. Önce bu kayıtların yeni URL Denetimi kanıtı gerekir; buna dayanarak kod değiştirilmedi.
+
+İş sırası: üç kopya alanlı canonical kaydı ve üç bilinmiyor kaydını yeniden denetle; sitemap satırının gerçek keşif adedini görüntüle; ana sorgu için URL filtreli günlük grafikler al. Sonuçlar doğrulanmadan toplu canonical/yönlendirme değişikliği yapılmaz. Ayrıntılar .audit/gsc-review-2026-10-26/GSC-INCELEME.md ve EK-DOGRULAMA-PROMPTU.txt içindedir.
+
+
+Paket scripts/import-gsc-evidence.mjs ile kaynağı değiştirmeden doğrulanıp içeri alındı. Eski 19 günlük kayıt .audit/round2/gsc-evidence-2026-08-19.json olarak korundu. Kanıt: .audit/round2/gsc-evidence.json. Kullanıcı dosyasının incelenmesi ile canlı GSC oturumuna erişim ayrı işlemlerdir. API çağrısı **0**; sitemap gönderimi veya indeksleme isteği yapılmadı.
 
 ## 10 çalışma alanı
 
 1. **Arama niyeti:** Genel kahvaltı ana sayfada; köy, mantı, mıhlama ve fiyat eski URL'leri ilgili yeni hedefte. 166 kalıcı 308 kuralı.
-2. **Gerçek GSC bulgusu:** 19 günlük eski dosya: 49 tıklama, 2.423 gösterim. 16 ay veya bugünkü trafik değil.
+2. **GSC verisinin incelenmesi:** 85 günlük kullanıcı paketi: 154 tıklama, 10.135 gösterim. 60 sorgu–URL eşleşmesi; panel işlemleri ayrı.
 3. **İçerik mimarisi:** 14 bağımsız makale; menü, aile, grup, bölgesel rota ve kapsam tabloları. Her makale için en az 800 kelime kontrolü.
 4. **Yerel ulaşım:** 48 Google Haritalar başlangıcı ve doğru Üvezli varışı. Sabit, doğrulanmamış km/dakika yok.
 5. **Arama görünümü:** Sayfaya özel title, description, canonical, Open Graph, Twitter ve #id rehberleri. Sıralama veya CTR garantisi yok.
@@ -119,7 +152,7 @@ HTTP: 203/203. Tarayıcı: Tüm kanonikler kontrol edildi. Kanıt zamanı build'
 
 ## Yayın kanıtı
 
-Canlı yayın doğrulandı; commit 4843eb1ab7228da0965807f18d1a567408d5ca1c. Read-only hazırlık kontrolü GitHub main dalında ADMIN erişimi ve iki Vercel production entegrasyonu (canevim / canevim-next) gösterdi. Yeni SHA'nın provider durumları ve asıl www sayfaları doğrulanmadan yayın tamamlandı denmez. Public gövde eşleşmesi özel alan adının proje sahipliğini tek başına kanıtlamaz. Kaynak: .audit/round2/deploy-readiness.md ve varsa deployment-verification.json.
+Bu build için canlı yayın henüz doğrulanmadı; yerel çalışma ve yayın sonucu ayrı tutulur. Read-only hazırlık kontrolü GitHub main dalında ADMIN erişimi ve iki Vercel production entegrasyonu (canevim / canevim-next) gösterdi. Yeni SHA'nın provider durumları ve asıl www sayfaları doğrulanmadan yayın tamamlandı denmez. Public gövde eşleşmesi özel alan adının proje sahipliğini tek başına kanıtlamaz. Kaynak: .audit/round2/deploy-readiness.md ve varsa deployment-verification.json.
 
 ## Yeniden üretme
 
@@ -134,15 +167,16 @@ Canlı yayın doğrulandı; commit 4843eb1ab7228da0965807f18d1a567408d5ca1c. Rea
 - node scripts/test-report.mjs (yerel sunum, içerik/hash ve mobil planlayıcı)
 - node scripts/verify-deployment.mjs --sha <tam commit> --wait-seconds 300 (push sonrası read-only)
 - node scripts/gsc-audit.mjs --help
+- node scripts/import-gsc-evidence.mjs --input gsc-canevim-2026-10-26 (salt okunur paket içe aktarımı)
 
 ## İlk başlangıca göre byte / SHA-256
 
-Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve baseline yolları SHA-256 ile karşılaştırılır. Commit/push kanıtı silmez. Yeni dosya before_bytes=0, silinen after_bytes=0. Rapor kendi hash'ini içine alamadığı için iki raporun hash'i dış .audit/file-evidence.json ve round2/file-evidence.json dosyalarındadır. HTML hash'leri final-metrics.json, QA hash'leri artifact-evidence.json içindedir.
+Git modified durumuna bağlı değildir: tracked/staged teslim dosyaları ve baseline yolları SHA-256 ile karşılaştırılır. Yeni kaynak dosyaları rapor üretiminden önce stage edilir. Kullanıcının untracked GSC klasörü, ZIP'i ve paket hazırlama betiği yayın kapsamı değildir. Commit/push kanıtı silmez. Yeni dosya before_bytes=0, silinen after_bytes=0. Rapor kendi hash'ini içine alamadığı için iki raporun hash'i dış .audit/file-evidence.json ve round2/file-evidence.json dosyalarındadır. HTML hash'leri final-metrics.json, QA hash'leri artifact-evidence.json içindedir.
 
 | Dosya | before_bytes | after_bytes | SHA-256 (son durum) |
 |---|---:|---:|---|
 | .gitignore | 539 | 660 | f3e4ce36af89977f02406c31719d76193e5cee36331f068fea37b7fe502aac80 |
-| GROWTH-INTERACTIVE-INTEGRATION.md | 0 | 14446 | fb5c6563f632bdf0c22fff7f86bddce55f0df606953e2278e0b4c893a6ccf290 |
+| GROWTH-INTERACTIVE-INTEGRATION.md | 0 | 15180 | 6c5869dc208f4e41f230f3b8bcec0568751f8638ea7c7c278f23745842b59415 |
 | app/Header.js | 10100 | 11639 | f7cfd433bf032c087f1f496455e7388a48995d529c191453f52fcde296d878d5 |
 | app/[experience]/page.js | 0 | 3174 | b66903131bccea56a5ca57fccf55c528220a0da60f5f3a4a5ccbade27cd4a1f6 |
 | app/blog/page.js | 801 | 1281 | e3e60d00feb853c6cc21532e45e20361e2384420c86962de2b98d1a2065c4706 |
@@ -155,7 +189,7 @@ Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve bas
 | app/components/RouteMatrix.js | 0 | 2883 | 531054cb0bf7bed1ca9d562d9991eb875f3de8feefa4190d1936d60a741800f6 |
 | app/components/SiteLink.js | 0 | 361 | 32d94124fc58e6e37b9c53af866214c7dc0db954d2788754551a0fed9a8a4e4d |
 | app/components/StaticImage.js | 0 | 326 | 82ac052212edb221edf39724d51a74d90a1f64419e1e60fd4e2b4c7b03fceb81 |
-| app/content-dates.json | 0 | 24414 | ab70bd1ce5106ef16d32ccb55f9b1c8fa08feee84bbdea2d42d1974e2ab41451 |
+| app/content-dates.json | 0 | 24414 | bcb37653fc7d37afaa6a46354bf21db34c82ce184ce1051be22ca9c6d16720e7 |
 | app/expanded-experiences.js | 0 | 93903 | e2a77e1f288e5d188cc8e2c225f9a8bc3b54e610e90dc2c916d444f076fa4eaf |
 | app/globals.css | 229 | 398 | 53cdc71f8615fd4cc6c969913bdb748262bd1e945aeeab1cfd230b2daf3cad38 |
 | app/growth-content.css | 0 | 9894 | 8ca17bdd97c1644c48aa492d868041b6c2b5c526e353b9c9dbe8d71b602c2524 |
@@ -183,7 +217,7 @@ Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve bas
 | package.json | 367 | 928 | 8900efb7b740e91d1b9f0ca3e52d32c14b1d8e3f142630d3eb0f92ab33e84e6d |
 | public/growth-loader.js | 0 | 2952 | bcd717aebde868b2cc889340f0274331b84c0654f844c43e4e2140b761c155c8 |
 | public/growth.js | 0 | 10824 | d89977df35e24ce2e15445484376f8ffadade12c7276082b3b8a40c886ff2d35 |
-| public/home-ui.js | 0 | 2100 | 4fe45c481517b38a21c96d8c8f2f72755086aa577b453211ac2a68a7aa23e3c8 |
+| public/home-ui.js | 0 | 2300 | dc1e39f4793b22097eb43eb9961bffe0f6bfa1cd1091c589808df8612045ca7b |
 | public/performance/content/bahce-card.avif | 0 | 11906 | 2795e4b816951ba58f782a49871893badc89b6ead0ca1a2da9260edcbe024fd8 |
 | public/performance/content/gozleme-480.webp | 0 | 36322 | ab051f46e0a31ebc5b2cdafe4458379164536e37f3c363ecca7dcbea5d5a635f |
 | public/performance/content/gozleme-960.webp | 0 | 96002 | a8fb89c56a7c8361cf408a9fe625dc974453a3482b70f92048432ce1493b55ab |
@@ -201,20 +235,21 @@ Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve bas
 | public/performance/ui/interactive.css | 0 | 6611 | b6deba9fb884c16e220cdb78383b23142be7d1649b382d20ade87d2e581555d7 |
 | public/performance/ui/routes.css | 0 | 3424 | 57e24647fc84cde8598c5982f1536fe185759cd84ef2f29349a737f97f8b0aa0 |
 | scripts/build-growth.mjs | 0 | 1837 | bcab9b983bb44493db0e8b6528b7db44ca00ceb6b2e6bb2f5896be169f30a6a4 |
-| scripts/build-home.cjs | 0 | 5517 | edcf30aba3ba914ec471c91fe213f899faf795f9172bb3fbfb32a8589d08f15d |
+| scripts/build-home.cjs | 0 | 7687 | ddd971a237c127facd802af6694e00b40d4c5621b7263bb780a358ddf25451ec |
 | scripts/compiled-pages.mjs | 0 | 248 | 16cfb3ff2f158074f4f062b9c6e0a1b1ceb5c6b8643048896fda85cdbcd8d50b |
 | scripts/content-fingerprint.mjs | 0 | 350 | 7f70c6362eb87c8aa7b7ceddc8c7940989c6d949a5c5ca20251aed8dd8aa1e13 |
-| scripts/generate-growth-report.mjs | 0 | 37122 | f3a22669cecba18137823bdd90782274d72bd8dd4ef65157ebd6e0379e962166 |
+| scripts/generate-growth-report.mjs | 0 | 43720 | b79b83b9700d03c496fa4c3b0f257d845c4dbf3ada7c676c0c7a8d9fae9edc27 |
 | scripts/growth-loader.cjs | 0 | 4427 | 0c2e4ae70954f6c569d5cc6610b098c72421064091995a500804028f1f48a4d1 |
 | scripts/growth-runtime.cjs | 0 | 17697 | 4ed9f10d8405078db550755fe76c3bc7303b09aefa085872d3808433bbd52ae5 |
 | scripts/gsc-audit.mjs | 0 | 14607 | 606c89fe740b6809ae1af5dbe74156c64478b174a8591c6fe3a184b8450c0097 |
-| scripts/home-ui.cjs | 0 | 3125 | 54a554b487b7e567a6edd2d0fe35871b22d0ab95637c8e077f6afb5dcc1fbd1b |
+| scripts/home-ui.cjs | 0 | 3424 | c1e2a88fe30e26af748ae8c6492dd7d25d8a65d1280873b972e6cbc434dd9fff |
+| scripts/import-gsc-evidence.mjs | 0 | 19815 | 4abc59fc4fad6ee299f2023f12e45a4af6be7b370909d016ede9531febbcc7b2 |
 | scripts/seo-infra-check.mjs | 0 | 9132 | 952b18c6c99e02a0697e65e009f0e22e23c87027ff06afd8436ed22bf1421245 |
-| scripts/test-browser.mjs | 0 | 42305 | 8f1db555e9fc71eeeae4bdd09f619595f6d7fe9d6af67aa1a99b750eb1b894a1 |
+| scripts/test-browser.mjs | 0 | 46850 | 4997cb9a45b7580221636e9b7486b7cc506690a01e1e31975e7691379f91f1a7 |
 | scripts/test-growth.mjs | 0 | 7148 | 0187e766f9ba21bd1dd52402799c078e0aae9cd818a721c65c39afde80a6504a |
 | scripts/test-http.mjs | 0 | 9926 | 393207dde38fefbd4dc97af9ebf9ee2ab1f22baff7127804b73cd4833aa5c400 |
 | scripts/test-links.mjs | 0 | 1592 | 15807d821044ebcce73c7416b5d5453191a59db8357682c4f47ff667b293d796 |
-| scripts/test-report.mjs | 0 | 6507 | 17345f0e2bebdcd7437a933b28e06d1d0e5d587977456f57c8958d62eb25651e |
+| scripts/test-report.mjs | 0 | 22592 | 56115f5f771e5511da764649500a96af14dbc1656e93b53d84e2e5c4c2667bc9 |
 | scripts/update-content-dates.mjs | 0 | 4219 | b828ce97c8082df61e6754e15e0fc58a1d438955cd6d74e10eb5aeb58d9e0173 |
 | scripts/verify-deployment.mjs | 0 | 11770 | 35d1047ba213cc847ea49e460e0f0bf16318a1bb53cce20e3f3fd3de4b2893a4 |
 
@@ -225,7 +260,7 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | Dosya | before_bytes | after_bytes | SHA-256 (son durum) |
 |---|---:|---:|---|
 | .gitignore | 549 | 660 | f3e4ce36af89977f02406c31719d76193e5cee36331f068fea37b7fe502aac80 |
-| GROWTH-INTERACTIVE-INTEGRATION.md | 7111 | 14446 | fb5c6563f632bdf0c22fff7f86bddce55f0df606953e2278e0b4c893a6ccf290 |
+| GROWTH-INTERACTIVE-INTEGRATION.md | 7111 | 15180 | 6c5869dc208f4e41f230f3b8bcec0568751f8638ea7c7c278f23745842b59415 |
 | app/Header.js | 11457 | 11639 | f7cfd433bf032c087f1f496455e7388a48995d529c191453f52fcde296d878d5 |
 | app/[experience]/page.js | 3024 | 3174 | b66903131bccea56a5ca57fccf55c528220a0da60f5f3a4a5ccbade27cd4a1f6 |
 | app/blog/page.js | 1234 | 1281 | e3e60d00feb853c6cc21532e45e20361e2384420c86962de2b98d1a2065c4706 |
@@ -233,7 +268,7 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | app/components/LazyInteractive.js | 0 | 1251 | 1c7736110d90856a1804b6535b1d14a09ddd42a74611beb784dc804636764b52 |
 | app/components/SiteLink.js | 0 | 361 | 32d94124fc58e6e37b9c53af866214c7dc0db954d2788754551a0fed9a8a4e4d |
 | app/components/StaticImage.js | 0 | 326 | 82ac052212edb221edf39724d51a74d90a1f64419e1e60fd4e2b4c7b03fceb81 |
-| app/content-dates.json | 8934 | 24414 | ab70bd1ce5106ef16d32ccb55f9b1c8fa08feee84bbdea2d42d1974e2ab41451 |
+| app/content-dates.json | 8934 | 24414 | bcb37653fc7d37afaa6a46354bf21db34c82ce184ce1051be22ca9c6d16720e7 |
 | app/expanded-experiences.js | 0 | 93903 | e2a77e1f288e5d188cc8e2c225f9a8bc3b54e610e90dc2c916d444f076fa4eaf |
 | app/globals.css | 370 | 398 | 53cdc71f8615fd4cc6c969913bdb748262bd1e945aeeab1cfd230b2daf3cad38 |
 | app/growth-content.js | 41474 | 41668 | c3d7d965391bf9f5c56c21d62001bd54733a9cf5d949275419842dae9cec0150 |
@@ -251,7 +286,7 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | package-lock.json | 55450 | 53857 | 2c4be83a8c31cb95b05d21b05d6446615475a86bffb9a5c946b92e73c0a96627 |
 | package.json | 806 | 928 | 8900efb7b740e91d1b9f0ca3e52d32c14b1d8e3f142630d3eb0f92ab33e84e6d |
 | public/growth-loader.js | 0 | 2952 | bcd717aebde868b2cc889340f0274331b84c0654f844c43e4e2140b761c155c8 |
-| public/home-ui.js | 0 | 2100 | 4fe45c481517b38a21c96d8c8f2f72755086aa577b453211ac2a68a7aa23e3c8 |
+| public/home-ui.js | 0 | 2300 | dc1e39f4793b22097eb43eb9961bffe0f6bfa1cd1091c589808df8612045ca7b |
 | public/performance/content/bahce-card.avif | 0 | 11906 | 2795e4b816951ba58f782a49871893badc89b6ead0ca1a2da9260edcbe024fd8 |
 | public/performance/content/gozleme-card.avif | 0 | 14839 | 029b589d01d5b05b41d02b5cfe68ea21e05abae3ac7c185cfc9874f01b0228c4 |
 | public/performance/content/sac-kavurma-card.avif | 0 | 10600 | f370152fd56e61dd17e2189972ea00e35104a57893debeff5f9c3ce06457f19d |
@@ -265,16 +300,17 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | public/performance/ui/interactive.css | 0 | 6611 | b6deba9fb884c16e220cdb78383b23142be7d1649b382d20ade87d2e581555d7 |
 | public/performance/ui/routes.css | 0 | 3424 | 57e24647fc84cde8598c5982f1536fe185759cd84ef2f29349a737f97f8b0aa0 |
 | scripts/build-growth.mjs | 775 | 1837 | bcab9b983bb44493db0e8b6528b7db44ca00ceb6b2e6bb2f5896be169f30a6a4 |
-| scripts/build-home.cjs | 0 | 5517 | edcf30aba3ba914ec471c91fe213f899faf795f9172bb3fbfb32a8589d08f15d |
+| scripts/build-home.cjs | 0 | 7687 | ddd971a237c127facd802af6694e00b40d4c5621b7263bb780a358ddf25451ec |
 | scripts/compiled-pages.mjs | 0 | 248 | 16cfb3ff2f158074f4f062b9c6e0a1b1ceb5c6b8643048896fda85cdbcd8d50b |
 | scripts/content-fingerprint.mjs | 0 | 350 | 7f70c6362eb87c8aa7b7ceddc8c7940989c6d949a5c5ca20251aed8dd8aa1e13 |
-| scripts/generate-growth-report.mjs | 28901 | 37122 | f3a22669cecba18137823bdd90782274d72bd8dd4ef65157ebd6e0379e962166 |
+| scripts/generate-growth-report.mjs | 28901 | 43720 | b79b83b9700d03c496fa4c3b0f257d845c4dbf3ada7c676c0c7a8d9fae9edc27 |
 | scripts/growth-loader.cjs | 0 | 4427 | 0c2e4ae70954f6c569d5cc6610b098c72421064091995a500804028f1f48a4d1 |
-| scripts/home-ui.cjs | 0 | 3125 | 54a554b487b7e567a6edd2d0fe35871b22d0ab95637c8e077f6afb5dcc1fbd1b |
+| scripts/home-ui.cjs | 0 | 3424 | c1e2a88fe30e26af748ae8c6492dd7d25d8a65d1280873b972e6cbc434dd9fff |
+| scripts/import-gsc-evidence.mjs | 0 | 19815 | 4abc59fc4fad6ee299f2023f12e45a4af6be7b370909d016ede9531febbcc7b2 |
 | scripts/seo-infra-check.mjs | 7616 | 9132 | 952b18c6c99e02a0697e65e009f0e22e23c87027ff06afd8436ed22bf1421245 |
-| scripts/test-browser.mjs | 23268 | 42305 | 8f1db555e9fc71eeeae4bdd09f619595f6d7fe9d6af67aa1a99b750eb1b894a1 |
+| scripts/test-browser.mjs | 23268 | 46850 | 4997cb9a45b7580221636e9b7486b7cc506690a01e1e31975e7691379f91f1a7 |
 | scripts/test-links.mjs | 1578 | 1592 | 15807d821044ebcce73c7416b5d5453191a59db8357682c4f47ff667b293d796 |
-| scripts/test-report.mjs | 0 | 6507 | 17345f0e2bebdcd7437a933b28e06d1d0e5d587977456f57c8958d62eb25651e |
+| scripts/test-report.mjs | 0 | 22592 | 56115f5f771e5511da764649500a96af14dbc1656e93b53d84e2e5c4c2667bc9 |
 | scripts/update-content-dates.mjs | 3610 | 4219 | b828ce97c8082df61e6754e15e0fc58a1d438955cd6d74e10eb5aeb58d9e0173 |
 | scripts/verify-deployment.mjs | 0 | 11770 | 35d1047ba213cc847ea49e460e0f0bf16318a1bb53cce20e3f3fd3de4b2893a4 |
 

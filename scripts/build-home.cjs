@@ -2,6 +2,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const Module = require("node:module");
+const { createHash } = require("node:crypto");
 const root = path.resolve(__dirname, "..");
 process.chdir(root);
 
@@ -48,6 +49,33 @@ async function build() {
     // One small WebP avoids a round trip for the narrow-screen LCP image.
     // Larger screens retain the responsive external image sources.
     const mobileHeroSrc = "data:image/webp;base64," + fs.readFileSync(path.join(root, "public/performance/hero/home-mobile-480-fast.webp")).toString("base64");
+    // Include the entire overlay navigation, not only the initially visible
+    // header: it must remain usable while the complete sheet is still loading.
+    const headerMarkup = renderToStaticMarkup(h(Header));
+    const heroMarkup = renderToStaticMarkup(h(Home, { mobileHeroSrc })).match(/<section class="home-hero[\s\S]*?<\/section>/)?.[0] || "";
+    if (!heroMarkup) throw new Error("First-screen hero markup was not found.");
+    const criticalMarkup = headerMarkup + heroMarkup + renderToStaticMarkup(h(MobileActions)) + 'class="skip-link"';
+    const classes = new Set([...criticalMarkup.matchAll(/\bclass="([^"]+)"/g)].flatMap(match => match[1].split(/\s+/)));
+    classes.add("growth-table-scroll");
+    const critical = postcss.parse(css);
+    critical.walkRules(rule => {
+      // Retain the existing containment and its focus/anchor/print exceptions
+      // before the complete stylesheet arrives, within their original at-rules.
+      if (rule.nodes.some(node => node.type === "decl" && /^(content-visibility|contain-intrinsic-)/.test(node.prop))) return;
+      const selectors = rule.selectors.filter(selector => {
+        const required = [...selector.matchAll(/\.((?:\\.|[\w-])+)/g)].map(match => match[1].replace(/\\(.)/g, "$1"));
+        return !required.length || required.every(name => classes.has(name));
+      });
+      if (selectors.length) rule.selectors = selectors;
+      else rule.remove();
+    });
+    critical.walkAtRules(rule => { if (rule.nodes && !rule.nodes.length) rule.remove(); });
+    const criticalCSS = critical.toString() + 'html,body{max-width:100%;overflow-x:clip}#site-menu[aria-hidden="true"]{visibility:hidden;pointer-events:none}';
+    const stylesheet = `home-${createHash("sha256").update(css).digest("hex").slice(0, 16)}.css`;
+    const styleDir = path.join(root, "public/performance/ui");
+    fs.mkdirSync(styleDir, { recursive: true });
+    fs.writeFileSync(path.join(styleDir, stylesheet), css);
+    const styleUrl = "/performance/ui/" + stylesheet;
     const meta = (name, content) => h("meta", { name, content });
     const og = (property, content) => h("meta", { property, content });
     const html = "<!DOCTYPE html>" + renderToStaticMarkup(h("html", { lang: "tr" },
@@ -61,7 +89,9 @@ async function build() {
         meta("twitter:card", "summary_large_image"), meta("twitter:title", metadata.title), meta("twitter:description", metadata.description), meta("twitter:image", socialImage),
         h("link", { rel: "icon", href: "/icon.svg", type: "image/svg+xml" }),
         h("link", { rel: "apple-touch-icon", href: "/apple-icon.png" }),
-        h("style", { "data-home-styles": "complete", dangerouslySetInnerHTML: { __html: (css + 'html,body{max-width:100%;overflow-x:clip}#site-menu[aria-hidden="true"]{visibility:hidden;pointer-events:none}').replace(/<\/style/gi, "<\\/style") } })
+        h("style", { "data-home-styles": "critical", dangerouslySetInnerHTML: { __html: criticalCSS.replace(/<\/style/gi, "<\\/style") } }),
+        h("link", { rel: "stylesheet", href: styleUrl, media: "print", "data-deferred-styles": "" }),
+        h("noscript", null, h("link", { rel: "stylesheet", href: styleUrl }))
       ),
       h("body", { "data-static-home": "true" },
         h("a", { href: "#main-content", className: "skip-link" }, "İçeriğe geç"),
@@ -74,7 +104,7 @@ async function build() {
     const output = JSON.stringify({ html }) + "\n";
     fs.mkdirSync(path.dirname(target), { recursive: true });
     if (!fs.existsSync(target) || fs.readFileSync(target, "utf8") !== output) fs.writeFileSync(target, output);
-    console.log(`Static landing: ${Buffer.byteLength(html)} HTML bytes; CSS ${Buffer.byteLength(css)} complete; system serif and embedded 1KB wordmark; no framework hydration.`);
+    console.log(`Static landing: ${Buffer.byteLength(html)} HTML bytes; CSS ${Buffer.byteLength(criticalCSS)} critical / ${Buffer.byteLength(css)} complete; system serif and embedded 1KB wordmark; no framework hydration.`);
   } finally {
     Module._extensions[".js"] = previousJS;
     if (previousCSS) Module._extensions[".css"] = previousCSS;

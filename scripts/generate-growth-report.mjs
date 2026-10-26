@@ -73,6 +73,8 @@ const scores = qa.lighthouse ? afterLh.categories : null;
 const menuItems = MENU_SECTIONS.reduce((sum, section) => sum + section.items.length, 0);
 const graphMin = buildPageGraph()["@graph"].length, graphMax = buildPageGraph({ faqs: [["Örnek soru", "Örnek yanıt"]] })["@graph"].length;
 const gs = gsc.localSource, gm = gsc.sourceVerifiedMetrics;
+const packageGsc = Boolean(gs.sourceDataDirectory && gsc.queryPage);
+const gscSourceLabel = packageGsc ? path.basename(gs.sourceDataDirectory) : path.basename(gs.path);
 const metrics = {
   date, status: draft ? "draft_pending_final_evidence" : "final_local_qa_passed", deployment: publishText, buildId,
   beforeIndexablePages: Object.keys(beforeHtml.pages).filter((name) => name !== "blog").length, round1IndexablePages: round1.afterIndexablePages,
@@ -82,18 +84,18 @@ const metrics = {
   redirectRules: redirectCount, httpChecks: qa.http ? http.totalChecks : null, browserStatus: qa.browser ? "passed" : "pending", qa,
   lighthouseBefore: beforeLh?.categories, lighthouseRound1: round1Lh?.categories, lighthouseAfter: scores,
   lighthouseAfterContext: qa.lighthouse ? finalLhContext : null,
-  targets: { localLighthouseMet: qa.lighthouse && finalLhContext === "yerel", liveLighthouseMet: liveTargetMet, gsc16MonthsAvailable: gs.contains16Months },
+  targets: { localLighthouseMet: qa.lighthouse && finalLhContext === "yerel", liveLighthouseMet: liveTargetMet, gsc16MonthsAvailable: gs.contains16Months, gscAvailableHistoryReviewed: packageGsc && gsc.provenance?.allBytesAndHashesMatch === true },
   lighthouseLive: productionLhVerified ? productionLh.categories : null,
   lighthouseEvidence: qa.lighthouse ? lhFile : "Final ölçüm bekleniyor; eski/deneysel sonuç final sayılmadı.",
-  gsc: { source: "real_local_export", sourceFile: path.basename(gs.path), sha256: gs.sha256, start: gs.firstAvailableDate, end: gs.lastAvailableDate, days: gs.dailyRows, clicks: gm.propertyClicks, impressions: gm.propertyImpressions, joinedQueryPageRows: gs.containsJoinedQueryPageRows, contains16Months: gs.contains16Months, liveApiCalls: gsc.liveApi.callsMade }, pages,
+  gsc: { source: packageGsc ? "user_provided_export" : "real_local_export", sourceFile: gscSourceLabel, sha256: gs.sha256, start: gs.firstAvailableDate, end: gs.lastAvailableDate, days: gs.dailyRows, clicks: gm.propertyClicks, impressions: gm.propertyImpressions, joinedQueryPageRows: gs.containsJoinedQueryPageRows, joinedQueryPageRowCount: gsc.queryPage?.rows?.length || 0, containsDateQueryPageRows: gs.containsDateQueryPageRows === true, contains16Months: gs.contains16Months, independentlyAuthenticated: false, liveApiCalls: gsc.liveApi.callsMade }, pages,
 };
 fs.mkdirSync(".audit/round2", { recursive: true });
 for (const file of [".audit/final-metrics.json", ".audit/round2/final-metrics.json"]) fs.writeFileSync(file, `${JSON.stringify(metrics, null, 2)}\n`);
 
-// Compare all candidate hashes, not Git's modified status: committing does not
-// erase evidence. Missing baseline paths are recorded as deletions.
+// Compare tracked/staged deliverables with the baseline, including deletions.
+// User-supplied untracked exports are inputs, not publication deliverables.
 function evidence(start) {
-  const listed = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "-z"]).toString().split("\0").filter(Boolean);
+  const listed = execFileSync("git", ["ls-files", "--cached", "-z"]).toString().split("\0").filter(Boolean);
   return [...new Set([...listed, ...Object.keys(start.files)])].filter((file) => !file.startsWith(".audit/") && !/(^|\/)\.env(?:\.|$)|\.(?:pem|key)$/i.test(file)).sort().flatMap((file) => {
     const before = start.files[file];
     if (!exists(file)) return before ? [{ file, before_bytes: before.bytes, after_bytes: 0, before_sha256: before.sha256, after_sha256: null, change: "deleted" }] : [];
@@ -108,19 +110,62 @@ const proofTable = (rows) => "| Dosya | before_bytes | after_bytes | SHA-256 (so
 const categoryNames = { performance: "Performans", accessibility: "Erişilebilirlik", "best-practices": "En iyi uygulamalar", seo: "SEO" };
 const lhRows = Object.keys(categoryNames).map((key) => [categoryNames[key], beforeLh?.categories[key] ?? "—", round1Lh?.categories[key] ?? "—", scores?.[key] ?? "Final ölçüm bekleniyor"]);
 const gscRows = [
-  ["Günlük mülk toplamı", gm.propertyClicks, gm.propertyImpressions, gm.propertyCalculatedCtr, "Grafik A2:E20"],
+  ["Günlük mülk toplamı", gm.propertyClicks, gm.propertyImpressions, gm.propertyCalculatedCtr, `Grafik A2:E${gs.dailyRows + 1}`],
   ["HTTPS ana sayfa", gm.home.clicks, gm.home.impressions, gm.home.exportedCtr, gm.home.range],
   ["Menü", gm.menu.clicks, gm.menu.impressions, gm.menu.exportedCtr, gm.menu.range],
   ["şile kahvaltı sorgusu", gm.sileKahvaltiQuery.clicks, gm.sileKahvaltiQuery.impressions, gm.sileKahvaltiQuery.exportedCtr, gm.sileKahvaltiQuery.range],
   ["şile serpme kahvaltı sorgusu", gm.serpmeQuery.clicks, gm.serpmeQuery.impressions, gm.serpmeQuery.exportedCtr, gm.serpmeQuery.range],
   ["şile gözleme sorgusu", gm.gozlemeQuery.clicks, gm.gozlemeQuery.impressions, gm.gozlemeQuery.exportedCtr, gm.gozlemeQuery.range],
 ];
-const gscText = `Gerçek yerel Can Evim dosyası ${path.basename(gs.path)} bulundu. Filtre etiketi “${gs.filterLabel}” olsa da günlük veri ${gs.firstAvailableDate}–${gs.lastAvailableDate}, ${gs.dailyRows} gündür. Dosya ${gs.queryRows} sorgu ve ${gs.pageRows} sayfa satırı içerir; 16 aylık veri veya bugünkü trafik değildir. Kaynak değiştirilmedi: ${format(gs.bytes)} byte; SHA-256 ${gs.sha256}. Mobil ${gm.mobileClicks}/${gm.propertyClicks} tıklama, ${pct(gm.mobileClickShare, 1)}. Ayrı sorgu ve sayfa sekmeleri ortak sorgu–sayfa satırı sağlamaz; bunlar hayali biçimde birleştirilmedi. Belirli sorgunun tıklaması bir URL'ye atanmadı, yamyamlık kanıtlandı denmedi. Tarihsel ortalama pozisyon ${gm.sileKahvaltiQuery.averagePosition} bugünün Google sırası değildir. Mülk, sayfa ve sorgu toplamları zorla eşitlenmedi.`;
+const gscText = packageGsc
+  ? `Kullanıcının sağladığı ${gscSourceLabel} paketi incelendi. Filtre “${gs.filterLabel}”, mevcut günlük veri ${gs.firstAvailableDate}–${gs.lastAvailableDate}, ${gs.dailyRows} gündür; 16 aylık dolu geçmiş değildir. ${gs.queryRows} sorgu, ${gs.pageRows} sayfa satırı ve ${gsc.queryPage.filterCount} sorgu filtresinden ${gsc.queryPage.rows.length} sorgu–URL eşleşmesi incelendi. Filtre operatörü dışa aktarımda açık değil; gün+sorgu+sayfa serisi yok. Kaynaklar değiştirilmedi; manifest ${format(gs.bytes)} byte, SHA-256 ${gs.sha256}. Hash uyumu paket bütünlüğünü gösterir; GSC oturumuna bağımsız erişim veya ekran aktarımının doğruluğunu tasdik etmez. Mobil ${gm.mobileClicks}/${gm.propertyClicks} tıklama (${pct(gm.mobileClickShare, 1)}). Veri 24 Ekim'de biter; 25 Ekim dağıtımının etkisini ölçmez. Konum bugünün Google sırası değildir; mülk/sayfa/sorgu toplamları aynı kapsam sayılmadı.`
+  : `Gerçek yerel Can Evim dosyası ${path.basename(gs.path)} bulundu. Filtre etiketi “${gs.filterLabel}” olsa da günlük veri ${gs.firstAvailableDate}–${gs.lastAvailableDate}, ${gs.dailyRows} gündür. Dosya ${gs.queryRows} sorgu ve ${gs.pageRows} sayfa satırı içerir; 16 aylık veri veya bugünkü trafik değildir. Kaynak değiştirilmedi: ${format(gs.bytes)} byte; SHA-256 ${gs.sha256}. Mobil ${gm.mobileClicks}/${gm.propertyClicks} tıklama, ${pct(gm.mobileClickShare, 1)}. Ayrı sorgu ve sayfa sekmeleri ortak sorgu–sayfa satırı sağlamaz; bunlar hayali biçimde birleştirilmedi. Belirli sorgunun tıklaması bir URL'ye atanmadı, yamyamlık kanıtlandı denmedi. Tarihsel ortalama pozisyon ${gm.sileKahvaltiQuery.averagePosition} bugünün Google sırası değildir. Mülk, sayfa ve sorgu toplamları zorla eşitlenmedi.`;
+const queryProof = packageGsc ? gsc.queryPage.rows.filter(row => ["şile kahvaltı", "şile kahvaltı mekanları"].includes(row.query) && ["/", "/menu", "/sile/sile-kahvalti-mekanlari"].includes(new URL(row.page).pathname)) : [];
+const gscPeriodRows = packageGsc ? [
+  ["Mülk toplamı", gsc.periods.previous, gsc.periods.current],
+  ["Görünen markalı sorgular", gsc.brandBreakdown.brand.previous, gsc.brandBreakdown.brand.current],
+  ["Görünen markasız sorgular", gsc.brandBreakdown.nonbrand.previous, gsc.brandBreakdown.nonbrand.current],
+  ["Sorgu tablosunda temsil edilmeyen", gsc.brandBreakdown.unrepresented.previous, gsc.brandBreakdown.unrepresented.current],
+] : [];
+const gscInterpretation = packageGsc
+  ? "İncelenen ana sorgularda eski rehberin ana sayfayı bastırdığı iddiası desteklenmiyor. Görünen markasız sorgular artarken toplam tıklama düşüyor; kayıp yalnız başlığa, sıralamaya veya tek bir sorgu grubuna bağlanmadı. Ayrı genel sorgu ve sayfa tabloları yapay biçimde birleştirilmedi."
+  : "Desteklenen öncelikler: tarihsel ana sorgunun düşük TO'su için net ana sayfa/snippet, HTTP ve ürün URL'lerinin doğru hedefi ve mobil dönüşüm akışı. Ortak sorgu–sayfa verisi bulunmadığından çakışma kanıtlanmadı.";
+const gscInspectionText = "GSC aktarımındaki 14/17 dizin durumu, üç tarihsel canonical farkı ve sitemap'te iki keşif iddiası bağımsız doğrulanmadı. Üç canonical kaydı URL dışında başka kayıtlarla tamamen aynı; sitemap görselinde satır görünmüyor. Canlı HTTP kontrolü 17/17 doğru canonical gösterir; bu Google indeks durumu değildir. Önce bu kayıtların yeni URL Denetimi kanıtı gerekir; buna dayanarak kod değiştirilmedi.";
+const gscOperationsText = packageGsc
+  ? `${gs.dailyRows} günlük kullanıcı paketi ve ${gsc.queryPage.rows.length} sorgu–URL eşleşmesi incelendi. Canlı GSC API çağrısı ${gsc.liveApi.callsMade}; sitemap gönderimi veya indeksleme isteği yapılmadı. ${gscInspectionText}`
+  : `Gerçek yerel ${gs.dailyRows} günlük dosya incelendi; canlı API/16 aylık ortak sorgu–sayfa verisi yok. Kayıtlı izin reddi aşılmadı.`;
+const gscExtraMarkdown = packageGsc ? `
+### 28 günlük karşılaştırma
+
+Önceki dönem ${gsc.periods.previous.start}–${gsc.periods.previous.end}; son dönem ${gsc.periods.current.start}–${gsc.periods.current.end}.
+
+| Kapsam | Önceki tıklama | Son tıklama | Önceki gösterim | Son gösterim |
+|---|---:|---:|---:|---:|
+${gscPeriodRows.map(([label, prior, current]) => `| ${label} | ${prior.clicks} | ${current.clicks} | ${prior.impressions} | ${current.impressions} |`).join("\n")}
+
+Marka ayrımı görünen sorgu metninden türetildi; eksik sorgular marka/markasız diye dağıtılmadı. Önceki yılın sıfırları güvenilir bir büyüme bazına çevrilmedi.
+
+### Ana sorgu ve URL kanıtı
+
+| Sorgu | URL | Tıklama | Gösterim |
+|---|---|---:|---:|
+${queryProof.map(row => `| ${row.query} | ${new URL(row.page).pathname} | ${row.clicks} | ${row.impressions} |`).join("\n")}
+
+${gscInterpretation}
+
+### GSC işlemlerinde açık kalanlar
+
+${gscInspectionText}
+
+İş sırası: üç kopya alanlı canonical kaydı ve üç bilinmiyor kaydını yeniden denetle; sitemap satırının gerçek keşif adedini görüntüle; ana sorgu için URL filtreli günlük grafikler al. Sonuçlar doğrulanmadan toplu canonical/yönlendirme değişikliği yapılmaz. Ayrıntılar .audit/gsc-review-2026-10-26/GSC-INCELEME.md ve EK-DOGRULAMA-PROMPTU.txt içindedir.
+` : "";
+const gscExtraHtml = packageGsc ? `<h3>28 günlük değişim</h3><p class="note">Önceki: ${escape(gsc.periods.previous.start)}–${escape(gsc.periods.previous.end)}. Son: ${escape(gsc.periods.current.start)}–${escape(gsc.periods.current.end)}.</p><div class="table-wrap"><table><thead><tr><th>Kapsam</th><th>Önceki tıklama</th><th>Son tıklama</th><th>Önceki gösterim</th><th>Son gösterim</th></tr></thead><tbody>${gscPeriodRows.map(([label, prior, current]) => `<tr><th>${escape(label)}</th><td>${prior.clicks}</td><td>${current.clicks}</td><td>${prior.impressions}</td><td>${current.impressions}</td></tr>`).join("")}</tbody></table></div><h3>Ana sorgu hangi URL'ye gitmiş?</h3><div class="table-wrap"><table><thead><tr><th>Sorgu</th><th>URL</th><th>Tıklama</th><th>Gösterim</th></tr></thead><tbody>${queryProof.map(row => `<tr data-gsc-query="${escape(row.query)}" data-gsc-page="${escape(new URL(row.page).pathname)}"><th>${escape(row.query)}</th><td>${escape(new URL(row.page).pathname)}</td><td>${row.clicks}</td><td>${row.impressions}</td></tr>`).join("")}</tbody></table></div><p>${escape(gscInterpretation)}</p><div class="notice" data-gsc-inspection-status="unverified"><p>${escape(gscInspectionText)}</p><p>Önce altı URL kaydı ve sitemap satırını yeni kanıtla doğrula. Sitemap gönderimi veya indeksleme isteği yapılmadı.</p></div>` : "";
+const gscHtml = `<section id="gsc-evidence" data-gsc-source="${packageGsc ? "user-provided-export" : "legacy-local-export"}" data-gsc-query-page-rows="${gsc.queryPage?.rows?.length || 0}"><div class="wrap"><p class="eyebrow">${packageGsc ? "Kullanıcıdan gelen GSC dışa aktarımı" : "Gerçek eski dışa aktarım"} · ${gs.dailyRows} gün</p><h2>Mevcut verinin kapsamı açık.</h2><div class="notice"><p>${escape(gscText)}</p></div><div class="table-wrap"><table><thead><tr><th>Kapsam</th><th>Tıklama</th><th>Gösterim</th><th>TO</th></tr></thead><tbody>${gscRows.map(([label, clicks, impressions, ctr]) => `<tr><th>${label}</th><td>${format(clicks)}</td><td>${format(impressions)}</td><td>${pct(ctr)}</td></tr>`).join("")}</tbody></table></div>${gscExtraHtml}<p class="note">${packageGsc ? "Gün+sorgu+sayfa serisi yok; filtre operatörü bağımsız doğrulanmadı. Aktarım 25 Ekim sürümünün etkisini ölçmez." : "Ayrı sorgu/sayfa sekmeleri birleştirilmedi. Canlı 16 aylık veri alınmadı; eski pozisyon bugünün Google sırası değildir."} Mobil: ${gm.mobileClicks}/${gm.propertyClicks} tıklama, ${pct(gm.mobileClickShare, 1)}.</p></div></section>`;
 const lhText = scores ? `Final ölçüm ${finalLhContext}: ${afterLh.finalUrl}. LCP ${(afterLh.metrics.largestContentfulPaint / 1000).toFixed(2)} sn; TBT ${Math.round(afterLh.metrics.totalBlockingTime)} ms; CLS ${afterLh.metrics.cumulativeLayoutShift.toFixed(4)}. 98–100 performans hedefi bu koşuda ${scores.performance >= 98 ? "sağlandı" : "sağlanmadı"}. İlk iki sütun yerel koşulardır; canlı final kullanıldığında sunucu ve sıkıştırma koşulları farklıdır. Kanıt: ${lhFile}.` : "İkinci turun final Lighthouse ölçümü bekleniyor. İlk tur ve deneysel koşular final başarı olarak gösterilmedi. 98–100 hedefinin sağlandığı henüz söylenmiyor.";
 const sourceLinks = [["Can Evim menüsü", `${CANONICAL_ORIGIN}/menu`], ["Rokethane", "https://www.rokethane.com/"], ["Lotus restoran", "https://lotussile.com/restoran/"], ["Şile Kamp menü", "https://www.silekamp.com/menu"], ["Tripadvisor Şile", "https://www.tripadvisor.com.tr/Restaurants-g29015513-Sile.html"], ["Google Maps URL belgeleri", "https://developers.google.com/maps/documentation/urls/get-started"], ["Search Analytics API", "https://developers.google.com/webmaster-tools/v1/searchanalytics/query"], ["Vercel Git", "https://vercel.com/docs/git"]];
 const departments = [
   ["Arama niyeti", "Genel kahvaltı ana sayfada; köy, mantı, mıhlama ve fiyat eski URL'leri ilgili yeni hedefte.", `${redirectCount} kalıcı 308 kuralı`],
-  ["Gerçek GSC bulgusu", `${gs.dailyRows} günlük eski dosya: ${gm.propertyClicks} tıklama, ${format(gm.propertyImpressions)} gösterim.`, "16 ay veya bugünkü trafik değil"],
+  ["GSC verisinin incelenmesi", `${gs.dailyRows} günlük ${packageGsc ? "kullanıcı paketi" : "eski dosya"}: ${gm.propertyClicks} tıklama, ${format(gm.propertyImpressions)} gösterim.`, packageGsc ? `${gsc.queryPage.rows.length} sorgu–URL eşleşmesi; panel işlemleri ayrı` : "16 ay veya bugünkü trafik değil"],
   ["İçerik mimarisi", `${experienceRoutes.length} bağımsız makale; menü, aile, grup, bölgesel rota ve kapsam tabloları.`, "Her makale için en az 800 kelime kontrolü"],
   ["Yerel ulaşım", `${routes.routeCount} Google Haritalar başlangıcı ve doğru Üvezli varışı.`, "Sabit, doğrulanmamış km/dakika yok"],
   ["Arama görünümü", "Sayfaya özel title, description, canonical, Open Graph, Twitter ve #id rehberleri.", "Sıralama veya CTR garantisi yok"],
@@ -171,9 +216,9 @@ ${gscText}
 |---|---:|---:|---:|---|
 ${gscRows.map(([label, clicks, impressions, ctr, source]) => `| ${label} | ${format(clicks)} | ${format(impressions)} | ${pct(ctr)} | ${source} |`).join("\n")}
 
-Desteklenen öncelikler: tarihsel ana sorgunun düşük TO'su için net ana sayfa/snippet, HTTP ve ürün URL'lerinin doğru hedefi ve mobil dönüşüm akışı. Kanıtlar .audit/round2/gsc-evidence.json, findings.md ve gsc-local-export-analysis.json içinde. Başka işletmenin Serradent verisi Can Evim metriği yapılmadı.
+${gscExtraMarkdown}
 
-GSC hesabı kullanıcının ekranında açıktı; sitemap gönderimi 24 Eylül, son okuma 14 Ekim görünüyordu. Tarayıcı okuma/navigasyonu kayıtlı izin veya yönetilen politika nedeniyle reddedildi. Bu red çerez, başka tarayıcı veya oturum protokolüyle aşılmadı. Process/User/Machine token/ADC varlık kontrolü kimlik bulmadı; canlı API çağrısı **${gsc.liveApi.callsMade}**. Yerel Excel bulgusu ile canlı API erişimi ayrı durumlardır. scripts/gsc-audit.mjs gerçek ortak query-page CSV/JSON veya yetkili API kullanır; ayrı sekmeleri uydurma eşleştirmez.
+${packageGsc ? "Paket scripts/import-gsc-evidence.mjs ile kaynağı değiştirmeden doğrulanıp içeri alındı. Eski 19 günlük kayıt .audit/round2/gsc-evidence-2026-08-19.json olarak korundu." : gscInterpretation} Kanıt: .audit/round2/gsc-evidence.json. Kullanıcı dosyasının incelenmesi ile canlı GSC oturumuna erişim ayrı işlemlerdir. API çağrısı **${gsc.liveApi.callsMade}**; sitemap gönderimi veya indeksleme isteği yapılmadı.
 
 ## 10 çalışma alanı
 
@@ -212,10 +257,11 @@ ${publishText} Read-only hazırlık kontrolü GitHub main dalında ADMIN erişim
 - node scripts/test-report.mjs (yerel sunum, içerik/hash ve mobil planlayıcı)
 - node scripts/verify-deployment.mjs --sha <tam commit> --wait-seconds 300 (push sonrası read-only)
 - node scripts/gsc-audit.mjs --help
+- node scripts/import-gsc-evidence.mjs --input gsc-canevim-2026-10-26 (salt okunur paket içe aktarımı)
 
 ## İlk başlangıca göre byte / SHA-256
 
-Git modified durumuna bağlı değildir: tüm tracked/untracked adayları ve baseline yolları SHA-256 ile karşılaştırılır. Commit/push kanıtı silmez. Yeni dosya before_bytes=0, silinen after_bytes=0. Rapor kendi hash'ini içine alamadığı için iki raporun hash'i dış .audit/file-evidence.json ve round2/file-evidence.json dosyalarındadır. HTML hash'leri final-metrics.json, QA hash'leri artifact-evidence.json içindedir.
+Git modified durumuna bağlı değildir: tracked/staged teslim dosyaları ve baseline yolları SHA-256 ile karşılaştırılır. Yeni kaynak dosyaları rapor üretiminden önce stage edilir. Kullanıcının untracked GSC klasörü, ZIP'i ve paket hazırlama betiği yayın kapsamı değildir. Commit/push kanıtı silmez. Yeni dosya before_bytes=0, silinen after_bytes=0. Rapor kendi hash'ini içine alamadığı için iki raporun hash'i dış .audit/file-evidence.json ve round2/file-evidence.json dosyalarındadır. HTML hash'leri final-metrics.json, QA hash'leri artifact-evidence.json içindedir.
 
 ${proofTable(sourceEvidence)}
 
@@ -242,16 +288,16 @@ const css = `*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;b
 const html = `<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Can Evim — Büyüme ve Mühendislik Raporu</title><style>${css}\n${plannerCss}</style></head><body><header><div class="wrap"><div class="brand">canevim</div><p class="eyebrow">${date} · İki tur uygulama ve kanıt</p><h1>Bir masa etrafında.<br>Daha fazla doğru başlangıç.</h1><p>Menü, deneyim ve ulaşımı ${CONTENT_ROUTES.length} kanonik adreste buluşturan yapı. ${experienceRoutes.length} bağımsız makale, gerçek menü, masa planlayıcı ve doğrulanabilir dosyalar.</p><span class="badge">${badge}</span><span class="badge">${live ? "CANLI YAYIN DOĞRULANDI" : "YAYIN DOĞRULAMASI AYRI"}</span></div></header><div class="wrap metrics"><div><strong>${metrics.beforeIndexablePages} → ${round1.afterIndexablePages} → ${CONTENT_ROUTES.length}</strong><span>ilk başlangıç / ilk tur / güncel kanonik kapsam</span></div><div><strong>${experienceRoutes.length}</strong><span>bağımsız deneyim / ürün makalesi</span></div><div><strong>${routes.routeCount}</strong><span>canlı rota başlangıcı</span></div><div><strong>${ratio == null ? "Bekleniyor" : ratio.toFixed(2) + "×"}</strong><span>tam HTML / ilk başlangıç</span></div></div><main>
 <section><div class="wrap"><p class="eyebrow">İkinci tur kapsamı</p><h2>Her ziyaret ihtiyacının kendi sayfası var.</h2><p>İlk tur ${round1.afterIndexablePages} sayfaydı. Güncel ${CONTENT_ROUTES.length} adres; köy kahvaltısı, çocuklu aile, grup, bölgesel rota, fiyat kapsamı, mıhlama, mantı ve çay/tatlı ihtiyaçlarını ayrı içerikle anlatır. Ana sayfa deneyimleri birleştirir.</p><p class="note">Derlenmiş dosya ${metrics.compiledPages}/${CONTENT_ROUTES.length}; 800 kelime kontrolü ${qa.articles ? "geçti" : "final build üzerinde bekleniyor"}. Google sırası veya gerçekleşmiş rezervasyon artışı iddia edilmez.</p><div class="route-grid">${routeCards}</div></div></section>
 <section class="soft"><div class="wrap"><p class="eyebrow">Üç ayrı ölçüm sınırı</p><h2>Başlangıçlar ve son ölçüm birbirine karışmıyor.</h2><div class="table-wrap"><table><thead><tr><th>Ölçüm</th><th>İlk başlangıç</th><th>İlk tur sonu</th><th>İkinci tur</th></tr></thead><tbody>${lhRows.map((row) => `<tr>${row.map((cell, index) => index ? `<td>${cell}</td>` : `<th>${cell}</th>`).join("")}</tr>`).join("")}<tr><th>Derlenmiş HTML</th><td>${format(beforeHtml.totalIndexableBytes)} byte / ${metrics.beforeIndexablePages} sayfa</td><td>${format(round1.afterHtmlBytes)} byte / ${round1.afterIndexablePages} sayfa</td><td>${format(totalAfter)} byte / ${CONTENT_ROUTES.length} sayfa</td></tr></tbody></table></div><p class="note">${escape(lhText)} Toplam HTML eklenen sayfaları içerir; gerçek ziyaretçi Core Web Vitals veya sıkıştırılmış ağ transferi değildir.</p><p class="note">${escape(productionText + " " + productionTargetText)}</p></div></section>
-<section id="gsc-evidence"><div class="wrap"><p class="eyebrow">Gerçek eski dışa aktarım · ${gs.dailyRows} gün</p><h2>Bulduğumuz veri, söylediğimiz kadar.</h2><div class="notice"><p>${escape(gscText)}</p></div><div class="table-wrap"><table><thead><tr><th>Kapsam</th><th>Tıklama</th><th>Gösterim</th><th>TO</th></tr></thead><tbody>${gscRows.map(([label, clicks, impressions, ctr]) => `<tr><th>${label}</th><td>${format(clicks)}</td><td>${format(impressions)}</td><td>${pct(ctr)}</td></tr>`).join("")}</tbody></table></div><p class="note">Ayrı sorgu/sayfa sekmeleri birleştirilmedi. Canlı 16 aylık veri alınmadı; eski pozisyon bugünün Google sırası değildir. Mobil: ${gm.mobileClicks}/${gm.propertyClicks} tıklama, ${pct(gm.mobileClickShare, 1)}.</p></div></section>
+${gscHtml}
 <section class="soft"><div class="wrap"><p class="eyebrow">10 çalışma alanı</p><h2>Dosyaya dönüşen iş.</h2><div class="department-grid">${departments.map(([name, body, status], index) => `<article class="department"><span>${String(index + 1).padStart(2, "0")}</span><h3>${name}</h3><p>${escape(body)}</p><small>${escape(status)}</small></article>`).join("")}</div></div></section>
 <section id="demo"><div class="wrap"><p class="eyebrow">Yerel interaktif örnek</p><h2>Masanızı birlikte planlayın.</h2><p class="note">Mevcut derlemedeki araç seçimleri WhatsApp talebine dönüştürür. Göndermek size aittir; kesin rezervasyon veya fiyat onayı değildir.</p></div>${planner ? planner.replaceAll('href="/menu"', `href="${routeHost}/menu"`) : '<p class="wrap notice">Derlenmiş örnek final build sonrasında eklenir.</p>'}</section>
-<section><div class="wrap"><p class="eyebrow">Final kanıt durumu</p><h2>Başarı ve bekleyen ölçüm ayrı yazıyor.</h2><div class="qa-list">${Object.entries(qa).map(([name, passed]) => `<div><b>${name}</b><span>${passed ? "Geçti" : "Final kanıt bekleniyor"}</span></div>`).join("")}</div><div class="notice"><p><strong>Yayın:</strong> ${escape(publishText)}</p><p><strong>GSC:</strong> Gerçek yerel ${gs.dailyRows} günlük dosya incelendi; canlı API/16 aylık ortak sorgu–sayfa verisi yok. Kayıtlı izin reddi aşılmadı.</p><p><strong>Fiyat ve ölçüm:</strong> İşletme tarifesi veya gerçekleşmiş dönüşüm artışı uydurulmadı. Gerçek GA4/DebugView testi ayrı kanıttır.</p></div></div></section>
+<section><div class="wrap"><p class="eyebrow">Final kanıt durumu</p><h2>Başarı ve bekleyen ölçüm ayrı yazıyor.</h2><div class="qa-list">${Object.entries(qa).map(([name, passed]) => `<div><b>${name}</b><span>${passed ? "Geçti" : "Final kanıt bekleniyor"}</span></div>`).join("")}</div><div class="notice"><p><strong>Yayın:</strong> ${escape(publishText)}</p><p><strong>GSC:</strong> ${escape(gscOperationsText)}</p><p><strong>Fiyat ve ölçüm:</strong> İşletme tarifesi veya gerçekleşmiş dönüşüm artışı uydurulmadı. Gerçek GA4/DebugView testi ayrı kanıttır.</p></div></div></section>
 <section class="soft"><div class="wrap"><p class="eyebrow">Dosyanın izi</p><h2>Commit sonrasında da kalan byte ve hash kanıtı.</h2><p><a href="TUM-OPERASYON-KANITLARI.md">TUM-OPERASYON-KANITLARI.md</a> teknik ayrıntıları taşır. Hash karşılaştırması Git modified durumuna bağlı değildir; ilk ve ikinci tur farkları ayrıdır.</p><details><summary>İlk başlangıca göre kaynak dosyalarını açın</summary><div class="table-wrap"><table class="proof"><thead><tr><th>Dosya</th><th>before_bytes</th><th>after_bytes</th><th>SHA-256</th></tr></thead><tbody>${sourceEvidence.map((row) => `<tr><td>${escape(row.file)}</td><td>${row.before_bytes}</td><td>${row.after_bytes}</td><td>${row.after_sha256 || "Silindi"}</td></tr>`).join("")}</tbody></table></div></details><h3>Kaynaklar</h3><div class="links">${sourceLinks.map(([label, url]) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`).join("")}</div></div></section>
 </main><footer class="footer"><div class="wrap">Can Evim Şile · ${date} · ${badge}</div></footer><script>${plannerJs}</script></body></html>`;
 fs.writeFileSync(reportNames[0], html);
 for (const [file, start] of [[".audit/file-evidence.json", baseline], [".audit/round2/file-evidence.json", round2Baseline]]) {
   const files = evidence(start);
-  fs.writeFileSync(file, `${JSON.stringify({ capturedAt: new Date().toISOString(), baselineCapturedAt: start.capturedAt, scope: "Baseline-hash differences among all tracked/untracked deliverables; commit-independent. QA/build artifacts are separate.", files }, null, 2)}\n`);
+  fs.writeFileSync(file, `${JSON.stringify({ capturedAt: new Date().toISOString(), baselineCapturedAt: start.capturedAt, scope: "Baseline-hash differences among tracked/staged deliverables; commit-independent. Untracked user inputs and QA/build artifacts are separate.", files }, null, 2)}\n`);
   if (file === ".audit/file-evidence.json") fs.writeFileSync(".audit/final-file-table.md", `${proofTable(files)}\n`);
 }
 const artifactFiles = fs.readdirSync(".audit", { recursive: true }).filter((name) => !name.endsWith("artifact-evidence.json") && fs.statSync(path.join(".audit", name)).isFile()).map((name) => { const bytes = fs.readFileSync(path.join(".audit", name)); return { file: `.audit/${name.replaceAll("\\", "/")}`, bytes: bytes.length, sha256: sha(bytes) }; });

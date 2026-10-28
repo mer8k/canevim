@@ -18,6 +18,8 @@ The builder embeds the 14 KB WebP hero once as a data URL in the narrow-screen p
 
 `scripts/home-ui.cjs` builds `/home-ui.js` for the native header, keyboard/focus behavior and reservation form. Its WhatsApp submission validates the required name, date and contact checkbox and retains the message that reservations need business confirmation. Popups are intercepted during automated tests. The deferred `/growth-loader.js` continues to load the planner/routes as needed. Without configured analytics IDs, the initial home viewport requests neither `growth.js` nor widget HTML.
 
+The native UI reads its initial scroll position before activating an already loaded complete stylesheet. A saved production Lighthouse audit attributed a forced layout to the former order of `media="all"` followed immediately by `scrollY`; separating that read from the style write removes this synchronous dependency. This ordering alone does not establish a performance score or explain earlier document layout work.
+
 `npm run dev` and `npm run build` regenerate the runtime and static home through their pre-scripts. Changes to shared home content, styling, metadata or native interactions require regeneration. Detail pages retain the Next App Router; links between detail pages use client navigation. A link back to `/` uses a native anchor and starts the independent home document, so window state resets on that transition.
 
 ## App integration

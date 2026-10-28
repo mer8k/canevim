@@ -1,6 +1,12 @@
 /* Native interactions for the static landing document. No framework runtime. */
 (function () {
   "use strict";
+  var button = document.getElementById("menu-toggle");
+  var menu = document.getElementById("site-menu");
+  var header = button && button.closest("header");
+  // Read the initial scroll position before changing the stylesheet media.
+  // Reading it after media="all" synchronously flushes the complete layout.
+  var opened = false, lastY = window.scrollY, previousOverflow = "";
   document.querySelectorAll("link[data-deferred-styles]").forEach(function (link) {
     function activate() {
       link.media = "all";
@@ -9,10 +15,6 @@
     if (link.sheet) activate();
     else link.addEventListener("load", activate, { once: true });
   });
-  var button = document.getElementById("menu-toggle");
-  var menu = document.getElementById("site-menu");
-  var header = button && button.closest("header");
-  var opened = false, lastY = window.scrollY, previousOverflow = "";
   function toggle(next) {
     opened = next;
     button.setAttribute("aria-expanded", String(next));

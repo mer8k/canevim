@@ -284,16 +284,19 @@ try {
       checkHomeStyles(initialStyles, `Critical CSS @ ${width}`, { pending: true });
       const before = await snapshotBar();
       await stylePage.waitForTimeout(500);
-      const heldForMs = heldStyles.length ? Date.now() - heldStyles[0].requestedAt : 0;
+      let heldForMs = heldStyles.length ? Date.now() - heldStyles[0].requestedAt : 0;
       check(heldStyles.length === 1 && heldForMs >= 500, `Critical CSS @ ${width}: full stylesheet genuinely held for at least 500ms`, { heldStyles, heldForMs });
       await stylePage.locator("#menu-toggle").click();
       await stylePage.waitForFunction(() => document.getElementById("menu-toggle").getAttribute("aria-expanded") === "true");
+      // A positive visibility check can pass on the first almost-transparent
+      // frame. Wait for the real menu transition before checking/capturing it.
+      await stylePage.waitForFunction(() => parseFloat(getComputedStyle(document.getElementById("site-menu")).opacity) >= 0.99);
       const menu = await snapshotBar();
       const pendingMenu = await stylePage.locator("#site-menu").evaluate(element => {
         const rect = element.getBoundingClientRect(), link = element.querySelector('a[href="/menu"]'), linkRect = link.getBoundingClientRect(), background = element.firstElementChild;
-        return { visible: element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }), ariaHidden: element.getAttribute("aria-hidden"), left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, viewportHeight: innerHeight, display: getComputedStyle(element).display, background: getComputedStyle(background).backgroundColor, linkFont: getComputedStyle(link).fontFamily, linkFontSize: getComputedStyle(link).fontSize, linkLeft: linkRect.left, linkRight: linkRect.right, linkTop: linkRect.top, linkBottom: linkRect.bottom };
+        return { visible: element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }), opacity: Number(getComputedStyle(element).opacity), ariaHidden: element.getAttribute("aria-hidden"), left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, viewportHeight: innerHeight, display: getComputedStyle(element).display, background: getComputedStyle(background).backgroundColor, linkFont: getComputedStyle(link).fontFamily, linkFontSize: getComputedStyle(link).fontSize, linkLeft: linkRect.left, linkRight: linkRect.right, linkTop: linkRect.top, linkBottom: linkRect.bottom };
       });
-      check(pendingMenu.visible && pendingMenu.ariaHidden === "false" && pendingMenu.display === "flex" && pendingMenu.background !== "rgba(0, 0, 0, 0)" && Math.abs(pendingMenu.left) <= 1 && Math.abs(pendingMenu.right - width) <= 1 && pendingMenu.top <= 1 && pendingMenu.bottom >= pendingMenu.viewportHeight - 1 && pendingMenu.linkFont.includes("Georgia") && parseFloat(pendingMenu.linkFontSize) >= 27 && pendingMenu.linkLeft >= 0 && pendingMenu.linkRight <= width && pendingMenu.linkTop >= 0 && pendingMenu.linkBottom <= pendingMenu.viewportHeight, `Critical CSS @ ${width}: complete header/menu layout is visible before full CSS`, pendingMenu);
+      check(pendingMenu.visible && pendingMenu.opacity >= 0.99 && pendingMenu.ariaHidden === "false" && pendingMenu.display === "flex" && pendingMenu.background !== "rgba(0, 0, 0, 0)" && Math.abs(pendingMenu.left) <= 1 && Math.abs(pendingMenu.right - width) <= 1 && pendingMenu.top <= 1 && pendingMenu.bottom >= pendingMenu.viewportHeight - 1 && pendingMenu.linkFont.includes("Georgia") && parseFloat(pendingMenu.linkFontSize) >= 27 && pendingMenu.linkLeft >= 0 && pendingMenu.linkRight <= width && pendingMenu.linkTop >= 0 && pendingMenu.linkBottom <= pendingMenu.viewportHeight, `Critical CSS @ ${width}: complete header/menu layout is visible before full CSS`, pendingMenu);
       await stylePage.keyboard.press("Tab");
       const keyboardFocus = await stylePage.evaluate(() => { const active = document.activeElement, style = getComputedStyle(active); return { insideMenu: Boolean(active.closest("#site-menu")), tag: active.tagName, focusVisible: active.matches(":focus-visible"), outlineStyle: style.outlineStyle, outlineWidth: style.outlineWidth }; });
       check(keyboardFocus.insideMenu && keyboardFocus.tag === "A" && keyboardFocus.focusVisible && keyboardFocus.outlineStyle !== "none" && parseFloat(keyboardFocus.outlineWidth) > 0, `Critical CSS @ ${width}: keyboard focus is visible before full CSS`, keyboardFocus);
@@ -304,6 +307,7 @@ try {
       check(await stylePage.evaluate(() => document.getElementById("menu-toggle").getAttribute("aria-expanded") === "false" && document.activeElement?.id === "menu-toggle"), `Critical CSS @ ${width}: Escape closes menu and restores focus before full CSS`);
       const pendingStyles = await homeStyleInfo(stylePage);
       checkHomeStyles(pendingStyles, `Critical CSS after menu @ ${width}`, { pending: true });
+      heldForMs = Date.now() - heldStyles[0].requestedAt;
       releaseStyles();
       await stylePage.waitForLoadState("load");
       await stylePage.waitForFunction(() => Array.from(document.querySelectorAll("link[data-deferred-styles]")).every(link => link.media === "all" && link.sheet && link.getAttribute("data-style-ready") === "true"), null, { timeout: 15000 });

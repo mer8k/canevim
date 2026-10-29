@@ -1,8 +1,8 @@
 # Can Evim — tüm operasyon kanıtları
 
-26 Ekim 2026 · Next.js 16.3.6 / React 19.2.4 · Yerel QA tamamlandı; canlı hedef durumu aşağıdadır
+28 Ekim 2026 · Next.js 16.3.6 / React 19.2.4 · Yerel QA tamamlandı; canlı hedef durumu aşağıdadır
 
-Bu build için canlı yayın henüz doğrulanmadı; yerel çalışma ve yayın sonucu ayrı tutulur.
+Canlı yayın doğrulandı; commit 5cebf2bf36bdd02f6491435561858b8690ad08e3.
 
 ## Üç ayrı başlangıç / sonuç sınırı
 
@@ -43,11 +43,11 @@ HTML toplamı yeni sayfaları içerir; tek sayfa veya sıkıştırılmış ağ t
 | En iyi uygulamalar | 100 | 100 | 100 |
 | SEO | 100 | 100 | 100 |
 
-Final ölçüm yerel: http://127.0.0.1:3100/. LCP 1.88 sn; TBT 29 ms; CLS 0.0027. 98–100 performans hedefi bu koşuda sağlandı. İlk iki sütun yerel koşulardır; canlı final kullanıldığında sunucu ve sıkıştırma koşulları farklıdır. Kanıt: .audit/round2/lighthouse-final-summary.json. Mobil laboratuvar koşusu gerçek kullanıcı Core Web Vitals veya GSC sonucu değildir.
+Final ölçüm yerel: http://127.0.0.1:3100/. LCP 2.07 sn; TBT 53 ms; CLS 0.0027. 98–100 performans hedefi bu koşuda sağlandı. İlk iki sütun yerel koşulardır; canlı final kullanıldığında sunucu ve sıkıştırma koşulları farklıdır. Kanıt: .audit/round2/lighthouse-final-summary.json. Mobil laboratuvar koşusu gerçek kullanıcı Core Web Vitals veya GSC sonucu değildir.
 
-Canlı Lighthouse ölçümü bu yayın için henüz doğrulanmadı; yerel ölçüm canlı ölçüm olarak sunulmaz.
+Canlı https://www.canevimsile.com/ mobil Lighthouse: performans 96, erişilebilirlik 100, SEO 100. LCP 2.43 sn, TBT 55 ms, CLS 0.0000. Ölçüm: 2026-10-28T10:07:42.925Z. Kanıt: .audit/round2/lighthouse-live-summary.json. Bu bir laboratuvar koşusudur.
 
-Canlı performans hedefi için doğrulanmış ölçüm bekleniyor.
+Canlı 98–100 performans hedefi sağlanmadı; açık madde olarak korunuyor. Bağımsız Google PageSpeed API ölçümü HTTP 429 kota yanıtı nedeniyle alınmadı; ek bir puan üretilmedi. Ölçüm geçmişi: 26 Ekim önceki sürüm canlı: 93; 28 Ekim düzeltme öncesi canlı: 26; 28 Ekim düzeltme öncesi yerel: 83. Bu kayıtlar korunuyor; faz sırası tanısı ve ölçüm sınırları .audit/vercel-setup-2026-10-28/performance-diagnosis.md içindedir. Tek koşu kalıcı performans garantisi değildir.
 
 ## Gerçek GSC bulgusu
 
@@ -152,7 +152,7 @@ HTTP: 203/203. Tarayıcı: Tüm kanonikler kontrol edildi. Kanıt zamanı build'
 
 ## Yayın kanıtı
 
-Bu build için canlı yayın henüz doğrulanmadı; yerel çalışma ve yayın sonucu ayrı tutulur. Read-only hazırlık kontrolü GitHub main dalında ADMIN erişimi ve iki Vercel production entegrasyonu (canevim / canevim-next) gösterdi. Yeni SHA'nın provider durumları ve asıl www sayfaları doğrulanmadan yayın tamamlandı denmez. Public gövde eşleşmesi özel alan adının proje sahipliğini tek başına kanıtlamaz. Kaynak: .audit/round2/deploy-readiness.md ve varsa deployment-verification.json.
+Canlı yayın doğrulandı; commit 5cebf2bf36bdd02f6491435561858b8690ad08e3. Yetkili Vercel CLI üzerinden salt okunur sağlayıcı denetimi: canevim (prj_8rPWkNxgEbDuvay9AGltkI0XXLc6), deployment dpl_4CA5ChVzKEUEJMrQ6TRmUAAwimWR, tam Git SHA, production/READY durumu, alias ataması ve iki doğrulanmış alan adı eşleşti. Genel yayın kontrolleri 20/20; sağlayıcı kriterleri 11/11. Alan adının bağlı olduğu proje Vercel kayıtlarından doğrulandı. Kaynak: .audit/round2/application-release-verification.json. GitHub kaynağından yayın yapıldı; yerel GSC girdileri yüklenmedi.
 
 ## Yeniden üretme
 
@@ -164,8 +164,10 @@ Bu build için canlı yayın henüz doğrulanmadı; yerel çalışma ve yayın s
 - node scripts/test-browser.mjs (PLAYWRIGHT_MODULE / CHROME_PATH)
 - node scripts/generate-growth-report.mjs --draft (açıkça bekleyen ölçümlü taslak)
 - node scripts/generate-growth-report.mjs (taze final build / QA / Lighthouse zorunlu)
+- node scripts/generate-growth-report.mjs --deployment <uygulama-yayını-kaydı.json> (rapor commit'inden ayrı, doğrulanmış uygulama yayınını sabitler)
 - node scripts/test-report.mjs (yerel sunum, içerik/hash ve mobil planlayıcı)
 - node scripts/verify-deployment.mjs --sha <tam commit> --wait-seconds 300 (push sonrası read-only)
+- node scripts/verify-deployment.mjs --sha <tam commit> --vercel-project <prj_ID> --vercel-deployment <dpl_ID> --vercel-scope <takım> (yetkili CLI ile salt okunur proje/alan adı doğrulaması)
 - node scripts/gsc-audit.mjs --help
 - node scripts/import-gsc-evidence.mjs --input gsc-canevim-2026-10-26 (salt okunur paket içe aktarımı)
 
@@ -176,7 +178,7 @@ Git modified durumuna bağlı değildir: tracked/staged teslim dosyaları ve bas
 | Dosya | before_bytes | after_bytes | SHA-256 (son durum) |
 |---|---:|---:|---|
 | .gitignore | 539 | 660 | f3e4ce36af89977f02406c31719d76193e5cee36331f068fea37b7fe502aac80 |
-| GROWTH-INTERACTIVE-INTEGRATION.md | 0 | 15180 | 6c5869dc208f4e41f230f3b8bcec0568751f8638ea7c7c278f23745842b59415 |
+| GROWTH-INTERACTIVE-INTEGRATION.md | 0 | 15600 | bfd074b9a2e19a6c2d7939d9d4616248de1204ead47f7a4e7b78de3cccb8b551 |
 | app/Header.js | 10100 | 11639 | f7cfd433bf032c087f1f496455e7388a48995d529c191453f52fcde296d878d5 |
 | app/[experience]/page.js | 0 | 3174 | b66903131bccea56a5ca57fccf55c528220a0da60f5f3a4a5ccbade27cd4a1f6 |
 | app/blog/page.js | 801 | 1281 | e3e60d00feb853c6cc21532e45e20361e2384420c86962de2b98d1a2065c4706 |
@@ -189,7 +191,7 @@ Git modified durumuna bağlı değildir: tracked/staged teslim dosyaları ve bas
 | app/components/RouteMatrix.js | 0 | 2883 | 531054cb0bf7bed1ca9d562d9991eb875f3de8feefa4190d1936d60a741800f6 |
 | app/components/SiteLink.js | 0 | 361 | 32d94124fc58e6e37b9c53af866214c7dc0db954d2788754551a0fed9a8a4e4d |
 | app/components/StaticImage.js | 0 | 326 | 82ac052212edb221edf39724d51a74d90a1f64419e1e60fd4e2b4c7b03fceb81 |
-| app/content-dates.json | 0 | 24414 | bcb37653fc7d37afaa6a46354bf21db34c82ce184ce1051be22ca9c6d16720e7 |
+| app/content-dates.json | 0 | 24414 | 57668f24617352fad476534f241aae573c1ef13f7ae9aff27100fc785887ca40 |
 | app/expanded-experiences.js | 0 | 93903 | e2a77e1f288e5d188cc8e2c225f9a8bc3b54e610e90dc2c916d444f076fa4eaf |
 | app/globals.css | 229 | 398 | 53cdc71f8615fd4cc6c969913bdb748262bd1e945aeeab1cfd230b2daf3cad38 |
 | app/growth-content.css | 0 | 9894 | 8ca17bdd97c1644c48aa492d868041b6c2b5c526e353b9c9dbe8d71b602c2524 |
@@ -217,7 +219,7 @@ Git modified durumuna bağlı değildir: tracked/staged teslim dosyaları ve bas
 | package.json | 367 | 928 | 8900efb7b740e91d1b9f0ca3e52d32c14b1d8e3f142630d3eb0f92ab33e84e6d |
 | public/growth-loader.js | 0 | 2952 | bcd717aebde868b2cc889340f0274331b84c0654f844c43e4e2140b761c155c8 |
 | public/growth.js | 0 | 10824 | d89977df35e24ce2e15445484376f8ffadade12c7276082b3b8a40c886ff2d35 |
-| public/home-ui.js | 0 | 2300 | dc1e39f4793b22097eb43eb9961bffe0f6bfa1cd1091c589808df8612045ca7b |
+| public/home-ui.js | 0 | 2300 | 161cfe9949ba29cf966c98e60d0f8d573675d7f68b5cd19d757bed443b0eb6cf |
 | public/performance/content/bahce-card.avif | 0 | 11906 | 2795e4b816951ba58f782a49871893badc89b6ead0ca1a2da9260edcbe024fd8 |
 | public/performance/content/gozleme-480.webp | 0 | 36322 | ab051f46e0a31ebc5b2cdafe4458379164536e37f3c363ecca7dcbea5d5a635f |
 | public/performance/content/gozleme-960.webp | 0 | 96002 | a8fb89c56a7c8361cf408a9fe625dc974453a3482b70f92048432ce1493b55ab |
@@ -238,20 +240,20 @@ Git modified durumuna bağlı değildir: tracked/staged teslim dosyaları ve bas
 | scripts/build-home.cjs | 0 | 7687 | ddd971a237c127facd802af6694e00b40d4c5621b7263bb780a358ddf25451ec |
 | scripts/compiled-pages.mjs | 0 | 248 | 16cfb3ff2f158074f4f062b9c6e0a1b1ceb5c6b8643048896fda85cdbcd8d50b |
 | scripts/content-fingerprint.mjs | 0 | 350 | 7f70c6362eb87c8aa7b7ceddc8c7940989c6d949a5c5ca20251aed8dd8aa1e13 |
-| scripts/generate-growth-report.mjs | 0 | 43720 | b79b83b9700d03c496fa4c3b0f257d845c4dbf3ada7c676c0c7a8d9fae9edc27 |
+| scripts/generate-growth-report.mjs | 0 | 45928 | 6020ae8e2173e049985dbedc060ef7af0e63d21a4afab409a57ab76aade45b24 |
 | scripts/growth-loader.cjs | 0 | 4427 | 0c2e4ae70954f6c569d5cc6610b098c72421064091995a500804028f1f48a4d1 |
 | scripts/growth-runtime.cjs | 0 | 17697 | 4ed9f10d8405078db550755fe76c3bc7303b09aefa085872d3808433bbd52ae5 |
 | scripts/gsc-audit.mjs | 0 | 14607 | 606c89fe740b6809ae1af5dbe74156c64478b174a8591c6fe3a184b8450c0097 |
-| scripts/home-ui.cjs | 0 | 3424 | c1e2a88fe30e26af748ae8c6492dd7d25d8a65d1280873b972e6cbc434dd9fff |
+| scripts/home-ui.cjs | 0 | 3577 | 780a3cff7cd30b4c335c9f0f7ec74c813034f1b072c515528decaef7fe33059c |
 | scripts/import-gsc-evidence.mjs | 0 | 19815 | 4abc59fc4fad6ee299f2023f12e45a4af6be7b370909d016ede9531febbcc7b2 |
 | scripts/seo-infra-check.mjs | 0 | 9132 | 952b18c6c99e02a0697e65e009f0e22e23c87027ff06afd8436ed22bf1421245 |
-| scripts/test-browser.mjs | 0 | 46850 | 4997cb9a45b7580221636e9b7486b7cc506690a01e1e31975e7691379f91f1a7 |
+| scripts/test-browser.mjs | 0 | 47276 | 0c60824f62be7b47a9c4796f95c73ae6a2e20aaa8dffa62bad33d08521a905d1 |
 | scripts/test-growth.mjs | 0 | 7148 | 0187e766f9ba21bd1dd52402799c078e0aae9cd818a721c65c39afde80a6504a |
 | scripts/test-http.mjs | 0 | 9926 | 393207dde38fefbd4dc97af9ebf9ee2ab1f22baff7127804b73cd4833aa5c400 |
 | scripts/test-links.mjs | 0 | 1592 | 15807d821044ebcce73c7416b5d5453191a59db8357682c4f47ff667b293d796 |
 | scripts/test-report.mjs | 0 | 22592 | 56115f5f771e5511da764649500a96af14dbc1656e93b53d84e2e5c4c2667bc9 |
 | scripts/update-content-dates.mjs | 0 | 4219 | b828ce97c8082df61e6754e15e0fc58a1d438955cd6d74e10eb5aeb58d9e0173 |
-| scripts/verify-deployment.mjs | 0 | 11770 | 35d1047ba213cc847ea49e460e0f0bf16318a1bb53cce20e3f3fd3de4b2893a4 |
+| scripts/verify-deployment.mjs | 0 | 20899 | d582ca53708dda207d84d15f95da4a5fdd0d9ad672852d8172b621ae07bfcc66 |
 
 ## İkinci tur başlangıcına göre farklar
 
@@ -260,7 +262,7 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | Dosya | before_bytes | after_bytes | SHA-256 (son durum) |
 |---|---:|---:|---|
 | .gitignore | 549 | 660 | f3e4ce36af89977f02406c31719d76193e5cee36331f068fea37b7fe502aac80 |
-| GROWTH-INTERACTIVE-INTEGRATION.md | 7111 | 15180 | 6c5869dc208f4e41f230f3b8bcec0568751f8638ea7c7c278f23745842b59415 |
+| GROWTH-INTERACTIVE-INTEGRATION.md | 7111 | 15600 | bfd074b9a2e19a6c2d7939d9d4616248de1204ead47f7a4e7b78de3cccb8b551 |
 | app/Header.js | 11457 | 11639 | f7cfd433bf032c087f1f496455e7388a48995d529c191453f52fcde296d878d5 |
 | app/[experience]/page.js | 3024 | 3174 | b66903131bccea56a5ca57fccf55c528220a0da60f5f3a4a5ccbade27cd4a1f6 |
 | app/blog/page.js | 1234 | 1281 | e3e60d00feb853c6cc21532e45e20361e2384420c86962de2b98d1a2065c4706 |
@@ -268,7 +270,7 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | app/components/LazyInteractive.js | 0 | 1251 | 1c7736110d90856a1804b6535b1d14a09ddd42a74611beb784dc804636764b52 |
 | app/components/SiteLink.js | 0 | 361 | 32d94124fc58e6e37b9c53af866214c7dc0db954d2788754551a0fed9a8a4e4d |
 | app/components/StaticImage.js | 0 | 326 | 82ac052212edb221edf39724d51a74d90a1f64419e1e60fd4e2b4c7b03fceb81 |
-| app/content-dates.json | 8934 | 24414 | bcb37653fc7d37afaa6a46354bf21db34c82ce184ce1051be22ca9c6d16720e7 |
+| app/content-dates.json | 8934 | 24414 | 57668f24617352fad476534f241aae573c1ef13f7ae9aff27100fc785887ca40 |
 | app/expanded-experiences.js | 0 | 93903 | e2a77e1f288e5d188cc8e2c225f9a8bc3b54e610e90dc2c916d444f076fa4eaf |
 | app/globals.css | 370 | 398 | 53cdc71f8615fd4cc6c969913bdb748262bd1e945aeeab1cfd230b2daf3cad38 |
 | app/growth-content.js | 41474 | 41668 | c3d7d965391bf9f5c56c21d62001bd54733a9cf5d949275419842dae9cec0150 |
@@ -286,7 +288,7 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | package-lock.json | 55450 | 53857 | 2c4be83a8c31cb95b05d21b05d6446615475a86bffb9a5c946b92e73c0a96627 |
 | package.json | 806 | 928 | 8900efb7b740e91d1b9f0ca3e52d32c14b1d8e3f142630d3eb0f92ab33e84e6d |
 | public/growth-loader.js | 0 | 2952 | bcd717aebde868b2cc889340f0274331b84c0654f844c43e4e2140b761c155c8 |
-| public/home-ui.js | 0 | 2300 | dc1e39f4793b22097eb43eb9961bffe0f6bfa1cd1091c589808df8612045ca7b |
+| public/home-ui.js | 0 | 2300 | 161cfe9949ba29cf966c98e60d0f8d573675d7f68b5cd19d757bed443b0eb6cf |
 | public/performance/content/bahce-card.avif | 0 | 11906 | 2795e4b816951ba58f782a49871893badc89b6ead0ca1a2da9260edcbe024fd8 |
 | public/performance/content/gozleme-card.avif | 0 | 14839 | 029b589d01d5b05b41d02b5cfe68ea21e05abae3ac7c185cfc9874f01b0228c4 |
 | public/performance/content/sac-kavurma-card.avif | 0 | 10600 | f370152fd56e61dd17e2189972ea00e35104a57893debeff5f9c3ce06457f19d |
@@ -303,16 +305,16 @@ Bu before değerleri ilk başlangıç değil .audit/round2/baseline.json değerl
 | scripts/build-home.cjs | 0 | 7687 | ddd971a237c127facd802af6694e00b40d4c5621b7263bb780a358ddf25451ec |
 | scripts/compiled-pages.mjs | 0 | 248 | 16cfb3ff2f158074f4f062b9c6e0a1b1ceb5c6b8643048896fda85cdbcd8d50b |
 | scripts/content-fingerprint.mjs | 0 | 350 | 7f70c6362eb87c8aa7b7ceddc8c7940989c6d949a5c5ca20251aed8dd8aa1e13 |
-| scripts/generate-growth-report.mjs | 28901 | 43720 | b79b83b9700d03c496fa4c3b0f257d845c4dbf3ada7c676c0c7a8d9fae9edc27 |
+| scripts/generate-growth-report.mjs | 28901 | 45928 | 6020ae8e2173e049985dbedc060ef7af0e63d21a4afab409a57ab76aade45b24 |
 | scripts/growth-loader.cjs | 0 | 4427 | 0c2e4ae70954f6c569d5cc6610b098c72421064091995a500804028f1f48a4d1 |
-| scripts/home-ui.cjs | 0 | 3424 | c1e2a88fe30e26af748ae8c6492dd7d25d8a65d1280873b972e6cbc434dd9fff |
+| scripts/home-ui.cjs | 0 | 3577 | 780a3cff7cd30b4c335c9f0f7ec74c813034f1b072c515528decaef7fe33059c |
 | scripts/import-gsc-evidence.mjs | 0 | 19815 | 4abc59fc4fad6ee299f2023f12e45a4af6be7b370909d016ede9531febbcc7b2 |
 | scripts/seo-infra-check.mjs | 7616 | 9132 | 952b18c6c99e02a0697e65e009f0e22e23c87027ff06afd8436ed22bf1421245 |
-| scripts/test-browser.mjs | 23268 | 46850 | 4997cb9a45b7580221636e9b7486b7cc506690a01e1e31975e7691379f91f1a7 |
+| scripts/test-browser.mjs | 23268 | 47276 | 0c60824f62be7b47a9c4796f95c73ae6a2e20aaa8dffa62bad33d08521a905d1 |
 | scripts/test-links.mjs | 1578 | 1592 | 15807d821044ebcce73c7416b5d5453191a59db8357682c4f47ff667b293d796 |
 | scripts/test-report.mjs | 0 | 22592 | 56115f5f771e5511da764649500a96af14dbc1656e93b53d84e2e5c4c2667bc9 |
 | scripts/update-content-dates.mjs | 3610 | 4219 | b828ce97c8082df61e6754e15e0fc58a1d438955cd6d74e10eb5aeb58d9e0173 |
-| scripts/verify-deployment.mjs | 0 | 11770 | 35d1047ba213cc847ea49e460e0f0bf16318a1bb53cce20e3f3fd3de4b2893a4 |
+| scripts/verify-deployment.mjs | 0 | 20899 | d582ca53708dda207d84d15f95da4a5fdd0d9ad672852d8172b621ae07bfcc66 |
 
 ## Kaynaklar
 

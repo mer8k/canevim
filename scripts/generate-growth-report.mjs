@@ -29,7 +29,8 @@ if (!baseline || !round2Baseline || !beforeHtml || !round1 || !gsc) throw new Er
 const lhFile = option("--lighthouse", exists(".audit/round2/lighthouse-final-summary.json") ? ".audit/round2/lighthouse-final-summary.json" : ".audit/lighthouse-after-summary.json");
 const afterLh = read(lhFile), http = read(option("--http", ".audit/http-tests.json")), browser = read(option("--browser", exists(".audit/round2/browser-tests.json") ? ".audit/round2/browser-tests.json" : ".audit/browser-tests.json"));
 const seo = read(option("--seo", ".audit/round2/seo-infra-check.json")) || read(".audit/seo-infra-check.json");
-const routes = read(".audit/route-tests.json", {}), deployment = read(".audit/round2/deployment-verification.json");
+const deploymentFile = option("--deployment", ".audit/round2/deployment-verification.json");
+const routes = read(".audit/route-tests.json", {}), deployment = read(deploymentFile);
 const buildId = exists(".next/BUILD_ID") ? fs.readFileSync(".next/BUILD_ID", "utf8").trim() : null;
 const buildTime = exists(".next/BUILD_ID") ? fs.statSync(".next/BUILD_ID").mtimeMs : Infinity;
 const redirectCount = (await nextConfig.redirects()).length;
@@ -67,11 +68,17 @@ const productionLhVerified = live && productionLh?.finalUrl === `${CANONICAL_ORI
 const productionText = productionLhVerified ? `Canlı ${CANONICAL_ORIGIN}/ mobil Lighthouse: performans ${productionLh.categories.performance}, erişilebilirlik ${productionLh.categories.accessibility}, SEO ${productionLh.categories.seo}. LCP ${(productionLh.metrics.largestContentfulPaint / 1000).toFixed(2)} sn, TBT ${Math.round(productionLh.metrics.totalBlockingTime)} ms, CLS ${productionLh.metrics.cumulativeLayoutShift.toFixed(4)}. Ölçüm: ${productionLh.fetchTime}. Kanıt: .audit/round2/lighthouse-live-summary.json. Bu bir laboratuvar koşusudur.` : "Canlı Lighthouse ölçümü bu yayın için henüz doğrulanmadı; yerel ölçüm canlı ölçüm olarak sunulmaz.";
 const publishText = live ? `Canlı yayın doğrulandı; commit ${deployment.pushedCommitSha}.` : "Bu build için canlı yayın henüz doğrulanmadı; yerel çalışma ve yayın sonucu ayrı tutulur.";
 const providerPublicationText = live && deployment.verificationMode === "authenticated_vercel_provider"
-  ? `Yetkili Vercel CLI üzerinden salt okunur sağlayıcı denetimi: ${deployment.provider.project.name} (${deployment.provider.project.id}), deployment ${deployment.provider.deployment.id}, tam Git SHA, production/READY durumu, alias ataması ve iki doğrulanmış alan adı eşleşti. Genel yayın kontrolleri ${deployment.publicChecksPassed}/${deployment.publicChecksPassed + deployment.publicChecksFailed}; sağlayıcı kriterleri ${Object.values(deployment.provider.criteria).filter(Boolean).length}/${Object.keys(deployment.provider.criteria).length}. Alan adının bağlı olduğu proje Vercel kayıtlarından doğrulandı. Kaynak: .audit/round2/deployment-verification.json. GitHub kaynağından yayın yapıldı; yerel GSC girdileri yüklenmedi.`
+  ? `Yetkili Vercel CLI üzerinden salt okunur sağlayıcı denetimi: ${deployment.provider.project.name} (${deployment.provider.project.id}), deployment ${deployment.provider.deployment.id}, tam Git SHA, production/READY durumu, alias ataması ve iki doğrulanmış alan adı eşleşti. Genel yayın kontrolleri ${deployment.publicChecksPassed}/${deployment.publicChecksPassed + deployment.publicChecksFailed}; sağlayıcı kriterleri ${Object.values(deployment.provider.criteria).filter(Boolean).length}/${Object.keys(deployment.provider.criteria).length}. Alan adının bağlı olduğu proje Vercel kayıtlarından doğrulandı. Kaynak: ${deploymentFile}. GitHub kaynağından yayın yapıldı; yerel GSC girdileri yüklenmedi.`
   : "Read-only hazırlık kontrolü GitHub main dalında ADMIN erişimi ve iki tarihsel Vercel production entegrasyonu (canevim / canevim-next) gösterdi. Yeni SHA'nın provider durumları ve asıl www sayfaları doğrulanmadan yayın tamamlandı denmez. Public gövde eşleşmesi özel alan adının proje sahipliğini tek başına kanıtlamaz. Kaynak: .audit/round2/deploy-readiness.md ve varsa deployment-verification.json.";
 const liveTargetMet = productionLhVerified && productionLh.categories.performance >= 98 && productionLh.categories.accessibility === 100 && productionLh.categories.seo === 100;
 const pagespeedApi = read(".audit/round2/pagespeed-public-api.json");
-const productionTargetText = productionLhVerified ? `Canlı 98–100 performans hedefi ${liveTargetMet ? "sağlandı" : "sağlanmadı; açık madde olarak korunuyor"}.${pagespeedApi?.error?.code === 429 ? " Bağımsız Google PageSpeed API ölçümü HTTP 429 kota yanıtı nedeniyle alınmadı; ek bir puan üretilmedi." : ""}` : "Canlı performans hedefi için doğrulanmış ölçüm bekleniyor.";
+const performanceHistory = [
+  ["26 Ekim önceki sürüm canlı", ".audit/lighthouse-live-critical-system-2026-10-26-summary.json"],
+  ["28 Ekim düzeltme öncesi canlı", ".audit/lighthouse-live-2026-10-28-summary.json"],
+  ["28 Ekim düzeltme öncesi yerel", ".audit/lighthouse-local-diagnostic-2026-10-28-summary.json"],
+].flatMap(([label, file]) => { const run = read(file); return run?.categories && !run.runtimeError ? [`${label}: ${run.categories.performance}`] : []; });
+const performanceHistoryText = performanceHistory.length ? ` Ölçüm geçmişi: ${performanceHistory.join("; ")}. Bu kayıtlar korunuyor; faz sırası tanısı ve ölçüm sınırları .audit/vercel-setup-2026-10-28/performance-diagnosis.md içindedir. Tek koşu kalıcı performans garantisi değildir.` : "";
+const productionTargetText = (productionLhVerified ? `Canlı 98–100 performans hedefi ${liveTargetMet ? "sağlandı" : "sağlanmadı; açık madde olarak korunuyor"}.${pagespeedApi?.error?.code === 429 ? " Bağımsız Google PageSpeed API ölçümü HTTP 429 kota yanıtı nedeniyle alınmadı; ek bir puan üretilmedi." : ""}` : "Canlı performans hedefi için doğrulanmış ölçüm bekleniyor.") + performanceHistoryText;
 const scores = qa.lighthouse ? afterLh.categories : null;
 const menuItems = MENU_SECTIONS.reduce((sum, section) => sum + section.items.length, 0);
 const graphMin = buildPageGraph()["@graph"].length, graphMax = buildPageGraph({ faqs: [["Örnek soru", "Örnek yanıt"]] })["@graph"].length;
@@ -257,6 +264,7 @@ ${publishText} ${providerPublicationText}
 - node scripts/test-browser.mjs (PLAYWRIGHT_MODULE / CHROME_PATH)
 - node scripts/generate-growth-report.mjs --draft (açıkça bekleyen ölçümlü taslak)
 - node scripts/generate-growth-report.mjs (taze final build / QA / Lighthouse zorunlu)
+- node scripts/generate-growth-report.mjs --deployment <uygulama-yayını-kaydı.json> (rapor commit'inden ayrı, doğrulanmış uygulama yayınını sabitler)
 - node scripts/test-report.mjs (yerel sunum, içerik/hash ve mobil planlayıcı)
 - node scripts/verify-deployment.mjs --sha <tam commit> --wait-seconds 300 (push sonrası read-only)
 - node scripts/verify-deployment.mjs --sha <tam commit> --vercel-project <prj_ID> --vercel-deployment <dpl_ID> --vercel-scope <takım> (yetkili CLI ile salt okunur proje/alan adı doğrulaması)
